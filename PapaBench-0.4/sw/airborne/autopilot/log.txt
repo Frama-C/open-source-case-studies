@@ -1,0 +1,2408 @@
+In file included from ../../../avr/include/avr/io.h:86:0,
+                 from timer.h:33,
+                 from main.c:33:
+timer.h: In function ‘timer_periodic’:
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../../avr/include/avr/sfr_defs.h:215:31: note: in expansion of macro ‘_SFR_BYTE’
+ #define bit_is_set(sfr, bit) (_SFR_BYTE(sfr) & _BV(bit))
+                               ^
+timer.h:84:8: note: in expansion of macro ‘bit_is_set’
+   if( !bit_is_set( TIFR, TOV2 ) )
+        ^
+In file included from ../../../avr/include/avr/io.h:86:0,
+                 from timer.h:33,
+                 from main.c:33:
+timer.h: In function ‘timer_periodic’:
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../../avr/include/avr/sfr_defs.h:215:31: note: in expansion of macro ‘_SFR_BYTE’
+ #define bit_is_set(sfr, bit) (_SFR_BYTE(sfr) & _BV(bit))
+                               ^
+timer.h:84:8: note: in expansion of macro ‘bit_is_set’
+   if( !bit_is_set( TIFR, TOV2 ) )
+        ^
+main.c: In function ‘ground_calibrate’:
+main.c: In function ‘ground_calibrate’:
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:55:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:122:7: note: in expansion of macro ‘DOWNLINK_SEND_CALIB_START’
+       DOWNLINK_SEND_CALIB_START();
+       ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:55:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:122:7: note: in expansion of macro ‘DOWNLINK_SEND_CALIB_START’
+       DOWNLINK_SEND_CALIB_START();
+       ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:55:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:122:7: note: in expansion of macro ‘DOWNLINK_SEND_CALIB_START’
+       DOWNLINK_SEND_CALIB_START();
+       ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:55:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:122:7: note: in expansion of macro ‘DOWNLINK_SEND_CALIB_START’
+       DOWNLINK_SEND_CALIB_START();
+       ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:89:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:130:7: note: in expansion of macro ‘DOWNLINK_SEND_RAD_OF_IR’
+       DOWNLINK_SEND_RAD_OF_IR(&estimator_ir, &estimator_rad, &estimator_rad_of_ir, &ir_roll_neutral, &ir_pitch_neutral);
+       ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:89:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:130:7: note: in expansion of macro ‘DOWNLINK_SEND_RAD_OF_IR’
+       DOWNLINK_SEND_RAD_OF_IR(&estimator_ir, &estimator_rad, &estimator_rad_of_ir, &ir_roll_neutral, &ir_pitch_neutral);
+       ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:89:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:130:7: note: in expansion of macro ‘DOWNLINK_SEND_RAD_OF_IR’
+       DOWNLINK_SEND_RAD_OF_IR(&estimator_ir, &estimator_rad, &estimator_rad_of_ir, &ir_roll_neutral, &ir_pitch_neutral);
+       ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:89:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:130:7: note: in expansion of macro ‘DOWNLINK_SEND_RAD_OF_IR’
+       DOWNLINK_SEND_RAD_OF_IR(&estimator_ir, &estimator_rad, &estimator_rad_of_ir, &ir_roll_neutral, &ir_pitch_neutral);
+       ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:65:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:132:7: note: in expansion of macro ‘DOWNLINK_SEND_CALIB_CONTRAST’
+       DOWNLINK_SEND_CALIB_CONTRAST(&ir_contrast);
+       ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:65:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:132:7: note: in expansion of macro ‘DOWNLINK_SEND_CALIB_CONTRAST’
+       DOWNLINK_SEND_CALIB_CONTRAST(&ir_contrast);
+       ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:65:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:132:7: note: in expansion of macro ‘DOWNLINK_SEND_CALIB_CONTRAST’
+       DOWNLINK_SEND_CALIB_CONTRAST(&ir_contrast);
+       ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:65:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:132:7: note: in expansion of macro ‘DOWNLINK_SEND_CALIB_CONTRAST’
+       DOWNLINK_SEND_CALIB_CONTRAST(&ir_contrast);
+       ^
+main.c: In function ‘send_boot’:
+main.c: In function ‘send_boot’:
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:46:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:289:7: note: in expansion of macro ‘DOWNLINK_SEND_BOOT’
+       DOWNLINK_SEND_BOOT(&version);
+       ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:46:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:289:7: note: in expansion of macro ‘DOWNLINK_SEND_BOOT’
+       DOWNLINK_SEND_BOOT(&version);
+       ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:46:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:289:7: note: in expansion of macro ‘DOWNLINK_SEND_BOOT’
+       DOWNLINK_SEND_BOOT(&version);
+       ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:46:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:289:7: note: in expansion of macro ‘DOWNLINK_SEND_BOOT’
+       DOWNLINK_SEND_BOOT(&version);
+       ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:89:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:290:7: note: in expansion of macro ‘DOWNLINK_SEND_RAD_OF_IR’
+       DOWNLINK_SEND_RAD_OF_IR(&estimator_ir, &estimator_rad, &estimator_rad_of_ir, &ir_roll_neutral, &ir_pitch_neutral);
+       ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:89:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:290:7: note: in expansion of macro ‘DOWNLINK_SEND_RAD_OF_IR’
+       DOWNLINK_SEND_RAD_OF_IR(&estimator_ir, &estimator_rad, &estimator_rad_of_ir, &ir_roll_neutral, &ir_pitch_neutral);
+       ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:89:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:290:7: note: in expansion of macro ‘DOWNLINK_SEND_RAD_OF_IR’
+       DOWNLINK_SEND_RAD_OF_IR(&estimator_ir, &estimator_rad, &estimator_rad_of_ir, &ir_roll_neutral, &ir_pitch_neutral);
+       ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:89:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:290:7: note: in expansion of macro ‘DOWNLINK_SEND_RAD_OF_IR’
+       DOWNLINK_SEND_RAD_OF_IR(&estimator_ir, &estimator_rad, &estimator_rad_of_ir, &ir_roll_neutral, &ir_pitch_neutral);
+       ^
+main.c: In function ‘send_attitude’:
+main.c: In function ‘send_attitude’:
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:101:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:258:34: note: in expansion of macro ‘DOWNLINK_SEND_ATTITUDE’
+ #define PERIODIC_SEND_ATTITUDE() DOWNLINK_SEND_ATTITUDE(&estimator_phi, &estimator_psi, &estimator_theta);  
+                                  ^
+main.c:299:8: note: in expansion of macro ‘PERIODIC_SEND_ATTITUDE’
+        PERIODIC_SEND_ATTITUDE(); 
+        ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:101:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:258:34: note: in expansion of macro ‘DOWNLINK_SEND_ATTITUDE’
+ #define PERIODIC_SEND_ATTITUDE() DOWNLINK_SEND_ATTITUDE(&estimator_phi, &estimator_psi, &estimator_theta);  
+                                  ^
+main.c:299:8: note: in expansion of macro ‘PERIODIC_SEND_ATTITUDE’
+        PERIODIC_SEND_ATTITUDE(); 
+        ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:101:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:258:34: note: in expansion of macro ‘DOWNLINK_SEND_ATTITUDE’
+ #define PERIODIC_SEND_ATTITUDE() DOWNLINK_SEND_ATTITUDE(&estimator_phi, &estimator_psi, &estimator_theta);  
+                                  ^
+main.c:299:8: note: in expansion of macro ‘PERIODIC_SEND_ATTITUDE’
+        PERIODIC_SEND_ATTITUDE(); 
+        ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:101:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:258:34: note: in expansion of macro ‘DOWNLINK_SEND_ATTITUDE’
+ #define PERIODIC_SEND_ATTITUDE() DOWNLINK_SEND_ATTITUDE(&estimator_phi, &estimator_psi, &estimator_theta);  
+                                  ^
+main.c:299:8: note: in expansion of macro ‘PERIODIC_SEND_ATTITUDE’
+        PERIODIC_SEND_ATTITUDE(); 
+        ^
+main.c: In function ‘send_adc’:
+main.c: In function ‘send_adc’:
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:112:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:262:29: note: in expansion of macro ‘DOWNLINK_SEND_ADC’
+ #define PERIODIC_SEND_ADC() DOWNLINK_SEND_ADC(&ir_roll, &ir_pitch);
+                             ^
+main.c:304:34: note: in expansion of macro ‘PERIODIC_SEND_ADC’
+   if(!boot){ if (count % 5 == 1) PERIODIC_SEND_ADC();}
+                                  ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:112:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:262:29: note: in expansion of macro ‘DOWNLINK_SEND_ADC’
+ #define PERIODIC_SEND_ADC() DOWNLINK_SEND_ADC(&ir_roll, &ir_pitch);
+                             ^
+main.c:304:34: note: in expansion of macro ‘PERIODIC_SEND_ADC’
+   if(!boot){ if (count % 5 == 1) PERIODIC_SEND_ADC();}
+                                  ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:112:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:262:29: note: in expansion of macro ‘DOWNLINK_SEND_ADC’
+ #define PERIODIC_SEND_ADC() DOWNLINK_SEND_ADC(&ir_roll, &ir_pitch);
+                             ^
+main.c:304:34: note: in expansion of macro ‘PERIODIC_SEND_ADC’
+   if(!boot){ if (count % 5 == 1) PERIODIC_SEND_ADC();}
+                                  ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:112:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:262:29: note: in expansion of macro ‘DOWNLINK_SEND_ADC’
+ #define PERIODIC_SEND_ADC() DOWNLINK_SEND_ADC(&ir_roll, &ir_pitch);
+                             ^
+main.c:304:34: note: in expansion of macro ‘PERIODIC_SEND_ADC’
+   if(!boot){ if (count % 5 == 1) PERIODIC_SEND_ADC();}
+                                  ^
+main.c: In function ‘send_settings’:
+main.c: In function ‘send_settings’:
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:254:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:275:81: note: in expansion of macro ‘DOWNLINK_SEND_SETTINGS’
+ #define PERIODIC_SEND_SETTINGS() if (inflight_calib_mode != IF_CALIB_MODE_NONE) DOWNLINK_SEND_SETTINGS(&inflight_calib_mode, &slider_1_val, &slider_2_val);
+                                                                                 ^
+main.c:307:33: note: in expansion of macro ‘PERIODIC_SEND_SETTINGS’
+   if(!boot){if (count % 5 == 2) PERIODIC_SEND_SETTINGS();}
+                                 ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:254:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:275:81: note: in expansion of macro ‘DOWNLINK_SEND_SETTINGS’
+ #define PERIODIC_SEND_SETTINGS() if (inflight_calib_mode != IF_CALIB_MODE_NONE) DOWNLINK_SEND_SETTINGS(&inflight_calib_mode, &slider_1_val, &slider_2_val);
+                                                                                 ^
+main.c:307:33: note: in expansion of macro ‘PERIODIC_SEND_SETTINGS’
+   if(!boot){if (count % 5 == 2) PERIODIC_SEND_SETTINGS();}
+                                 ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:254:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:275:81: note: in expansion of macro ‘DOWNLINK_SEND_SETTINGS’
+ #define PERIODIC_SEND_SETTINGS() if (inflight_calib_mode != IF_CALIB_MODE_NONE) DOWNLINK_SEND_SETTINGS(&inflight_calib_mode, &slider_1_val, &slider_2_val);
+                                                                                 ^
+main.c:307:33: note: in expansion of macro ‘PERIODIC_SEND_SETTINGS’
+   if(!boot){if (count % 5 == 2) PERIODIC_SEND_SETTINGS();}
+                                 ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:254:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:275:81: note: in expansion of macro ‘DOWNLINK_SEND_SETTINGS’
+ #define PERIODIC_SEND_SETTINGS() if (inflight_calib_mode != IF_CALIB_MODE_NONE) DOWNLINK_SEND_SETTINGS(&inflight_calib_mode, &slider_1_val, &slider_2_val);
+                                                                                 ^
+main.c:307:33: note: in expansion of macro ‘PERIODIC_SEND_SETTINGS’
+   if(!boot){if (count % 5 == 2) PERIODIC_SEND_SETTINGS();}
+                                 ^
+main.c: In function ‘send_desired’:
+main.c: In function ‘send_desired’:
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:268:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:269:33: note: in expansion of macro ‘DOWNLINK_SEND_DESIRED’
+ #define PERIODIC_SEND_DESIRED() DOWNLINK_SEND_DESIRED(&desired_roll, &desired_pitch, &desired_x, &desired_y, &desired_altitude);
+                                 ^
+main.c:310:35: note: in expansion of macro ‘PERIODIC_SEND_DESIRED’
+   if(!boot){ if (count % 10 == 3) PERIODIC_SEND_DESIRED();}
+                                   ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:268:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:269:33: note: in expansion of macro ‘DOWNLINK_SEND_DESIRED’
+ #define PERIODIC_SEND_DESIRED() DOWNLINK_SEND_DESIRED(&desired_roll, &desired_pitch, &desired_x, &desired_y, &desired_altitude);
+                                 ^
+main.c:310:35: note: in expansion of macro ‘PERIODIC_SEND_DESIRED’
+   if(!boot){ if (count % 10 == 3) PERIODIC_SEND_DESIRED();}
+                                   ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:268:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:269:33: note: in expansion of macro ‘DOWNLINK_SEND_DESIRED’
+ #define PERIODIC_SEND_DESIRED() DOWNLINK_SEND_DESIRED(&desired_roll, &desired_pitch, &desired_x, &desired_y, &desired_altitude);
+                                 ^
+main.c:310:35: note: in expansion of macro ‘PERIODIC_SEND_DESIRED’
+   if(!boot){ if (count % 10 == 3) PERIODIC_SEND_DESIRED();}
+                                   ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:268:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:269:33: note: in expansion of macro ‘DOWNLINK_SEND_DESIRED’
+ #define PERIODIC_SEND_DESIRED() DOWNLINK_SEND_DESIRED(&desired_roll, &desired_pitch, &desired_x, &desired_y, &desired_altitude);
+                                 ^
+main.c:310:35: note: in expansion of macro ‘PERIODIC_SEND_DESIRED’
+   if(!boot){ if (count % 10 == 3) PERIODIC_SEND_DESIRED();}
+                                   ^
+main.c: In function ‘send_bat’:
+main.c: In function ‘send_bat’:
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:185:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:250:29: note: in expansion of macro ‘DOWNLINK_SEND_BAT’
+ #define PERIODIC_SEND_BAT() DOWNLINK_SEND_BAT(&vsupply, &estimator_flight_time, &low_battery, &block_time, &stage_time)
+                             ^
+main.c:313:35: note: in expansion of macro ‘PERIODIC_SEND_BAT’
+   if(!boot){ if (count % 20 == 8) PERIODIC_SEND_BAT();}
+                                   ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:185:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:250:29: note: in expansion of macro ‘DOWNLINK_SEND_BAT’
+ #define PERIODIC_SEND_BAT() DOWNLINK_SEND_BAT(&vsupply, &estimator_flight_time, &low_battery, &block_time, &stage_time)
+                             ^
+main.c:313:35: note: in expansion of macro ‘PERIODIC_SEND_BAT’
+   if(!boot){ if (count % 20 == 8) PERIODIC_SEND_BAT();}
+                                   ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:185:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:250:29: note: in expansion of macro ‘DOWNLINK_SEND_BAT’
+ #define PERIODIC_SEND_BAT() DOWNLINK_SEND_BAT(&vsupply, &estimator_flight_time, &low_battery, &block_time, &stage_time)
+                             ^
+main.c:313:35: note: in expansion of macro ‘PERIODIC_SEND_BAT’
+   if(!boot){ if (count % 20 == 8) PERIODIC_SEND_BAT();}
+                                   ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:185:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:250:29: note: in expansion of macro ‘DOWNLINK_SEND_BAT’
+ #define PERIODIC_SEND_BAT() DOWNLINK_SEND_BAT(&vsupply, &estimator_flight_time, &low_battery, &block_time, &stage_time)
+                             ^
+main.c:313:35: note: in expansion of macro ‘PERIODIC_SEND_BAT’
+   if(!boot){ if (count % 20 == 8) PERIODIC_SEND_BAT();}
+                                   ^
+main.c: In function ‘send_climb’:
+main.c: In function ‘send_climb’:
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:212:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:267:35: note: in expansion of macro ‘DOWNLINK_SEND_CLIMB_PID’
+ #define PERIODIC_SEND_CLIMB_PID() DOWNLINK_SEND_CLIMB_PID(&desired_gaz, &desired_climb, &climb_sum_err, &climb_pgain);
+                                   ^
+main.c:316:36: note: in expansion of macro ‘PERIODIC_SEND_CLIMB_PID’
+   if(!boot){ if (count % 20 == 18) PERIODIC_SEND_CLIMB_PID();}
+                                    ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:212:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:267:35: note: in expansion of macro ‘DOWNLINK_SEND_CLIMB_PID’
+ #define PERIODIC_SEND_CLIMB_PID() DOWNLINK_SEND_CLIMB_PID(&desired_gaz, &desired_climb, &climb_sum_err, &climb_pgain);
+                                   ^
+main.c:316:36: note: in expansion of macro ‘PERIODIC_SEND_CLIMB_PID’
+   if(!boot){ if (count % 20 == 18) PERIODIC_SEND_CLIMB_PID();}
+                                    ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:212:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:267:35: note: in expansion of macro ‘DOWNLINK_SEND_CLIMB_PID’
+ #define PERIODIC_SEND_CLIMB_PID() DOWNLINK_SEND_CLIMB_PID(&desired_gaz, &desired_climb, &climb_sum_err, &climb_pgain);
+                                   ^
+main.c:316:36: note: in expansion of macro ‘PERIODIC_SEND_CLIMB_PID’
+   if(!boot){ if (count % 20 == 18) PERIODIC_SEND_CLIMB_PID();}
+                                    ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:212:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:267:35: note: in expansion of macro ‘DOWNLINK_SEND_CLIMB_PID’
+ #define PERIODIC_SEND_CLIMB_PID() DOWNLINK_SEND_CLIMB_PID(&desired_gaz, &desired_climb, &climb_sum_err, &climb_pgain);
+                                   ^
+main.c:316:36: note: in expansion of macro ‘PERIODIC_SEND_CLIMB_PID’
+   if(!boot){ if (count % 20 == 18) PERIODIC_SEND_CLIMB_PID();}
+                                    ^
+main.c: In function ‘send_mode’:
+main.c: In function ‘send_mode’:
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:171:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:268:35: note: in expansion of macro ‘DOWNLINK_SEND_PPRZ_MODE’
+ #define PERIODIC_SEND_PPRZ_MODE() DOWNLINK_SEND_PPRZ_MODE(&pprz_mode, &vertical_mode, &inflight_calib_mode, &mcu1_status, &ir_estim_mode);
+                                   ^
+main.c:319:35: note: in expansion of macro ‘PERIODIC_SEND_PPRZ_MODE’
+   if(!boot){ if (count % 50 == 9) PERIODIC_SEND_PPRZ_MODE();}
+                                   ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:171:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:268:35: note: in expansion of macro ‘DOWNLINK_SEND_PPRZ_MODE’
+ #define PERIODIC_SEND_PPRZ_MODE() DOWNLINK_SEND_PPRZ_MODE(&pprz_mode, &vertical_mode, &inflight_calib_mode, &mcu1_status, &ir_estim_mode);
+                                   ^
+main.c:319:35: note: in expansion of macro ‘PERIODIC_SEND_PPRZ_MODE’
+   if(!boot){ if (count % 50 == 9) PERIODIC_SEND_PPRZ_MODE();}
+                                   ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:171:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:268:35: note: in expansion of macro ‘DOWNLINK_SEND_PPRZ_MODE’
+ #define PERIODIC_SEND_PPRZ_MODE() DOWNLINK_SEND_PPRZ_MODE(&pprz_mode, &vertical_mode, &inflight_calib_mode, &mcu1_status, &ir_estim_mode);
+                                   ^
+main.c:319:35: note: in expansion of macro ‘PERIODIC_SEND_PPRZ_MODE’
+   if(!boot){ if (count % 50 == 9) PERIODIC_SEND_PPRZ_MODE();}
+                                   ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:171:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:268:35: note: in expansion of macro ‘DOWNLINK_SEND_PPRZ_MODE’
+ #define PERIODIC_SEND_PPRZ_MODE() DOWNLINK_SEND_PPRZ_MODE(&pprz_mode, &vertical_mode, &inflight_calib_mode, &mcu1_status, &ir_estim_mode);
+                                   ^
+main.c:319:35: note: in expansion of macro ‘PERIODIC_SEND_PPRZ_MODE’
+   if(!boot){ if (count % 50 == 9) PERIODIC_SEND_PPRZ_MODE();}
+                                   ^
+main.c: In function ‘send_debug’:
+main.c: In function ‘send_debug’:
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:199:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:254:31: note: in expansion of macro ‘DOWNLINK_SEND_DEBUG’
+ #define PERIODIC_SEND_DEBUG() DOWNLINK_SEND_DEBUG(&link_fbw_nb_err, &link_fbw_fbw_nb_err, &modem_nb_ovrn, &gps_nb_ovrn, &mcu1_ppm_cpt);
+                               ^
+main.c:322:36: note: in expansion of macro ‘PERIODIC_SEND_DEBUG’
+   if(!boot){ if (count % 50 == 29) PERIODIC_SEND_DEBUG();}
+                                    ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:199:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:254:31: note: in expansion of macro ‘DOWNLINK_SEND_DEBUG’
+ #define PERIODIC_SEND_DEBUG() DOWNLINK_SEND_DEBUG(&link_fbw_nb_err, &link_fbw_fbw_nb_err, &modem_nb_ovrn, &gps_nb_ovrn, &mcu1_ppm_cpt);
+                               ^
+main.c:322:36: note: in expansion of macro ‘PERIODIC_SEND_DEBUG’
+   if(!boot){ if (count % 50 == 29) PERIODIC_SEND_DEBUG();}
+                                    ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:199:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:254:31: note: in expansion of macro ‘DOWNLINK_SEND_DEBUG’
+ #define PERIODIC_SEND_DEBUG() DOWNLINK_SEND_DEBUG(&link_fbw_nb_err, &link_fbw_fbw_nb_err, &modem_nb_ovrn, &gps_nb_ovrn, &mcu1_ppm_cpt);
+                               ^
+main.c:322:36: note: in expansion of macro ‘PERIODIC_SEND_DEBUG’
+   if(!boot){ if (count % 50 == 29) PERIODIC_SEND_DEBUG();}
+                                    ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:199:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:254:31: note: in expansion of macro ‘DOWNLINK_SEND_DEBUG’
+ #define PERIODIC_SEND_DEBUG() DOWNLINK_SEND_DEBUG(&link_fbw_nb_err, &link_fbw_fbw_nb_err, &modem_nb_ovrn, &gps_nb_ovrn, &mcu1_ppm_cpt);
+                               ^
+main.c:322:36: note: in expansion of macro ‘PERIODIC_SEND_DEBUG’
+   if(!boot){ if (count % 50 == 29) PERIODIC_SEND_DEBUG();}
+                                    ^
+In file included from downlink.h:28:0,
+                 from main.c:38:
+main.c: In function ‘send_nav_ref’:
+In file included from downlink.h:28:0,
+                 from main.c:38:
+main.c: In function ‘send_nav_ref’:
+main.c:272:71: error: ‘utm_east0’ undeclared (first use in this function)
+ #define PERIODIC_SEND_NAVIGATION_REF()  DOWNLINK_SEND_NAVIGATION_REF(&utm_east0, &utm_north0);
+                                                                       ^
+modem.h:104:23: note: in definition of macro ‘MODEM_PUT_1_BYTE_BY_ADDR’
+   tx_buf[tx_head] = *(_byte); \
+                       ^
+../../var/include/messages.h:138:4: note: in expansion of macro ‘MODEM_PUT_4_BYTE_BY_ADDR’
+    MODEM_PUT_4_BYTE_BY_ADDR((uint8_t*)(utm_east)); \
+    ^
+main.c:272:41: note: in expansion of macro ‘DOWNLINK_SEND_NAVIGATION_REF’
+ #define PERIODIC_SEND_NAVIGATION_REF()  DOWNLINK_SEND_NAVIGATION_REF(&utm_east0, &utm_north0);
+                                         ^
+main.c:325:37: note: in expansion of macro ‘PERIODIC_SEND_NAVIGATION_REF’
+   if(!boot){ if (count % 100 == 49) PERIODIC_SEND_NAVIGATION_REF();}
+                                     ^
+main.c:272:71: error: ‘utm_east0’ undeclared (first use in this function)
+ #define PERIODIC_SEND_NAVIGATION_REF()  DOWNLINK_SEND_NAVIGATION_REF(&utm_east0, &utm_north0);
+                                                                       ^
+modem.h:104:23: note: in definition of macro ‘MODEM_PUT_1_BYTE_BY_ADDR’
+   tx_buf[tx_head] = *(_byte); \
+                       ^
+../../var/include/messages.h:138:4: note: in expansion of macro ‘MODEM_PUT_4_BYTE_BY_ADDR’
+    MODEM_PUT_4_BYTE_BY_ADDR((uint8_t*)(utm_east)); \
+    ^
+main.c:272:41: note: in expansion of macro ‘DOWNLINK_SEND_NAVIGATION_REF’
+ #define PERIODIC_SEND_NAVIGATION_REF()  DOWNLINK_SEND_NAVIGATION_REF(&utm_east0, &utm_north0);
+                                         ^
+main.c:325:37: note: in expansion of macro ‘PERIODIC_SEND_NAVIGATION_REF’
+   if(!boot){ if (count % 100 == 49) PERIODIC_SEND_NAVIGATION_REF();}
+                                     ^
+main.c:272:71: note: each undeclared identifier is reported only once for each function it appears in
+ #define PERIODIC_SEND_NAVIGATION_REF()  DOWNLINK_SEND_NAVIGATION_REF(&utm_east0, &utm_north0);
+                                                                       ^
+modem.h:104:23: note: in definition of macro ‘MODEM_PUT_1_BYTE_BY_ADDR’
+   tx_buf[tx_head] = *(_byte); \
+                       ^
+../../var/include/messages.h:138:4: note: in expansion of macro ‘MODEM_PUT_4_BYTE_BY_ADDR’
+    MODEM_PUT_4_BYTE_BY_ADDR((uint8_t*)(utm_east)); \
+    ^
+main.c:272:41: note: in expansion of macro ‘DOWNLINK_SEND_NAVIGATION_REF’
+ #define PERIODIC_SEND_NAVIGATION_REF()  DOWNLINK_SEND_NAVIGATION_REF(&utm_east0, &utm_north0);
+                                         ^
+main.c:325:37: note: in expansion of macro ‘PERIODIC_SEND_NAVIGATION_REF’
+   if(!boot){ if (count % 100 == 49) PERIODIC_SEND_NAVIGATION_REF();}
+                                     ^
+main.c:272:71: note: each undeclared identifier is reported only once for each function it appears in
+ #define PERIODIC_SEND_NAVIGATION_REF()  DOWNLINK_SEND_NAVIGATION_REF(&utm_east0, &utm_north0);
+                                                                       ^
+modem.h:104:23: note: in definition of macro ‘MODEM_PUT_1_BYTE_BY_ADDR’
+   tx_buf[tx_head] = *(_byte); \
+                       ^
+../../var/include/messages.h:138:4: note: in expansion of macro ‘MODEM_PUT_4_BYTE_BY_ADDR’
+    MODEM_PUT_4_BYTE_BY_ADDR((uint8_t*)(utm_east)); \
+    ^
+main.c:272:41: note: in expansion of macro ‘DOWNLINK_SEND_NAVIGATION_REF’
+ #define PERIODIC_SEND_NAVIGATION_REF()  DOWNLINK_SEND_NAVIGATION_REF(&utm_east0, &utm_north0);
+                                         ^
+main.c:325:37: note: in expansion of macro ‘PERIODIC_SEND_NAVIGATION_REF’
+   if(!boot){ if (count % 100 == 49) PERIODIC_SEND_NAVIGATION_REF();}
+                                     ^
+main.c:272:83: error: ‘utm_north0’ undeclared (first use in this function)
+ #define PERIODIC_SEND_NAVIGATION_REF()  DOWNLINK_SEND_NAVIGATION_REF(&utm_east0, &utm_north0);
+                                                                                   ^
+modem.h:104:23: note: in definition of macro ‘MODEM_PUT_1_BYTE_BY_ADDR’
+   tx_buf[tx_head] = *(_byte); \
+                       ^
+../../var/include/messages.h:139:4: note: in expansion of macro ‘MODEM_PUT_4_BYTE_BY_ADDR’
+    MODEM_PUT_4_BYTE_BY_ADDR((uint8_t*)(utm_north)); \
+    ^
+main.c:272:41: note: in expansion of macro ‘DOWNLINK_SEND_NAVIGATION_REF’
+ #define PERIODIC_SEND_NAVIGATION_REF()  DOWNLINK_SEND_NAVIGATION_REF(&utm_east0, &utm_north0);
+                                         ^
+main.c:325:37: note: in expansion of macro ‘PERIODIC_SEND_NAVIGATION_REF’
+   if(!boot){ if (count % 100 == 49) PERIODIC_SEND_NAVIGATION_REF();}
+                                     ^
+main.c:272:83: error: ‘utm_north0’ undeclared (first use in this function)
+ #define PERIODIC_SEND_NAVIGATION_REF()  DOWNLINK_SEND_NAVIGATION_REF(&utm_east0, &utm_north0);
+                                                                                   ^
+modem.h:104:23: note: in definition of macro ‘MODEM_PUT_1_BYTE_BY_ADDR’
+   tx_buf[tx_head] = *(_byte); \
+                       ^
+../../var/include/messages.h:139:4: note: in expansion of macro ‘MODEM_PUT_4_BYTE_BY_ADDR’
+    MODEM_PUT_4_BYTE_BY_ADDR((uint8_t*)(utm_north)); \
+    ^
+main.c:272:41: note: in expansion of macro ‘DOWNLINK_SEND_NAVIGATION_REF’
+ #define PERIODIC_SEND_NAVIGATION_REF()  DOWNLINK_SEND_NAVIGATION_REF(&utm_east0, &utm_north0);
+                                         ^
+main.c:325:37: note: in expansion of macro ‘PERIODIC_SEND_NAVIGATION_REF’
+   if(!boot){ if (count % 100 == 49) PERIODIC_SEND_NAVIGATION_REF();}
+                                     ^
+In file included from ../../../avr/include/avr/io.h:86:0,
+                 from timer.h:33,
+                 from main.c:33:
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:140:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:272:41: note: in expansion of macro ‘DOWNLINK_SEND_NAVIGATION_REF’
+ #define PERIODIC_SEND_NAVIGATION_REF()  DOWNLINK_SEND_NAVIGATION_REF(&utm_east0, &utm_north0);
+                                         ^
+main.c:325:37: note: in expansion of macro ‘PERIODIC_SEND_NAVIGATION_REF’
+   if(!boot){ if (count % 100 == 49) PERIODIC_SEND_NAVIGATION_REF();}
+                                     ^
+In file included from ../../../avr/include/avr/io.h:86:0,
+                 from timer.h:33,
+                 from main.c:33:
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:140:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:272:41: note: in expansion of macro ‘DOWNLINK_SEND_NAVIGATION_REF’
+ #define PERIODIC_SEND_NAVIGATION_REF()  DOWNLINK_SEND_NAVIGATION_REF(&utm_east0, &utm_north0);
+                                         ^
+main.c:325:37: note: in expansion of macro ‘PERIODIC_SEND_NAVIGATION_REF’
+   if(!boot){ if (count % 100 == 49) PERIODIC_SEND_NAVIGATION_REF();}
+                                     ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:140:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:272:41: note: in expansion of macro ‘DOWNLINK_SEND_NAVIGATION_REF’
+ #define PERIODIC_SEND_NAVIGATION_REF()  DOWNLINK_SEND_NAVIGATION_REF(&utm_east0, &utm_north0);
+                                         ^
+main.c:325:37: note: in expansion of macro ‘PERIODIC_SEND_NAVIGATION_REF’
+   if(!boot){ if (count % 100 == 49) PERIODIC_SEND_NAVIGATION_REF();}
+                                     ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:140:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:272:41: note: in expansion of macro ‘DOWNLINK_SEND_NAVIGATION_REF’
+ #define PERIODIC_SEND_NAVIGATION_REF()  DOWNLINK_SEND_NAVIGATION_REF(&utm_east0, &utm_north0);
+                                         ^
+main.c:325:37: note: in expansion of macro ‘PERIODIC_SEND_NAVIGATION_REF’
+   if(!boot){ if (count % 100 == 49) PERIODIC_SEND_NAVIGATION_REF();}
+                                     ^
+main.c: In function ‘radio_control_task’:
+main.c: In function ‘radio_control_task’:
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../../avr/include/avr/sfr_defs.h:215:31: note: in expansion of macro ‘_SFR_BYTE’
+ #define bit_is_set(sfr, bit) (_SFR_BYTE(sfr) & _BV(bit))
+                               ^
+main.c:344:10: note: in expansion of macro ‘bit_is_set’
+     if ((bit_is_set(from_fbw.status, RADIO_REALLY_LOST) && (pprz_mode == PPRZ_MODE_AUTO1 || pprz_mode == PPRZ_MODE_MANUAL)) || too_far_from_home) {
+          ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../../avr/include/avr/sfr_defs.h:215:31: note: in expansion of macro ‘_SFR_BYTE’
+ #define bit_is_set(sfr, bit) (_SFR_BYTE(sfr) & _BV(bit))
+                               ^
+main.c:344:10: note: in expansion of macro ‘bit_is_set’
+     if ((bit_is_set(from_fbw.status, RADIO_REALLY_LOST) && (pprz_mode == PPRZ_MODE_AUTO1 || pprz_mode == PPRZ_MODE_MANUAL)) || too_far_from_home) {
+          ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../../avr/include/avr/sfr_defs.h:215:31: note: in expansion of macro ‘_SFR_BYTE’
+ #define bit_is_set(sfr, bit) (_SFR_BYTE(sfr) & _BV(bit))
+                               ^
+main.c:348:9: note: in expansion of macro ‘bit_is_set’
+     if (bit_is_set(from_fbw.status, AVERAGED_CHANNELS_SENT)) {
+         ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../../avr/include/avr/sfr_defs.h:215:31: note: in expansion of macro ‘_SFR_BYTE’
+ #define bit_is_set(sfr, bit) (_SFR_BYTE(sfr) & _BV(bit))
+                               ^
+main.c:348:9: note: in expansion of macro ‘bit_is_set’
+     if (bit_is_set(from_fbw.status, AVERAGED_CHANNELS_SENT)) {
+         ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:171:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:362:7: note: in expansion of macro ‘DOWNLINK_SEND_PPRZ_MODE’
+       DOWNLINK_SEND_PPRZ_MODE(&pprz_mode, &vertical_mode, &inflight_calib_mode, &mcu1_status, &ir_estim_mode);
+       ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:171:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:362:7: note: in expansion of macro ‘DOWNLINK_SEND_PPRZ_MODE’
+       DOWNLINK_SEND_PPRZ_MODE(&pprz_mode, &vertical_mode, &inflight_calib_mode, &mcu1_status, &ir_estim_mode);
+       ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:171:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:362:7: note: in expansion of macro ‘DOWNLINK_SEND_PPRZ_MODE’
+       DOWNLINK_SEND_PPRZ_MODE(&pprz_mode, &vertical_mode, &inflight_calib_mode, &mcu1_status, &ir_estim_mode);
+       ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:171:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:362:7: note: in expansion of macro ‘DOWNLINK_SEND_PPRZ_MODE’
+       DOWNLINK_SEND_PPRZ_MODE(&pprz_mode, &vertical_mode, &inflight_calib_mode, &mcu1_status, &ir_estim_mode);
+       ^
+main.c: In function ‘send_nav_values’:
+main.c: In function ‘send_nav_values’:
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:157:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:407:3: note: in expansion of macro ‘DOWNLINK_SEND_NAVIGATION’
+   DOWNLINK_SEND_NAVIGATION(&nav_block, &nav_stage, &estimator_x, &estimator_y, &desired_course, &dist2_to_wp, &course_pgain, &dist2_to_home);
+   ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:157:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:407:3: note: in expansion of macro ‘DOWNLINK_SEND_NAVIGATION’
+   DOWNLINK_SEND_NAVIGATION(&nav_block, &nav_stage, &estimator_x, &estimator_y, &desired_course, &dist2_to_wp, &course_pgain, &dist2_to_home);
+   ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:157:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:407:3: note: in expansion of macro ‘DOWNLINK_SEND_NAVIGATION’
+   DOWNLINK_SEND_NAVIGATION(&nav_block, &nav_stage, &estimator_x, &estimator_y, &desired_course, &dist2_to_wp, &course_pgain, &dist2_to_home);
+   ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:157:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:407:3: note: in expansion of macro ‘DOWNLINK_SEND_NAVIGATION’
+   DOWNLINK_SEND_NAVIGATION(&nav_block, &nav_stage, &estimator_x, &estimator_y, &desired_course, &dist2_to_wp, &course_pgain, &dist2_to_home);
+   ^
+main.c: In function ‘send_gps_pos’:
+main.c: In function ‘send_gps_pos’:
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:129:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:608:6: note: in expansion of macro ‘DOWNLINK_SEND_GPS’
+      DOWNLINK_SEND_GPS(&gps_mode, &gps_utm_east, &gps_utm_north, &gps_fcourse, &gps_falt, &gps_fspeed,&gps_fclimb, &gps_ftow);
+      ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:129:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:608:6: note: in expansion of macro ‘DOWNLINK_SEND_GPS’
+      DOWNLINK_SEND_GPS(&gps_mode, &gps_utm_east, &gps_utm_north, &gps_fcourse, &gps_falt, &gps_fspeed,&gps_fclimb, &gps_ftow);
+      ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:129:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:608:6: note: in expansion of macro ‘DOWNLINK_SEND_GPS’
+      DOWNLINK_SEND_GPS(&gps_mode, &gps_utm_east, &gps_utm_north, &gps_fcourse, &gps_falt, &gps_fspeed,&gps_fclimb, &gps_ftow);
+      ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:129:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:608:6: note: in expansion of macro ‘DOWNLINK_SEND_GPS’
+      DOWNLINK_SEND_GPS(&gps_mode, &gps_utm_east, &gps_utm_north, &gps_fcourse, &gps_falt, &gps_fspeed,&gps_fclimb, &gps_ftow);
+      ^
+main.c: In function ‘send_radIR’:
+main.c: In function ‘send_radIR’:
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:89:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:615:6: note: in expansion of macro ‘DOWNLINK_SEND_RAD_OF_IR’
+      DOWNLINK_SEND_RAD_OF_IR(&estimator_ir, &estimator_rad, &estimator_rad_of_ir, &ir_roll_neutral, &ir_pitch_neutral);
+      ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:89:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:615:6: note: in expansion of macro ‘DOWNLINK_SEND_RAD_OF_IR’
+      DOWNLINK_SEND_RAD_OF_IR(&estimator_ir, &estimator_rad, &estimator_rad_of_ir, &ir_roll_neutral, &ir_pitch_neutral);
+      ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:89:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:615:6: note: in expansion of macro ‘DOWNLINK_SEND_RAD_OF_IR’
+      DOWNLINK_SEND_RAD_OF_IR(&estimator_ir, &estimator_rad, &estimator_rad_of_ir, &ir_roll_neutral, &ir_pitch_neutral);
+      ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:89:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:615:6: note: in expansion of macro ‘DOWNLINK_SEND_RAD_OF_IR’
+      DOWNLINK_SEND_RAD_OF_IR(&estimator_ir, &estimator_rad, &estimator_rad_of_ir, &ir_roll_neutral, &ir_pitch_neutral);
+      ^
+main.c: In function ‘send_takeOff’:
+main.c: In function ‘send_takeOff’:
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:75:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:623:9: note: in expansion of macro ‘DOWNLINK_SEND_TAKEOFF’
+         DOWNLINK_SEND_TAKEOFF(&cputime);
+         ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:134:5: note: in expansion of macro ‘sbi’
+     sbi(EIFR, INTF0); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:75:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:623:9: note: in expansion of macro ‘DOWNLINK_SEND_TAKEOFF’
+         DOWNLINK_SEND_TAKEOFF(&cputime);
+         ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:75:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:623:9: note: in expansion of macro ‘DOWNLINK_SEND_TAKEOFF’
+         DOWNLINK_SEND_TAKEOFF(&cputime);
+         ^
+../../../avr/include/avr/sfr_defs.h:164:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+ #define _SFR_MEM_ADDR(sfr) ((uint16_t) &(sfr))
+                             ^
+../../../avr/include/avr/sfr_defs.h:125:53: note: in definition of macro ‘_MMIO_BYTE’
+ #define _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
+                                                     ^
+../../../avr/include/avr/sfr_defs.h:168:24: note: in expansion of macro ‘_SFR_MEM_ADDR’
+ #define _SFR_ADDR(sfr) _SFR_MEM_ADDR(sfr)
+                        ^
+../../../avr/include/avr/sfr_defs.h:172:35: note: in expansion of macro ‘_SFR_ADDR’
+ #define _SFR_BYTE(sfr) _MMIO_BYTE(_SFR_ADDR(sfr))
+                                   ^
+../../include/std.h:19:24: note: in expansion of macro ‘_SFR_BYTE’
+ #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+                        ^
+modem.h:135:5: note: in expansion of macro ‘sbi’
+     sbi(EIMSK, MODEM_CLK_INT); \
+     ^
+modem.h:48:53: note: in expansion of macro ‘MODEM_CHECK_RUNNING’
+   { MODEM_PUT_1_BYTE(ck_a); MODEM_PUT_1_BYTE(ck_b); MODEM_CHECK_RUNNING(); }
+                                                     ^
+../../var/include/messages.h:75:4: note: in expansion of macro ‘ModemEndMessage’
+    ModemEndMessage() \
+    ^
+main.c:623:9: note: in expansion of macro ‘DOWNLINK_SEND_TAKEOFF’
+         DOWNLINK_SEND_TAKEOFF(&cputime);
+         ^

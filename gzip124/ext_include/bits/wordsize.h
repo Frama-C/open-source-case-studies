@@ -1,0 +1,1 @@
+/* Determine the wordsize from the preprocessor defines.  */
