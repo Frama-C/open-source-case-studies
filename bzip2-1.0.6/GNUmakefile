@@ -4,20 +4,24 @@
 # It is an optional include, unnecessary if frama-c is in the PATH.
 -include frama-c-path.mk
 
-include ../fcscripts/frama-c.mk
+FRAMAC_CONFIG ?= frama-c-config
+include $(shell $(FRAMAC_CONFIG) -print-share-path)/analysis-scripts/frama-c.mk
 
 # Define global parameters
-CPPFLAGS     = -include../__fc_compatibility.h -include__fc_builtin.h
-FCFLAGS     += -main testmain
-EVAFLAGS    +=
+CPPFLAGS  =
+FCFLAGS  +=
+EVAFLAGS +=
 
 # Export environment variable for Frama-C
 export FRAMA_C_MEMORY_FOOTPRINT	= 8
 
-TARGETS=t-add
+TARGETS=bzip2
 all: $(TARGETS:%=%.eva)
 help:
 	@echo "targets: $(TARGETS)"
 loop: $(TARGETS:%=%.parse.loop) $(TARGETS:%=%.eva.loop)
+parse: $(TARGETS:%=%.parse)
+stats: $(TARGETS:%=%.parse) $(TARGETS:%=%.eva)
+	../show_stats.sh "$(notdir $(CURDIR))" $^
 
-t-add.parse: tests/t-add.c mini-gmp.c tests/hex-random.c tests/mini-random.c fc_stubs.h
+bzip2.parse: bzip2.c

@@ -4,7 +4,8 @@
 # It is an optional include, unnecessary if frama-c is in the PATH.
 -include frama-c-path.mk
 
-include ../fcscripts/frama-c.mk
+FRAMAC_CONFIG ?= frama-c-config
+include $(shell $(FRAMAC_CONFIG) -print-share-path)/analysis-scripts/frama-c.mk
 
 # Define global parameters
 CPPFLAGS  = -I code/harness -I code -I code/intel/linux \
@@ -20,7 +21,9 @@ all: $(TARGETS:%=%.eva)
 help:
 	@echo "targets: $(TARGETS)"
 loop: $(TARGETS:%=%.parse.loop) $(TARGETS:%=%.eva.loop)
+parse: $(TARGETS:%=%.parse)
+stats: $(TARGETS:%=%.parse) $(TARGETS:%=%.eva)
+	../show_stats.sh "$(notdir $(CURDIR))" $^
 
-debie1.parse: $(sort $(wildcard code/*.c)) code/harness/harness.c \
-              code/intel/linux/target.c
-debie1.eva: EVAFLAGS += $(shell cat debie1.manually-modified.loop | tr '\\' ' ')
+debie1.parse: $(sort $(wildcard code/*.c)) code/harness/harness.c code/intel/linux/target.c
+debie1.eva: EVAFLAGS += $(shell cat debie1.slevel | tr '\\' ' ')

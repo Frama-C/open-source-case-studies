@@ -4,7 +4,8 @@
 # It is an optional include, unnecessary if frama-c is in the PATH.
 -include frama-c-path.mk
 
-include ../fcscripts/frama-c.mk
+FRAMAC_CONFIG ?= frama-c-config
+include $(shell $(FRAMAC_CONFIG) -print-share-path)/analysis-scripts/frama-c.mk
 
 # Define global parameters
 CPPFLAGS  = -include$(shell $(FRAMAC) -print-path)/libc/string.h
@@ -19,6 +20,9 @@ all: $(TARGETS:%=%.eva)
 help:
 	@echo "targets: $(TARGETS)"
 loop: $(TARGETS:%=%.parse.loop) $(TARGETS:%=%.eva.loop)
+parse: $(TARGETS:%=%.parse)
+stats: $(TARGETS:%=%.parse) $(TARGETS:%=%.eva)
+	../show_stats.sh "$(notdir $(CURDIR))" $^
 
 compress.parse: compress_file.c quicklz.c
 

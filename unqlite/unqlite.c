@@ -3160,6 +3160,14 @@ JX9_PRIVATE sxi32 SyBlobInit(SyBlob *pBlob, SyMemBackend *pAllocator);
 JX9_PRIVATE sxi32 SyBlobInitFromBuf(SyBlob *pBlob, void *pBuffer, sxu32 nSize);
 JX9_PRIVATE char *SyMemBackendStrDup(SyMemBackend *pBackend, const char *zSrc, sxu32 nSize);
 JX9_PRIVATE void *SyMemBackendDup(SyMemBackend *pBackend, const void *pSrc, sxu32 nSize);
+
+// stub to avoid recursive call; does not correctly model the memory
+// being freed
+// Note: ideally, we would add the spec in another file, but the types used
+// in the function prototype are not exported.
+/*@
+  assigns \result \from indirect:pBackend;
+*/
 JX9_PRIVATE sxi32 SyMemBackendRelease(SyMemBackend *pBackend);
 JX9_PRIVATE sxi32 SyMemBackendInitFromOthers(SyMemBackend *pBackend, const SyMemMethods *pMethods, ProcMemError xMemErr, void *pUserData);
 JX9_PRIVATE sxi32 SyMemBackendInit(SyMemBackend *pBackend, ProcMemError xMemErr, void *pUserData);
@@ -3168,9 +3176,30 @@ JX9_PRIVATE sxi32 SyMemBackendInitFromParent(SyMemBackend *pBackend,const SyMemB
 /* Not used in the current release of the JX9 engine */
 JX9_PRIVATE void *SyMemBackendPoolRealloc(SyMemBackend *pBackend, void *pOld, sxu32 nByte);
 #endif
+
+// stub to avoid recursive call; does not correctly model the memory
+// being freed
+// Note: ideally, we would add the spec in another file, but the types used
+// in the function prototype are not exported.
+/*@
+  assigns \result \from indirect:pBackend, indirect:pChunk;
+*/
 JX9_PRIVATE sxi32 SyMemBackendPoolFree(SyMemBackend *pBackend, void *pChunk);
 JX9_PRIVATE void *SyMemBackendPoolAlloc(SyMemBackend *pBackend, sxu32 nByte);
+
+// stub to avoid recursive call; does not correctly model the memory
+// being freed
+// Note: ideally, we would add the spec in another file, but the types used
+// in the function prototype are not exported.
+/*@
+  assigns \result \from indirect:pBackend, indirect:pChunk;
+*/
 JX9_PRIVATE sxi32 SyMemBackendFree(SyMemBackend *pBackend, void *pChunk);
+
+// Unsound stub to remove recursion
+/*@
+  assigns \result, *pBackend, (pOld == \null ? \empty : ((char *)pOld)[0..]) \from *pBackend, ((char *)pOld)[0..], nByte;
+*/
 JX9_PRIVATE void *SyMemBackendRealloc(SyMemBackend *pBackend, void *pOld, sxu32 nByte);
 JX9_PRIVATE void *SyMemBackendAlloc(SyMemBackend *pBackend, sxu32 nByte);
 JX9_PRIVATE sxu32 SyMemcpy(const void *pSrc, void *pDest, sxu32 nLen);
@@ -3448,6 +3477,9 @@ UNQLITE_PRIVATE unqlite_kv_methods * unqliteFindKVStore(
 	sxu32 nByte        /* zName length */
 	);
 UNQLITE_PRIVATE int unqliteGetPageSize(void);
+
+// Unsound stub to remove recursion
+/*@ assigns \result, *pDb, *zErr \from indirect:pDb, indirect:zErr; */
 UNQLITE_PRIVATE int unqliteGenError(unqlite *pDb,const char *zErr);
 UNQLITE_PRIVATE int unqliteGenErrorFormat(unqlite *pDb,const char *zFmt,...);
 UNQLITE_PRIVATE int unqliteGenOutofMem(unqlite *pDb);
@@ -3492,7 +3524,12 @@ UNQLITE_PRIVATE int unqliteOsWrite(unqlite_file *id, const void *pBuf, unqlite_i
 UNQLITE_PRIVATE int unqliteOsTruncate(unqlite_file *id, unqlite_int64 size);
 UNQLITE_PRIVATE int unqliteOsSync(unqlite_file *id, int flags);
 UNQLITE_PRIVATE int unqliteOsFileSize(unqlite_file *id, unqlite_int64 *pSize);
+
+// Unsound stub to remove recursion
+//@ assigns \result, *id \from indirect:id, indirect:lockType;
 UNQLITE_PRIVATE int unqliteOsLock(unqlite_file *id, int lockType);
+// Unsound stub to remove recursion
+//@ assigns \result, *id \from indirect:id, indirect:lockType;
 UNQLITE_PRIVATE int unqliteOsUnlock(unqlite_file *id, int lockType);
 UNQLITE_PRIVATE int unqliteOsCheckReservedLock(unqlite_file *id, int *pResOut);
 UNQLITE_PRIVATE int unqliteOsSectorSize(unqlite_file *id);
@@ -3504,6 +3541,8 @@ UNQLITE_PRIVATE int unqliteOsOpen(
   unsigned int flags
 );
 UNQLITE_PRIVATE int unqliteOsCloseFree(SyMemBackend *pAlloc,unqlite_file *pId);
+// Unsound stub to remove recursion
+//@ assigns \result, *pVfs \from pVfs, zPath, dirSync;
 UNQLITE_PRIVATE int unqliteOsDelete(unqlite_vfs *pVfs, const char *zPath, int dirSync);
 UNQLITE_PRIVATE int unqliteOsAccess(unqlite_vfs *pVfs,const char *zPath,int flags,int *pResOut);
 /* bitmap.c */
@@ -3861,7 +3900,7 @@ static sxi32 unqliteCoreInitialize(void)
 #endif
 		if( sUnqlMPGlobal.sAllocator.pMethods == 0 ){
 			/* Install a memory subsystem */
-			rc = unqlite_lib_config(UNQLITE_LIB_CONFIG_USER_MALLOC, 0); /* zero mean use the built-in memory backend */
+			rc = unqlite_lib_config(UNQLITE_LIB_CONFIG_USER_MALLOC, (const SyMemMethods *)0); /* zero mean use the built-in memory backend */
 			if( rc != UNQLITE_OK ){
 				/* If we are unable to initialize the memory backend, there is no much we can do here.*/
 				goto End;
@@ -27368,7 +27407,7 @@ static void * MemBackendPoolAlloc(SyMemBackend *pBackend, sxu32 nByte)
 	pNext = pBucket->pNext;
 	pBackend->apPool[nBucket] = pNext;
 	/* Record bucket&magic number */
-	pBucket->nBucket = (SXMEM_POOL_MAGIC << 16) | nBucket;
+	pBucket->nBucket = ((sxu32)SXMEM_POOL_MAGIC << 16) | nBucket;
 	return (void *)&pBucket[1];
 }
 JX9_PRIVATE void * SyMemBackendPoolAlloc(SyMemBackend *pBackend, sxu32 nByte)
@@ -51533,6 +51572,8 @@ static int lhCursorLast(unqlite_kv_cursor *pCursor)
 /*
  * Reset the cursor.
  */
+// Unsound stub to remove recursion
+/*@ assigns *pCursor \from pCursor; */
 static void lhCursorReset(unqlite_kv_cursor *pCursor)
 {
 	lhCursorFirst(pCursor);
@@ -52485,6 +52526,7 @@ UNQLITE_PRIVATE int unqliteOsSectorSize(unqlite_file *id)
 ** The next group of routines are convenience wrappers around the
 ** VFS methods.
 */
+//@ assigns \result, *pVfs, *pAlloc, **ppOut \from pVfs, pAlloc, zPath, flags;
 UNQLITE_PRIVATE int unqliteOsOpen(
   unqlite_vfs *pVfs,
   SyMemBackend *pAlloc,
@@ -55642,6 +55684,10 @@ static void page_ref(Page *pPage)
 /*
  * Release an in-memory page after its reference count reach zero.
  */
+// stub to avoid recursive call; unsound (does not model all the effects
+/*@
+  assigns \result \from indirect:pPager, indirect:pPage;
+*/
 static int pager_release_page(Pager *pPager,Page *pPage)
 {
 	int rc = UNQLITE_OK;
@@ -56375,6 +56421,8 @@ static int pager_lock_db(Pager *pPager, int eLock){
 ** the lock. If the lock is obtained successfully, set the Pager.state 
 ** variable to locktype before returning.
 */
+// Unsound stub to remove recursion
+/*@ assigns \result, *pPager \from pPager, locktype; */
 static int pager_wait_on_lock(Pager *pPager, int locktype){
   int rc;                              /* Return code */
   do {
@@ -56520,6 +56568,8 @@ fail:
 /*
  * Write the unqlite header (First page). (Big-Endian)
  */
+// Unsound stub to remove recursion
+/*@ assigns \result, *pPager \from pPager; */
 static int pager_write_db_header(Pager *pPager)
 {
 	unsigned char *zRaw = pPager->pHeader->zData;
@@ -56720,6 +56770,8 @@ static int pager_create_header(Pager *pPager)
 ** occurs while locking the database, checking for a hot-journal file or 
 ** rolling back a journal file, the IO error code is returned.
 */
+// Unsound stub to remove recursion
+/*@ assigns \result, *pPager \from pPager; */
 static int pager_shared_lock(Pager *pPager)
 {
 	int rc = UNQLITE_OK;

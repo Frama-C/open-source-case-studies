@@ -11,10 +11,7 @@
 
    http://www.hedonism.demon.co.uk/paul/solitaire/ */
 
-// Modified for tests using Value
 #include <string.h>
-#include "__fc_builtin.h"
-
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
@@ -254,7 +251,7 @@ static char encrypt_char(
 }
 
 
-int original_main(
+int main(
     int argc,
     char *argv[]
 )
@@ -318,10 +315,11 @@ int original_main(
     return 0;
 }
 
+#ifdef __FRAMAC__
+# include "__fc_builtin.h"
 volatile int nondet;
-
-// main for Value
-int main() {
+// main for EVA
+int eva_main() {
   int argc = Frama_C_interval(0, 5);
   char argv0[256], argv1[256], argv2[256], argv3[256], argv4[256];
   char *argv[5] = {argv0, argv1, argv2, argv3, argv4};
@@ -330,5 +328,6 @@ int main() {
       argv[i][j] = nondet;
     }
   }
-  return original_main(argc, argv);
+  return main(argc, argv);
 }
+#endif // __FRAMAC__

@@ -4,21 +4,25 @@
 # It is an optional include, unnecessary if frama-c is in the PATH.
 -include frama-c-path.mk
 
-include ../fcscripts/frama-c.mk
+FRAMAC_CONFIG ?= frama-c-config
+include $(shell $(FRAMAC_CONFIG) -print-share-path)/analysis-scripts/frama-c.mk
 
 # Define global parameters
-CPPFLAGS  =
-FCFLAGS  +=
-EVAFLAGS += -slevel-function initBoard:19,addRandom:34 \
--val-slevel-merge-after-loop addRandom
+CPPFLAGS     = -include../__fc_compatibility.h -include__fc_builtin.h
+FCFLAGS     +=
+EVAFLAGS    +=
+VALBUILTINS +=
 
 # Export environment variable for Frama-C
 export FRAMA_C_MEMORY_FOOTPRINT	= 8
 
-TARGETS=2048
+TARGETS=hiredis
 all: $(TARGETS:%=%.eva)
 help:
 	@echo "targets: $(TARGETS)"
 loop: $(TARGETS:%=%.parse.loop) $(TARGETS:%=%.eva.loop)
+parse: $(TARGETS:%=%.parse)
+stats: $(TARGETS:%=%.parse) $(TARGETS:%=%.eva)
+	../show_stats.sh "$(notdir $(CURDIR))" $^
 
-2048.parse: 2048.c
+hiredis.parse: $(sort $(wildcard *.c))

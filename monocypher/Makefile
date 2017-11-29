@@ -1,25 +1,21 @@
-# frama-c-path.mk contains variables which are specific to each
-# user and should not be versioned, such as the path to the
-# frama-c binaries (e.g. FRAMAC and FRAMAC_GUI).
-# It is an optional include, unnecessary if frama-c is in the PATH.
--include frama-c-path.mk
+CC=gcc
+CFLAGS=-O2 -Wall -Wextra -std=c11 -pedantic
 
-include ../fcscripts/frama-c.mk
+.PHONY: all clean
 
-# Define global parameters
-CPPFLAGS         +=
-FCFLAGS          +=
-EVAFLAGS         += -plevel 256
+all: test
 
-# Export environment variable for Frama-C
-export FRAMA_C_MEMORY_FOOTPRINT = 8
+clean:
+	rm -f *.o test
 
-TARGETS=monocypher
-all: $(TARGETS:%=%.eva)
-help:
-	@echo "targets: $(TARGETS)"
-loop: $(TARGETS:%=%.parse.loop) $(TARGETS:%=%.eva.loop)
+test: test.o monocypher.o sha512.o
+	$(CC) $(CFLAGS) -o $@ $^
 
-monocypher.parse: monocypher.c sha512.c test.c
+test.o: test.c
+	$(CC) $(CFLAGS) -c $^
 
-monocypher.eva: EVAFLAGS+=$(shell cat monocypher.eva.loop | tr -d '\n\\')
+sha512.o: sha512.c sha512.h
+	$(CC) $(CFLAGS) -c $^
+
+monocypher.o: monocypher.c monocypher.h
+	$(CC) $(CFLAGS) -c $^ -DED25519_SHA512

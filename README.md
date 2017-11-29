@@ -5,15 +5,13 @@ This repository is a collection of open source C codes to be used with
 [Frama-C](http://frama-c.com), in particular with the EVA
 (Evolved Value Analysis) plug-in.
 
-Except for the `fcscripts` directory (which contains a Makefile and some helper
-scripts), each directory contains open-source code that constitutes a
-"case study".
+Each directory contains open-source code that constitutes a "case study".
 
 
 # Requirements
 
 - GNU Make >= 4.0;
-- Frama-C 15 (Phosphorus);
+- Frama-C 16 (Sulfur);
 - The `frama-c` binary must be in the PATH.
 
 
@@ -22,7 +20,11 @@ scripts), each directory contains open-source code that constitutes a
 - `cd` to one of the case studies;
 
 - Run `make` to parse and run EVA on the predefined targets
-  (you can run `make help` to get the list of base targets);
+  (you can run `make help` to get the list of base targets).
+  Note that the default file used by GNU Make is `GNUmakefile` if it exists.
+  We use this to avoid renaming the original Makefile, if any. It also means
+  that, if you want to compile the code using its Makefile, you'll have to
+  explicitly name it (`make -f Makefile`).
 
 - For each base target `t`, the following targets are generated:
 
@@ -32,6 +34,18 @@ scripts), each directory contains open-source code that constitutes a
 
   Each target depends on the previous one; note that `t.parse.gui` is also
   available (e.g. for inspecting the AST before the analysis).
+
+## Optional targets
+
+- For each base target `t`, the following optional targets are generated:
+
+    - `t.stats`: print time/memory usage;
+    - `t.parse.loop` and `t.eva.loop`: use the Loop Analysis plug-in to produce
+      a file with slevel heuristics (running EVA may improve the result of
+      Loop Analysis, so `t.eva.loop` should be more precise than `t.parse.loop`).
+      After obtaining this initial set of parameters, consider saving it to a
+      `.slevel` file and including it in the `GNUmakefile`. This way, you can
+      improve the parameters for specific functions as you refine the analysis.
 
 ## Remarks
 
@@ -43,7 +57,7 @@ scripts), each directory contains open-source code that constitutes a
   directories, to allow comparing them (e.g. via `meld`);
 
 - To try other parametrizations, simply edit variables
-  `CPPFLAGS/FCFLAGS/EVAFLAGS` in the case study Makefiles and re-run `make`.
+  `CPPFLAGS/FCFLAGS/EVAFLAGS` in `GNUmakefile` and re-run `make`.
 
 # Notes
 
@@ -51,15 +65,17 @@ scripts), each directory contains open-source code that constitutes a
 
 Only minor modifications were performed on each of these case studies:
 
-- If there is a `Makefile` in the root directory of a case study,
-  it is systematically renamed to `original.mk`;
-- A `Makefile` is added to each case study,
-  with Frama-C/EVA-specific rules for parsing and running the analysis;
+- File `GNUmakefile` is added to each case study, with Frama-C/EVA-specific
+  rules for parsing and running the analysis;
+- Some case studies contain a `.slevel` file which is derived from the result
+  obtained by the Loop Analysis plug-in;
 - When necessary, syntactic modifications were performed to ensure better
   C99-compliance and/or the inclusion of stubs to allow Frama-C to parse the
   files;
-- The `main` function may have been modified (or added, if none existed) to
-  ensure a more useful initial context;
+- In some cases, an `eva_main` function was added to provide a better initial
+  context for the analysis;
+- When recursive calls are present, the functions containing them need to be
+  replaced with specifications;
 - Some ACSL annotations may have been added to the sources
   (to illustrate their usage, or to improve the analysis).
 
@@ -85,7 +101,15 @@ Only minor modifications were performed on each of these case studies:
 
 If you know of other open source code bases where Frama-C/EVA produces
 interesting results, please contribute with pull requests including the
-sources and the `Makefile` that you have devised to run Frama-C.
+sources and the `GNUmakefile` that you have devised to run Frama-C.
+
+On the other hand, if you have some interesting open-source C software
+(ideally, C99-compatible) that you are unable to parse and/or run with
+Frama-C/EVA, consider creating an issue with the description of the problem
+you are facing (e.g. missing/incompatible declarations in the Frama-C libc,
+problems when preprocessing/parsing the software, constructs unsupported
+by EVA, etc). Ideally, create a (WIP) pull request with the sources in a new
+directory, ready to be prepared for the case study.
 
 
 # License
@@ -101,6 +125,7 @@ when available. We also summarize the license of each directory below.
 - `fcscripts`: LGPL
 - `gzip124`: GPL
 - `hiredis`: Redis license (BSD-style), see `COPYING`
+- `jsmn`: MIT
 - `khash`: MIT
 - `libmodbus`: LGPL
 - `mini-gmp`:  LGPL or GPL
