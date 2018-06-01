@@ -8,7 +8,7 @@ FRAMAC_CONFIG ?= frama-c-config
 include $(shell $(FRAMAC_CONFIG) -print-share-path)/analysis-scripts/frama-c.mk
 
 # Define global parameters
-CPPFLAGS         += -I include -I $($FRAMAC_BIN -print-path)/libc
+CPPFLAGS         += -I include -I $($FRAMAC_BIN -print-path)/libc -D_SOCKLEN_T
 FCFLAGS          +=
 USE_SPEC         += \
   my_set_session \
@@ -56,7 +56,7 @@ USE_SPEC         += \
 EVAFLAGS         += \
   -val-subdivide-non-linear 16 \
   -val-ilevel 13 \
-  -no-val-malloc-returns-null \
+  -no-val-alloc-returns-null \
   -val-use-spec $(call fc_list,$(USE_SPEC))
 
 # Export environment variable for Frama-C

@@ -25,7 +25,7 @@
 #ifndef NAV_H
 #define NAV_H
 
-#include <std.h>
+#include "std.h"
 
 struct point {
   float x;

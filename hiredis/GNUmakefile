@@ -5,18 +5,28 @@
 -include frama-c-path.mk
 
 FRAMAC_CONFIG ?= frama-c-config
-include $(shell $(FRAMAC_CONFIG) -print-share-path)/analysis-scripts/frama-c.mk
+FRAMAC_SHARE = $(shell $(FRAMAC_CONFIG) -print-share-path)
+include $(FRAMAC_SHARE)/analysis-scripts/frama-c.mk
 
 # Define global parameters
-CPPFLAGS     = -include../__fc_compatibility.h -include__fc_builtin.h
-FCFLAGS     +=
+CPPFLAGS     = -include../__fc_compatibility.h -include__fc_builtin.h \
+  -D_POSIX_C_SOURCE=200809L
+FCFLAGS     += -main eva_main
 EVAFLAGS    +=
-VALBUILTINS +=
 
 # Export environment variable for Frama-C
 export FRAMA_C_MEMORY_FOOTPRINT	= 8
 
-TARGETS=hiredis
+TARGETS=\
+hiredis_test_format \
+hiredis_test_misc \
+
+# some targets are disabled from automatic testing until further tuning
+#hiredis_test_tcp \
+#hiredis_test_unix \
+#hiredis_test_tcp_long \
+#hiredis_test_unix_long
+
 all: $(TARGETS:%=%.eva)
 help:
 	@echo "targets: $(TARGETS)"
@@ -25,4 +35,25 @@ parse: $(TARGETS:%=%.parse)
 stats: $(TARGETS:%=%.parse) $(TARGETS:%=%.eva)
 	../show_stats.sh "$(notdir $(CURDIR))" $^
 
-hiredis.parse: $(sort $(wildcard *.c))
+TEST_SRCS:=$(sort $(wildcard *.c)) $(FRAMAC_SHARE)/libc/string.c \
+  $(FRAMAC_SHARE)/libc/netdb.c
+
+hiredis_test_format.parse: CPPFLAGS += -DEVA_TEST_FORMAT
+hiredis_test_format.parse: $(TEST_SRCS)
+
+hiredis_test_misc.parse: CPPFLAGS += -DEVA_TEST_MISC
+hiredis_test_misc.parse: $(TEST_SRCS)
+
+hiredis_test_tcp.parse: CPPFLAGS += -DEVA_TEST_TCP
+hiredis_test_tcp.parse: $(TEST_SRCS)
+
+hiredis_test_unix.parse: CPPFLAGS += -DEVA_TEST_UNIX
+hiredis_test_unix.parse: $(TEST_SRCS)
+
+hiredis_test_tcp_long.parse: \
+  CPPFLAGS += -DEVA_TEST_TCP -DEVA_TEST_BLOCKING_LONG
+hiredis_test_tcp_long.parse: $(TEST_SRCS)
+
+hiredis_test_unix_long.parse: \
+  CPPFLAGS += -DEVA_TEST_UNIX -DEVA_TEST_BLOCKING_LONG
+hiredis_test_unix_long.parse: $(TEST_SRCS)

@@ -387,6 +387,7 @@ static void test_blocking_connection(struct config config) {
     redisContext *c;
     redisReply *reply;
 
+#ifdef EVA_TEST_BLOCKING_LONG
     c = connect(config);
 
     test("Is able to deliver commands: ");
@@ -457,6 +458,7 @@ static void test_blocking_connection(struct config config) {
               reply->element[1]->type == REDIS_REPLY_STATUS &&
               strcasecmp(reply->element[1]->str,"pong") == 0);
     freeReplyObject(reply);
+#endif //EVA_TEST_BLOCKING_LONG
 
     disconnect(c, 0);
 }
@@ -746,7 +748,7 @@ static void test_throughput(struct config config) {
 //     redisFree(c);
 // }
 
-int original_main(int argc, char **argv) {
+int main(int argc, char **argv) {
     struct config cfg = {
         .tcp = {
             .host = "127.0.0.1",
@@ -785,11 +787,14 @@ int original_main(int argc, char **argv) {
         argv++; argc--;
     }
 
+#ifdef EVA_TEST_FORMAT
     test_format_commands();
+#elif EVA_TEST_MISC
     test_reply_reader();
     test_blocking_connection_errors();
     test_free_null();
 
+#elif EVA_TEST_TCP
     printf("\nTesting against TCP connection (%s:%d):\n", cfg.tcp.host, cfg.tcp.port);
     cfg.type = CONN_TCP;
     test_blocking_connection(cfg);
@@ -799,6 +804,7 @@ int original_main(int argc, char **argv) {
     test_append_formatted_commands(cfg);
     if (throughput) test_throughput(cfg);
 
+#elif EVA_TEST_UNIX
     printf("\nTesting against Unix socket connection (%s):\n", cfg.unix_sock.path);
     cfg.type = CONN_UNIX;
     test_blocking_connection(cfg);
@@ -812,20 +818,19 @@ int original_main(int argc, char **argv) {
         test_blocking_connection(cfg);
     }
 
-
+#endif
     if (fails) {
         printf("*** %d TESTS FAILED ***\n", fails);
         return 1;
     }
-
     printf("ALL TESTS PASSED\n");
     return 0;
 }
 
 volatile int nondet;
 
-// main for Value
-int main() {
+#ifdef __FRAMAC__
+int eva_main() {
   int argc = Frama_C_interval(0, 5);
   char argv0[256], argv1[256], argv2[256], argv3[256], argv4[256];
   char *argv[5] = {argv0, argv1, argv2, argv3, argv4};
@@ -834,5 +839,6 @@ int main() {
       argv[i][j] = nondet;
     }
   }
-  return original_main(argc, argv);
+  return main(argc, argv);
 }
+#endif

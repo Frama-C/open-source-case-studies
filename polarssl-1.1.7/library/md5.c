@@ -252,7 +252,7 @@ static const unsigned char md5_padding[64] =
 
 /*
  * MD5 final digest
- */ /*@ requires \valid(output+(0..15)); */
+ */
 void md5_finish( md5_context *ctx, unsigned char output[16] )
 {
     unsigned long last, padn;

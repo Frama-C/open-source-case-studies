@@ -50,7 +50,10 @@ double pp_atan2(double x, double y)
  * Range: -pi/2 <= x <= pi/2
  * Precision: +/- .000,000,005
  */
- 
+/*@
+  requires \is_finite(x); // otherwise, may loop indefinitely
+  assigns \result \from x;
+*/
 double pp_sin(double x)
 {
 	double xi, y, q, q2;

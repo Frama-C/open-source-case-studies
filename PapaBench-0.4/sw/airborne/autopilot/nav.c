@@ -1,6 +1,6 @@
 /*
  * $Id: nav.c,v 1.3 2007/11/16 14:11:50 casse Exp $
- *  
+ *
  * Copyright (C) 2003  Pascal Brisset, Antoine Drouin
  *
  * This file is part of paparazzi.
@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with paparazzi; see the file COPYING.  If not, write to
  * the Free Software Foundation, 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA. 
+ * Boston, MA 02111-1307, USA.
  *
  */
 
@@ -76,7 +76,13 @@ static void route_to(uint8_t last_wp, uint8_t wp);
 
 static float qdr; /* Degrees from 0 to 360 */
 
-#define CircleXY(x,y,radius) { float alpha = atan2(estimator_y - y, estimator_x - x);float alpha_carrot = alpha + CARROT / (-radius * estimator_hspeed_mod); fly_to_xy(x+cos(alpha_carrot)*fabs(radius),y+sin(alpha_carrot)*fabs(radius)); qdr = DegOfRad(M_PI/2 - alpha_carrot); NormCourse(qdr);}
+#define CircleXY(x,y,radius) { \
+    float speed_for_radius = fabs(estimator_hspeed_mod) < 0.1 ? 0.1 : estimator_hspeed_mod; \
+    float alpha = atan2(estimator_y - y, estimator_x - x); \
+    float alpha_carrot = alpha + CARROT / (-radius * speed_for_radius); \
+    fly_to_xy(x+cos(alpha_carrot)*fabs(radius),y+sin(alpha_carrot)*fabs(radius)); \
+    qdr = DegOfRad(M_PI/2 - alpha_carrot); \
+    NormCourse(qdr);}
 
 #define MAX_DIST_CARROT 250.
 #define MIN_HEIGHT_CARROT 50.
@@ -127,23 +133,23 @@ static bool_t approaching(uint8_t wp) {
     return TRUE;
 
   scal_prod = (waypoints[wp].x - last_x) * pw_x + (waypoints[wp].y - last_y) * pw_y;
-  
+
   return (scal_prod < 0);
 }
 
-static inline void fly_to_xy(float x, float y) 
-{ 
+static inline void fly_to_xy(float x, float y)
+{
   desired_x = x;
   desired_y = y;
   desired_course = M_PI/2.-atan2(y - estimator_y, x - estimator_x);
 }
 
-static void fly_to(uint8_t wp) { 
+static void fly_to(uint8_t wp) {
   fly_to_xy(waypoints[wp].x, waypoints[wp].y);
 }
 
 static float alpha, leg;
-static void route_to(uint8_t _last_wp, uint8_t wp) 
+static void route_to(uint8_t _last_wp, uint8_t wp)
 {
   float last_wp_x = waypoints[_last_wp].x;
   float last_wp_y = waypoints[_last_wp].y;
@@ -173,7 +179,7 @@ static inline void compute_dist2_to_home(void) {
 
 void nav_home(void) {
   Circle(WP_HOME, 50); /* FIXME: radius should be defined elsewhere */
-  nav_pitch = 0.; /* Nominal speed */ 
+  nav_pitch = 0.; /* Nominal speed */
   vertical_mode = VERTICAL_MODE_AUTO_ALT;
   desired_altitude = GROUND_ALT+50;
   compute_dist2_to_home();

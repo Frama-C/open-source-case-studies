@@ -26,4 +26,4 @@ stats: $(TARGETS:%=%.parse) $(TARGETS:%=%.eva)
 
 monocypher.parse: monocypher.c sha512.c test.c
 
-monocypher.eva: EVAFLAGS+=$(shell cat monocypher.eva.loop | tr -d '\n\\')
+monocypher.eva: EVAFLAGS+=$(shell cat monocypher.slevel | tr -d '\n\\')

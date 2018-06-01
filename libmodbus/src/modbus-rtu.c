@@ -257,13 +257,13 @@ static void _modbus_rtu_ioctl_rts(modbus_t *ctx, int on)
     int fd = ctx->s;
     int flags;
 
-    ioctl(fd, TIOCMGET, &flags);
+    ioctl(fd, TIOCMGET, (char*)&flags);
     if (on) {
         flags |= TIOCM_RTS;
     } else {
         flags &= ~TIOCM_RTS;
     }
-    ioctl(fd, TIOCMSET, &flags);
+    ioctl(fd, TIOCMSET, (char*)&flags);
 }
 #endif
 
@@ -913,7 +913,7 @@ int modbus_rtu_set_serial_mode(modbus_t *ctx, int mode)
 
         if (mode == MODBUS_RTU_RS485) {
             rs485conf.flags = SER_RS485_ENABLED;
-            if (ioctl(ctx->s, TIOCSRS485, &rs485conf) < 0) {
+            if (ioctl(ctx->s, TIOCSRS485, (char*)&rs485conf) < 0) {
                 return -1;
             }
 
@@ -923,7 +923,7 @@ int modbus_rtu_set_serial_mode(modbus_t *ctx, int mode)
             /* Turn off RS485 mode only if required */
             if (ctx_rtu->serial_mode == MODBUS_RTU_RS485) {
                 /* The ioctl call is avoided because it can fail on some RS232 ports */
-                if (ioctl(ctx->s, TIOCSRS485, &rs485conf) < 0) {
+                if (ioctl(ctx->s, TIOCSRS485, (char*)&rs485conf) < 0) {
                     return -1;
                 }
             }

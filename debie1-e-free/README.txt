@@ -10,7 +10,7 @@ if you do not find that file near this README file, ask for it from the
 source from where you got this README. Do not use the SW before you have
 read the Terms Of Use. Note that, prior to May 2014, this same benchmark
 was distributed under much less permissive Terms of Use. Check that the
-Terms of Use that you find are signed on 5.5.2014 by Harri Lähti for
+Terms of Use that you find are signed on 5.5.2014 by Harri LÃ¤hti for
 Patria Aviation Oy and on 8.5.2014 by Tuomas TalviOja for Space Systems
 Finland Oy and by Niklas Holsti for Tidorum Ltd.
 

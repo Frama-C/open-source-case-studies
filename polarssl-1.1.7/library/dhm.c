@@ -133,7 +133,6 @@ int dhm_read_params( dhm_context *ctx,
 /*
  * Setup and write the ServerKeyExchange parameters
  */
-
 int dhm_make_params( dhm_context *ctx, int x_size,
                      unsigned char *output, size_t *olen,
                      int (*f_rng)(void *, unsigned char *, size_t),

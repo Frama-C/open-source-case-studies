@@ -1775,7 +1775,7 @@ int ssl_init( ssl_context *ssl )
 
     memset( ssl, 0, sizeof( ssl_context ) );
 
-    ssl->in_ctr = (unsigned char *) malloc( SSL_BUFFER_LEN ); // malloc builtin still does not handle variables precisely
+    ssl->in_ctr = (unsigned char *) malloc( len );
     ssl->in_hdr = ssl->in_ctr +  8;
     ssl->in_msg = ssl->in_ctr + 13;
 

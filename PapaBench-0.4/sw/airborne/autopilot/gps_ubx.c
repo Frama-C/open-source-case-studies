@@ -42,7 +42,7 @@ float gps_fclimb;
 float gps_fcourse;
 int32_t gps_utm_east, gps_utm_north;
 float gps_east, gps_north;
-uint8_t gps_mode;
+volatile uint8_t gps_mode;
 volatile bool_t gps_msg_received;
 bool_t gps_pos_available;
 const int32_t utm_east0 = NAV_UTM_EAST0;
@@ -76,10 +76,10 @@ volatile int16_t simul_ir_pitch;
 #define GOT_IR3 23
 #endif
 
-static uint8_t  ubx_status;
+static volatile uint8_t  ubx_status;
 static uint16_t ubx_len;
 static uint8_t  ubx_msg_idx;
-static uint8_t ck_a, ck_b, ubx_id, ubx_class;
+static volatile uint8_t ck_a, ck_b, ubx_id, ubx_class;
 
 void gps_init( void ) {
   /* Enable uart                   */
@@ -93,7 +93,13 @@ void gps_init( void ) {
   ubx_status = UNINIT;
 }
 
+static void parse_ubx( uint8_t c );
+
 void parse_gps_msg( void ) {
+  // FRAMA-C/EVA: patch to simulate interruption; improves code coverage
+  uint8_t c = UDR1;
+  parse_ubx(c);
+
   if (ubx_class == UBX_NAV_ID) {
     if (ubx_id == UBX_NAV_POSUTM_ID) {
       gps_utm_east = UBX_NAV_POSUTM_EAST(ubx_msg_buf);

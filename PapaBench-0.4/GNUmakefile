@@ -8,8 +8,14 @@ FRAMAC_CONFIG ?= frama-c-config
 include $(shell $(FRAMAC_CONFIG) -print-share-path)/analysis-scripts/frama-c.mk
 
 # Define global parameters
-CPPFLAGS += -DUBX -D__FAKE_FOR_IA32__ -Isw/airborne/fly_by_wire -Isw/var/include -Isw/airborne/autopilot -Iavr/include -isystem sw/include -D_XOPEN_SOURCE=700
-FCFLAGS  += -absolute-valid-range 0-0xFF
+CPPFLAGS += -DUBX -D__FAKE_FOR_IA32__ -D_XOPEN_SOURCE=700 \
+  -Isw/airborne/fly_by_wire \
+  -Isw/var/include \
+  -Isw/airborne/autopilot \
+  -Iavr/include \
+  -iquote sw/include \
+
+FCFLAGS  += -absolute-valid-range 0-0xFF -warn-special-float nan
 EVAFLAGS +=
 
 # Export environment variable for Frama-C
@@ -24,4 +30,5 @@ parse: $(TARGETS:%=%.parse)
 stats: $(TARGETS:%=%.parse) $(TARGETS:%=%.eva)
 	../show_stats.sh "$(notdir $(CURDIR))" $^
 
-autopilot.parse: $(sort $(wildcard sw/airborne/autopilot/*.c)) sw/lib/c/math.c
+autopilot.parse: $(sort $(wildcard sw/airborne/autopilot/*.c)) sw/lib/c/math.c \
+  $(shell $(FRAMAC_CONFIG) -print-share-path)/libc/math.c

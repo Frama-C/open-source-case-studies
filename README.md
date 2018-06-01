@@ -11,7 +11,7 @@ Each directory contains open-source code that constitutes a "case study".
 # Requirements
 
 - GNU Make >= 4.0;
-- Frama-C 16 (Sulfur);
+- Frama-C 17 (Chlorine);
 - The `frama-c` binary must be in the PATH.
 
 
@@ -79,7 +79,6 @@ Only minor modifications were performed on each of these case studies:
 - Some ACSL annotations may have been added to the sources
   (to illustrate their usage, or to improve the analysis).
 
-
 ## Rationale
 
 - The main objectives of these files are:
@@ -119,10 +118,10 @@ when available. We also summarize the license of each directory below.
 
 - `2048`: MIT
 - `bzip2-1.0.6`: bzip2 license (BSD-style), see `LICENSE`
+- `chrony`: GPL
 - `debie1-e-free`: distribution and use authorized by Patria Aviation Oy,
                    Space Systems Finland Ltd. and Tidorum Ltd, see `README.txt`
                    and `terms_of_use-2014-05.pdf`
-- `fcscripts`: LGPL
 - `gzip124`: GPL
 - `hiredis`: Redis license (BSD-style), see `COPYING`
 - `jsmn`: MIT
@@ -136,4 +135,3 @@ when available. We also summarize the license of each directory below.
 - `qlz`: GPL
 - `solitaire`: public domain (see `solitaire.c`)
 - `tweetnacl-usable`: public domain (see `LICENSE.txt`)
-- `unqlite`: 2-clause BSD (see http://unqlite.org/licensing.html)

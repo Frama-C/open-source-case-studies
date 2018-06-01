@@ -721,7 +721,10 @@ local void treat_file(iname)
 	if (recursive) {
 	    struct stat st;
 	    st = istat;
+            //FRAMA-C/EVA: patch to remove recursive call
+#ifndef __FRAMAC__
 	    treat_dir(iname);
+#endif
 	    /* Warning: ifname is now garbage */
 #  ifndef NO_UTIME
 	    reset_times (iname, &st);

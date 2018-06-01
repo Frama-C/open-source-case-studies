@@ -27,7 +27,7 @@ MERGE_AFTER_LOOP += \
   inv25519
 
 EVAFLAGS         += \
-  -no-val-malloc-returns-null \
+  -no-val-alloc-returns-null \
   -no-warn-signed-overflow -slevel 16 \
   -slevel-function $(call fc_list,$(SLEVEL_FUNCTION)) \
   -val-slevel-merge-after-loop $(call fc_list,$(MERGE_AFTER_LOOP))

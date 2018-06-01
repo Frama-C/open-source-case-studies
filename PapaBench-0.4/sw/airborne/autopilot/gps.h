@@ -33,7 +33,7 @@
 
 #include "std.h"
 
-extern uint8_t gps_mode;
+extern volatile uint8_t gps_mode;
 extern float   gps_ftow;    /* ms */
 extern float   gps_falt;    /* m       */
 extern float   gps_fspeed;  /* m/s     */

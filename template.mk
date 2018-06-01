@@ -29,7 +29,7 @@ CPPFLAGS    +=
 # (Optional) Frama-C general flags (parsing and kernel)
 FCFLAGS     +=
 
-# (Optional) EVA-specific flags
+# (Optional) Eva-specific flags
 EVAFLAGS    +=
 
 # (MANDATORY) Name of the main target
@@ -59,7 +59,7 @@ gui: $(MAIN_TARGET).eva.gui
 # Run 'make <TARGET>.eva.loop' to obtain a .loop file, fine-tune it by hand,
 # then rename it to <TARGET>.slevel to prevent it from being overwritten.
 # If such file exists, use it to define per-function slevel values.
-ifeq (,$(MAIN_TARGET).slevel)
+ifneq (,$(wildcard $(MAIN_TARGET).slevel))
 $(MAIN_TARGET).eva: \
   EVAFLAGS += $(shell cat $(MAIN_TARGET).slevel | tr -d '\n\\')
 endif

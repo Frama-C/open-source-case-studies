@@ -138,6 +138,9 @@ void md5_process( md5_context *ctx, const unsigned char data[64] );
  */
 void md5( const unsigned char *input, size_t ilen, unsigned char output[16] );
 
+/*@ requires \valid(output+(0..15)); */
+void md5_finish( md5_context *ctx, unsigned char output[16] );
+
 //@ghost volatile int _ctr_drbg_random_source;
 /*@
   requires \valid((ctr_drbg_context*)p_rng);

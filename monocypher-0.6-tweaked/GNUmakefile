@@ -11,7 +11,7 @@ include $(shell $(FRAMAC_CONFIG) -print-share-path)/analysis-scripts/frama-c.mk
 CPPFLAGS         +=
 FCFLAGS          +=
 EVAFLAGS         += -plevel 256 -val-malloc-functions calloc,alloc -val-builtin calloc:Frama_C_calloc_fresh -val-print-callstacks
--include manually_optimized.loop
+-include monocypher.slevel
 
 # Export environment variable for Frama-C
 export FRAMA_C_MEMORY_FOOTPRINT = 8

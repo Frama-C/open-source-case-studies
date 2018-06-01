@@ -36,8 +36,8 @@ void link_fbw_on_spi_it(void);
 extern volatile uint8_t link_fbw_nb_err;
 extern uint8_t link_fbw_fbw_nb_err;
 
-extern struct inter_mcu_msg from_fbw;
-extern struct inter_mcu_msg to_fbw;
+extern volatile struct inter_mcu_msg from_fbw;
+extern volatile struct inter_mcu_msg to_fbw;
 extern volatile uint8_t link_fbw_receive_complete;
 extern volatile uint8_t link_fbw_receive_valid;
 

@@ -52,7 +52,7 @@ extern uint16_t estimator_flight_time;
 extern float estimator_t;
 
 /* horizontal speed in module and dir (m/s, rad) */
-extern float estimator_hspeed_mod;
+extern volatile float estimator_hspeed_mod;
 extern float estimator_hspeed_dir;
 
 void estimator_init( void );

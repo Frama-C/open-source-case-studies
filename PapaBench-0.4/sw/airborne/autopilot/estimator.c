@@ -58,7 +58,7 @@ uint16_t estimator_flight_time;
 float estimator_t; 
 
 /* horizontal speed in module and dir */
-float estimator_hspeed_mod;
+volatile float estimator_hspeed_mod;
 float estimator_hspeed_dir;
 
 float estimator_rad_of_ir, estimator_ir, estimator_rad;

@@ -10,7 +10,7 @@ include $(shell $(FRAMAC_CONFIG) -print-share-path)/analysis-scripts/frama-c.mk
 # Define global parameters
 CPPFLAGS  =
 FCFLAGS  +=
-EVAFLAGS += -slevel 300 -no-val-malloc-returns-null
+EVAFLAGS += -slevel 300 -no-val-alloc-returns-null
 
 # Export environment variable for Frama-C
 export FRAMA_C_MEMORY_FOOTPRINT = 8

@@ -13,8 +13,8 @@ CPPFLAGS  = -include$(shell $(FRAMAC) -print-path)/libc/string.h \
             -DSTDC_HEADERS=1 -DHAVE_UNISTD_H=1 -DDIRENT=1 -DNO_UTIME=1 \
             -I$(shell $(FRAMAC) -print-path)/libc -I$(DIR)/
 
-FCFLAGS  +=
-EVAFLAGS += -slevel 2 -no-val-malloc-returns-null -no-val-builtins-auto
+FCFLAGS  += -nonterm-ignore abort,do_exit,exit
+EVAFLAGS += -slevel 2 -no-val-alloc-returns-null -no-val-builtins-auto
 
 # Export environment variable for Frama-C
 export FRAMA_C_MEMORY_FOOTPRINT	= 8

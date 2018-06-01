@@ -97,7 +97,7 @@ typedef unsigned long  t_udbl;
   #if defined(_MSC_VER) && defined(_M_IX86)
   typedef unsigned __int64 t_udbl;
   #else
-    // Disabled becaus of GCC-specific attribute
+    // Disabled because of GCC-specific attribute
     #if false && defined(__GNUC__) && (                          \
         defined(__amd64__) || defined(__x86_64__)    || \
         defined(__ppc64__) || defined(__powerpc64__) || \

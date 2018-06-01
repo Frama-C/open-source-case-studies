@@ -1,8 +1,5 @@
 #include "khash.h"
 
-#define FRAMA_C_MALLOC_INDIVIDUAL
-#include "stdlib.c" // for calloc
-
 KHASH_MAP_INIT_INT(32, char)
 
 int main() {

@@ -1,0 +1,53 @@
+#!/bin/sh
+
+LANG=C.UTF-8
+export LANG
+
+if [ $# -ne 1 ]; then
+  echo "Usage : $0 <version>"
+  exit 2
+fi
+
+version=$1
+tag=$version
+subdir=chrony-${version}
+
+umask 022
+
+if [ ! -d .git ]; then
+  echo "No .git subdirectory?"
+  exit 3
+fi
+
+[ -d RELEASES ] || mkdir RELEASES
+
+rm -rf RELEASES/$subdir
+
+if [ $version != test ]; then
+  git tag -s $tag || exit 1
+else
+  tag=HEAD
+fi
+
+git archive --format=tar --prefix=RELEASES/${subdir}/ $tag | \
+  tar xf - || exit 1
+
+cd RELEASES/$subdir || exit 1
+
+echo $version > version.txt
+
+sed -i -e "s%@@VERSION@@%${version}%" examples/chrony.spec
+
+./configure && make -C doc man txt || exit 1
+
+iconv -f utf-8 -t ascii//TRANSLIT < doc/installation.txt > INSTALL
+iconv -f utf-8 -t ascii//TRANSLIT < doc/faq.txt > FAQ
+
+make distclean
+rm -f make_release .gitignore
+
+cd ..
+tar cv --owner root --group root $subdir | gzip -9 > ${subdir}.tar.gz
+
+[ $version != test ] && \
+  gpg -b -a -o ${subdir}-tar-gz-asc.txt ${subdir}.tar.gz

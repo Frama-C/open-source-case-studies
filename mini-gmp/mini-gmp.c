@@ -3422,7 +3422,7 @@ mpz_probab_prime_p (const mpz_t n, int reps)
   k = mpz_scan1 (nm1, 0);
   mpz_tdiv_q_2exp (q, nm1, k);
 
-  for (j = 0, is_prime = 1; is_prime & (j < reps); j++)
+  for (j = 0, is_prime = 1; is_prime && (j < reps); j++)
     {
       mpz_set_ui (y, (unsigned long) j*j+j+41);
       if (mpz_cmp (y, nm1) >= 0)
@@ -3588,7 +3588,7 @@ mpz_clrbit (mpz_t d, mp_bitcnt_t bit_index)
 void
 mpz_combit (mpz_t d, mp_bitcnt_t bit_index)
 {
-  if (mpz_tstbit (d, bit_index) ^ (d->_mp_size < 0))
+  if ((mpz_tstbit (d, bit_index) ^ (d->_mp_size < 0)))
     mpz_abs_sub_bit (d, bit_index);
   else
     mpz_abs_add_bit (d, bit_index);
