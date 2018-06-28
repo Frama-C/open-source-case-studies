@@ -49,7 +49,7 @@ of undefined behaviors, plus some functional behaviors of the program.
 First, we are going to execute the code, then analyze it with Eva,
 instrument it with E-ACSL, and finally finalize the proof with WP.
 
-\section{Compilation and execution of the program}
+## Compilation and execution of the program ##
 
 First, you should copy `parser0.c` into `parser.c`. Then you can run
 `make run_test`. The output should be:
