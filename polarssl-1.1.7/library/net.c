@@ -178,6 +178,7 @@ int net_bind( int *fd, const char *bind_ip, int port )
         memset( c, 0, sizeof( c ) );
         sscanf( bind_ip, "%d.%d.%d.%d", &c[0], &c[1], &c[2], &c[3] );
 
+        //@ loop unroll 4;
         for( n = 0; n < 4; n++ )
             if( c[n] < 0 || c[n] > 255 )
                 break;

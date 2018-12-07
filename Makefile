@@ -1,6 +1,6 @@
-TARGETS=2048 debie1-e-free gzip124 mini-gmp PapaBench-0.4 polarssl-1.1.7 \
+TARGETS=2048 debie1 gzip124 mini-gmp papabench polarssl-1.1.7 \
      qlz solitaire tweetnacl-usable libmodbus monocypher khash \
-     monocypher-0.6-tweaked jsmn chrony
+     jsmn chrony hiredis semver kilo icpc
 
 help::
 	@echo ""

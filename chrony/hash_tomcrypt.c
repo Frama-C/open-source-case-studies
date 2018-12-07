@@ -2,7 +2,7 @@
   chronyd/chronyc - Programs for keeping computer clocks accurate.
 
  **********************************************************************
- * Copyright (C) Miroslav Lichvar  2012
+ * Copyright (C) Miroslav Lichvar  2012, 2018
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
@@ -29,6 +29,7 @@
 
 #include "config.h"
 #include "hash.h"
+#include "util.h"
 
 struct hash {
   const char *name;
@@ -61,6 +62,12 @@ static const struct hash hashes[] = {
 #endif
 #ifdef LTC_SHA512
   { "SHA512", "sha512", &sha512_desc },
+#endif
+#ifdef LTC_SHA3
+  { "SHA3-224", "sha3-224", &sha3_224_desc },
+  { "SHA3-256", "sha3-256", &sha3_256_desc },
+  { "SHA3-384", "sha3-384", &sha3_384_desc },
+  { "SHA3-512", "sha3-512", &sha3_512_desc },
 #endif
 #ifdef LTC_TIGER
   { "TIGER", "tiger", &tiger_desc },
@@ -99,18 +106,23 @@ HSH_Hash(int id, const unsigned char *in1, unsigned int in1_len,
     const unsigned char *in2, unsigned int in2_len,
     unsigned char *out, unsigned int out_len)
 {
+  unsigned char buf[MAX_HASH_LENGTH];
   unsigned long len;
   int r;
 
-  len = out_len;
+  len = sizeof (buf);
   if (in2)
-    r = hash_memory_multi(id, out, &len,
-        in1, (unsigned long)in1_len, in2, (unsigned long)in2_len, NULL, 0);
+    r = hash_memory_multi(id, buf, &len,
+                          in1, (unsigned long)in1_len,
+                          in2, (unsigned long)in2_len, NULL, 0);
   else
-    r = hash_memory(id, in1, in1_len, out, &len);
+    r = hash_memory(id, in1, in1_len, buf, &len);
 
   if (r != CRYPT_OK)
     return 0;
+
+  len = MIN(len, out_len);
+  memcpy(out, buf, len);
 
   return len;
 }

@@ -62,7 +62,8 @@ default_client_rpeer_options=""
 default_server_conf=""
 default_client_conf=""
 default_chronyc_conf=""
-default_chronyd_options=""
+default_server_chronyd_options=""
+default_client_chronyd_options=""
 
 default_time_max_limit=1e-3
 default_freq_max_limit=5e-4
@@ -71,11 +72,13 @@ default_freq_rms_limit=1e-5
 default_min_sync_time=120
 default_max_sync_time=210
 
+default_client_min_mean_out_interval=0.0
+default_client_max_min_out_interval=inf
+
 # Initialize test settings from their defaults
-for defopt in $(declare | grep '^default_'); do
-	defoptname=${defopt%%=*}
+for defoptname in ${!default_*}; do
 	optname=${defoptname#default_}
-	eval "[ -z \"\${$optname:+a}\" ] && $optname=\"\$$defoptname\""
+	[ -z "${!optname}" ] && declare "$optname"="${!defoptname}"
 done
 
 test_start() {
@@ -250,7 +253,7 @@ check_chronyd_exit() {
 	for i in $(seq 1 $(get_chronyd_nodes)); do
 		test_message 3 0 "node $i:"
 
-		tail -n 1 tmp/log.$i | grep -q 'chronyd exiting' && \
+		grep -q 'chronyd exiting' tmp/log.$i && \
 			! grep -q 'Adjustment.*exceeds.*exiting' tmp/log.$i && \
 			test_ok || test_bad
 		[ $? -eq 0 ] || ret=1
@@ -303,10 +306,12 @@ check_packet_interval() {
 			([ $i -gt $servers ] || \
 				check_stat $mean_in_interval 0.0 $mean_out_interval 10*$jitter) && \
 			([ $i -le $[$servers * $server_strata] ] || \
-				check_stat $mean_out_interval 0.0 $mean_in_interval 10*$jitter) && \
+				check_stat $mean_out_interval $client_min_mean_out_interval \
+					$mean_in_interval 10*$jitter) && \
 			([ $i -le $[$servers * $server_strata] ] || \
 				check_stat $min_out_interval \
-					$([ $servers -gt 1 ] && echo 0.18 || echo 1.8) inf) && \
+					$([ $servers -gt 1 ] && echo 0.18 || echo 1.8) \
+					$client_max_min_out_interval) && \
 			test_ok || test_bad
 
 		[ $? -eq 0 ] || ret=1
@@ -325,6 +330,43 @@ check_chronyc_output() {
 		test_message 3 0 "node $i:"
 
 		[[ "$(cat tmp/log.$i)" =~ $pattern ]] && \
+			test_ok || test_bad
+		[ $? -eq 0 ] || ret=1
+	done
+
+	return $ret
+}
+
+# Check the number of messages matching a pattern in the client logs
+check_log_messages() {
+	local i count ret=0 pattern=$1 min=$2 max=$3
+
+	test_message 2 1 "checking number of messages \"$pattern\":"
+
+	for i in $(seq $[$servers * $server_strata + 1] $(get_chronyd_nodes)); do
+		count=$(grep "$pattern" tmp/log.$i | wc -l)
+		test_message 3 0 "node $i: $count"
+
+		[ "$min" -le "$count" ] && [ "$count" -le "$max" ] && \
+			test_ok || test_bad
+		[ $? -eq 0 ] || ret=1
+	done
+
+	return $ret
+}
+
+# Check the number of messages matching a pattern in a specified file
+check_file_messages() {
+	local i count ret=0 pattern=$1 min=$2 max=$3
+	shift 3
+
+	test_message 2 1 "checking number of messages \"$pattern\":"
+
+	for i; do
+		count=$(grep "$pattern" tmp/$i | wc -l)
+		test_message 3 0 "$i: $count"
+
+		[ "$min" -le "$count" ] && [ "$count" -le "$max" ] && \
 			test_ok || test_bad
 		[ $? -eq 0 ] || ret=1
 	done
@@ -353,14 +395,13 @@ check_packet_port() {
 
 # Print test settings which differ from default value
 print_nondefaults() {
-	local defopt defoptname optname
+	local defoptname optname
 
 	test_message 2 1 "non-default settings:"
-	declare | grep '^default_*' | while read defopt; do
-		defoptname=${defopt%%=*}
+	for defoptname in ${!default_*}; do
 		optname=${defoptname#default_}
-		eval "[ \"\$$optname\" = \"\$$defoptname\" ]" || \
-			test_message 3 1 $(eval "echo $optname=\$$optname")
+		[ "${!defoptname}" = "${!optname}" ] || \
+			test_message 3 1 $optname=${!optname}
 	done
 }
 
@@ -377,7 +418,7 @@ run_simulation() {
 }
 
 run_test() {
-	local i j n stratum node nodes step start freq offset conf
+	local i j n stratum node nodes step start freq offset conf options
 
 	test_message 1 1 "network with $servers*$server_strata servers and $clients clients:"
 	print_nondefaults
@@ -406,16 +447,19 @@ run_test() {
 				start=$server_start
 				freq=""
 				[ $i -le $falsetickers ] && offset=$i.0 || offset=0.0
+				options=$server_chronyd_options
 			elif [ $stratum -le $server_strata ]; then
 				step=$server_step
 				start=$server_start
 				freq=$(get_wander_expr)
 				offset=0.0
+				options=$server_chronyd_options
 			else
 				step=$client_step
 				start=$client_start
 				freq=$(get_wander_expr)
 				offset=$time_offset
+				options=$client_chronyd_options
 			fi
 
 			conf=$(get_chronyd_conf $stratum $i $n)
@@ -426,7 +470,7 @@ run_test() {
 				echo "node${node}_refclock = $(get_refclock_expr)" >> tmp/conf
 			echo "node${node}_offset = $offset" >> tmp/conf
 			echo "node${node}_start = $start" >> tmp/conf
-			start_client $node chronyd "$conf" "" "$chronyd_options" && \
+			start_client $node chronyd "$conf" "" "$options" && \
 				test_ok || test_error
 
 			[ $? -ne 0 ] && return 1

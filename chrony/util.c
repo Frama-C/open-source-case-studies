@@ -3,7 +3,7 @@
 
  **********************************************************************
  * Copyright (C) Richard P. Curnow  1997-2003
- * Copyright (C) Miroslav Lichvar  2009, 2012-2017
+ * Copyright (C) Miroslav Lichvar  2009, 2012-2018
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
@@ -302,14 +302,13 @@ UTI_IPToString(IPAddr *addr)
       break;
     case IPADDR_INET6:
       ip6 = addr->addr.in6;
-      //FRAMA-C/EVA: assert to subsume several warnings
-      //@ assert \initialized(ip6+(4..15));
 #ifdef FEAT_IPV6
       inet_ntop(AF_INET6, ip6, result, BUFFER_LENGTH);
 #else
-      snprintf(result, BUFFER_LENGTH, "%02hhx%02hhx:%02hhx%02hhx:%02hhx%02hhx:%02hhx%02hhx:%02hhx%02hhx:%02hhx%02hhx:%02hhx%02hhx:%02hhx%02hhx",
-               ip6[0], ip6[1], ip6[2], ip6[3], ip6[4], ip6[5], ip6[6], ip6[7],
-               ip6[8], ip6[9], ip6[10], ip6[11], ip6[12], ip6[13], ip6[14], ip6[15]);
+      assert(BUFFER_LENGTH >= 40);
+      for (a = 0; a < 8; a++)
+        snprintf(result + a * 5, 40 - a * 5, "%04x:",
+                 (unsigned int)(ip6[2 * a] << 8 | ip6[2 * a + 1]));
 #endif
       break;
     default:
@@ -368,16 +367,14 @@ UTI_IPToRefid(IPAddr *ip)
     case IPADDR_INET4:
       return ip->addr.in4;
     case IPADDR_INET6:
-      if (MD5_hash < 0) {
+      if (MD5_hash < 0)
         MD5_hash = HSH_GetHashId("MD5");
-        assert(MD5_hash >= 0);
-      }
 
-      if (HSH_Hash(MD5_hash, (unsigned const char *)ip->addr.in6, sizeof
-            (ip->addr.in6), NULL, 0, buf, 16) != 16) {
-        assert(0);
-        return 0;
-      };
+      if (MD5_hash < 0 ||
+          HSH_Hash(MD5_hash, (const unsigned char *)ip->addr.in6, sizeof (ip->addr.in6),
+                   NULL, 0, buf, sizeof (buf)) != sizeof (buf))
+        LOG_FATAL("Could not get MD5");
+
       return (uint32_t)buf[0] << 24 | buf[1] << 16 | buf[2] << 8 | buf[3];
   }
   return 0;
@@ -728,6 +725,23 @@ UTI_CompareNtp64(NTP_int64 *a, NTP_int64 *b)
 
 /* ================================================== */
 
+int
+UTI_IsEqualAnyNtp64(NTP_int64 *a, NTP_int64 *b1, NTP_int64 *b2, NTP_int64 *b3)
+{
+  if (b1 && a->lo == b1->lo && a->hi == b1->hi)
+    return 1;
+
+  if (b2 && a->lo == b2->lo && a->hi == b2->hi)
+    return 1;
+
+  if (b3 && a->lo == b3->lo && a->hi == b3->hi)
+    return 1;
+
+  return 0;
+}
+
+/* ================================================== */
+
 /* Seconds part of NTP timestamp correponding to the origin of the time_t format */
 #define JAN_1970 0x83aa7e80UL
 
@@ -981,34 +995,38 @@ UTI_FdSetCloexec(int fd)
 
 /* ================================================== */
 
-int
-UTI_SetQuitSignalsHandler(void (*handler)(int))
+void
+UTI_SetQuitSignalsHandler(void (*handler)(int), int ignore_sigpipe)
 {
   struct sigaction sa;
 
   sa.sa_handler = handler;
   sa.sa_flags = SA_RESTART;
   if (sigemptyset(&sa.sa_mask) < 0)
-    return 0;
+    LOG_FATAL("sigemptyset() failed");
 
 #ifdef SIGINT
   if (sigaction(SIGINT, &sa, NULL) < 0)
-    return 0;
+    LOG_FATAL("sigaction(%d) failed", SIGINT);
 #endif
 #ifdef SIGTERM
   if (sigaction(SIGTERM, &sa, NULL) < 0)
-    return 0;
+    LOG_FATAL("sigaction(%d) failed", SIGTERM);
 #endif
 #ifdef SIGQUIT
   if (sigaction(SIGQUIT, &sa, NULL) < 0)
-    return 0;
+    LOG_FATAL("sigaction(%d) failed", SIGQUIT);
 #endif
 #ifdef SIGHUP
   if (sigaction(SIGHUP, &sa, NULL) < 0)
-    return 0;
+    LOG_FATAL("sigaction(%d) failed", SIGHUP);
 #endif
 
-  return 1;
+  if (ignore_sigpipe)
+    sa.sa_handler = SIG_IGN;
+
+  if (sigaction(SIGPIPE, &sa, NULL) < 0)
+    LOG_FATAL("sigaction(%d) failed", SIGPIPE);
 }
 
 /* ================================================== */
@@ -1147,12 +1165,12 @@ UTI_CheckDirPermissions(const char *path, mode_t perm, uid_t uid, gid_t gid)
   }
 
   if (buf.st_uid != uid) {
-    LOG(LOGS_ERR, "Wrong owner of %s (%s != %d)", path, "UID", uid);
+    LOG(LOGS_ERR, "Wrong owner of %s (%s != %u)", path, "UID", uid);
     return 0;
   }
 
   if (buf.st_gid != gid) {
-    LOG(LOGS_ERR, "Wrong owner of %s (%s != %d)", path, "GID", gid);
+    LOG(LOGS_ERR, "Wrong owner of %s (%s != %u)", path, "GID", gid);
     return 0;
   }
 
@@ -1170,13 +1188,13 @@ UTI_DropRoot(uid_t uid, gid_t gid)
 
   /* Set effective, saved and real group ID */
   if (setgid(gid))
-    LOG_FATAL("setgid(%d) failed : %s", gid, strerror(errno));
+    LOG_FATAL("setgid(%u) failed : %s", gid, strerror(errno));
 
   /* Set effective, saved and real user ID */
   if (setuid(uid))
-    LOG_FATAL("setuid(%d) failed : %s", uid, strerror(errno));
+    LOG_FATAL("setuid(%u) failed : %s", uid, strerror(errno));
 
-  DEBUG_LOG("Dropped root privileges: UID %d GID %d", uid, gid);
+  DEBUG_LOG("Dropped root privileges: UID %u GID %u", uid, gid);
 }
 
 /* ================================================== */
@@ -1211,7 +1229,7 @@ get_random_bytes_getrandom(char *buf, unsigned int len)
       if (disabled)
         break;
 
-      if (getrandom(rand_buf, sizeof (rand_buf), 0) != sizeof (rand_buf)) {
+      if (getrandom(rand_buf, sizeof (rand_buf), GRND_NONBLOCK) != sizeof (rand_buf)) {
         disabled = 1;
         break;
       }

@@ -76,6 +76,16 @@ main(int argc, char **argv)
   return 0;
 }
 
+void TST_SuspendLogging(void)
+{
+  LOG_OpenFileLog("/dev/null");
+}
+
+void TST_ResumeLogging(void)
+{
+  LOG_OpenFileLog(NULL);
+}
+
 double
 TST_GetRandomDouble(double min, double max)
 {
@@ -107,6 +117,7 @@ TST_GetRandomAddress(IPAddr *ip, int family, int bits)
       bits = 128;
     assert(bits <= 128);
 
+    //@ loop unroll 16;
     for (i = 0, b = 120; i < 16; i++, b -= 8) {
       if (b >= bits) {
         ip->addr.in6[i] = 0;

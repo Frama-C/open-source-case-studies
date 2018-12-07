@@ -1,6 +1,6 @@
 /*
  **********************************************************************
- * Copyright (C) Miroslav Lichvar  2016
+ * Copyright (C) Miroslav Lichvar  2016, 2018
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
@@ -26,10 +26,9 @@ test_unit(void)
 {
   SRC_Instance srcs[16];
   RPT_SourceReport report;
+  NTP_Sample sample;
   IPAddr addr;
   int i, j, k, l, samples, sel_options;
-  double offset, delay, disp;
-  struct timespec ts;
 
   CNF_Initialise(0, 0);
   LCL_Initialise();
@@ -59,21 +58,25 @@ test_unit(void)
 
       samples = (i + j) % 5 + 3;
 
-      offset = TST_GetRandomDouble(-1.0, 1.0);
+      sample.offset = TST_GetRandomDouble(-1.0, 1.0);
 
       for (k = 0; k < samples; k++) {
-        SCH_GetLastEventTime(&ts, NULL, NULL);
-        UTI_AddDoubleToTimespec(&ts, TST_GetRandomDouble(k - samples, k - samples + 1), &ts);
+        SCH_GetLastEventTime(&sample.time, NULL, NULL);
+        UTI_AddDoubleToTimespec(&sample.time, TST_GetRandomDouble(k - samples, k - samples + 1),
+                                &sample.time);
 
-        offset += TST_GetRandomDouble(-1.0e-2, 1.0e-2);
-        delay = TST_GetRandomDouble(1.0e-6, 1.0e-1);
-        disp = TST_GetRandomDouble(1.0e-6, 1.0e-1);
+        sample.offset += TST_GetRandomDouble(-1.0e-2, 1.0e-2);
+        sample.peer_delay = TST_GetRandomDouble(1.0e-6, 1.0e-1);
+        sample.peer_dispersion = TST_GetRandomDouble(1.0e-6, 1.0e-1);
+        sample.root_delay = sample.peer_delay;
+        sample.root_dispersion = sample.peer_dispersion;
+        sample.stratum = 1;
+        sample.leap = LEAP_Normal;
 
         DEBUG_LOG("source %d sample %d offset %f delay %f disp %f", j, k,
-                  offset, delay, disp);
+                  sample.offset, sample.peer_delay, sample.peer_dispersion);
 
-        SRC_AccumulateSample(srcs[j], &ts, offset, delay, disp, delay, disp,
-                             1, LEAP_Normal);
+        SRC_AccumulateSample(srcs[j], &sample);
       }
 
       for (k = 0; k <= j; k++) {
@@ -82,7 +85,7 @@ test_unit(void)
         double passed_lo = DBL_MAX, passed_hi = DBL_MIN;
 
         SRC_SelectSource(srcs[k]);
-        DEBUG_LOG("source %d status %d", k, sources[k]->status);
+        DEBUG_LOG("source %d status %u", k, sources[k]->status);
 
         for (l = 0; l <= j; l++) {
           TEST_CHECK(sources[l]->status > SRC_OK && sources[l]->status <= SRC_SELECTED);
@@ -125,7 +128,7 @@ test_unit(void)
     }
 
     for (j = 0; j < sizeof (srcs) / sizeof (srcs[0]); j++) {
-      SRC_ReportSource(j, &report, &ts);
+      SRC_ReportSource(j, &report, &sample.time);
       SRC_DestroyInstance(srcs[j]);
     }
   }

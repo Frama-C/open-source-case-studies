@@ -12,6 +12,7 @@ int main() {
   is_missing = (k == kh_end(h));
   k = kh_get(32, h, 5);
   kh_del(32, h, k);
+  //@ loop unroll 32;
   for (k = kh_begin(h); k != kh_end(h); ++k)
     if (kh_exist(h, k)) kh_value(h, k) = 1;
   kh_destroy(32, h);

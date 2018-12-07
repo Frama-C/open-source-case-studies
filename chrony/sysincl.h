@@ -36,11 +36,10 @@
 #include <float.h>
 #include <glob.h>
 #include <grp.h>
+#include <inttypes.h>
 #include <math.h>
-#include <netdb.h>
 #include <netinet/in.h>
 #include <pwd.h>
-#include <resolv.h>
 #include <signal.h>
 #include <stdarg.h>
 #include <stddef.h>
@@ -61,14 +60,6 @@
 
 #if defined(LINUX) || defined(FREEBSD) || defined(NETBSD) || defined(SOLARIS) || defined(HAVE_MACOS_SYS_TIMEX)
 #include <sys/timex.h>
-#endif
-
-#ifdef HAVE_INTTYPES_H
-#include <inttypes.h>
-#elif HAVE_STDINT_H
-#include <stdint.h>
-#else
-/* Tough */
 #endif
 
 #ifdef FEAT_IPV6

@@ -127,6 +127,7 @@ int entropy_gather( entropy_context *ctx )
     /*
      * Run through our entropy sources
      */
+    //@ loop unroll 2;
     for( i = 0; i < ctx->source_count; i++ )
     {
         olen = 0;
@@ -171,6 +172,7 @@ int entropy_func( void *data, unsigned char *output, size_t len )
 
         reached = 0;
 
+        //@ loop unroll 2;
         for( i = 0; i < ctx->source_count; i++ )
             if( ctx->source[i].size >= ctx->source[i].threshold )
                 reached++;
@@ -193,6 +195,7 @@ int entropy_func( void *data, unsigned char *output, size_t len )
     sha4_starts( &ctx->accumulator, 0 );
     sha4_update( &ctx->accumulator, buf, ENTROPY_BLOCK_SIZE );
 
+    //@ loop unroll 2;
     for( i = 0; i < ctx->source_count; i++ )
         ctx->source[i].size = 0;
 

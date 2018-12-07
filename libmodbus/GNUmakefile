@@ -10,8 +10,14 @@ include $(FRAMAC_SHARE)/analysis-scripts/frama-c.mk
 
 # Define global parameters
 CPPFLAGS     = -include__fc_libc_fixes.h -I src
-FCFLAGS     += -machdep gcc_x86_64
-EVAFLAGS    += -slevel 10 -eva-equality-domain -val-split-return full
+FCFLAGS     += \
+  -machdep gcc_x86_64 \
+
+EVAFLAGS    += \
+  -slevel 20 \
+  -eva-equality-domain \
+  -eva-split-return full \
+
 VALBUILTINS +=
 
 # Export environment variable for Frama-C
@@ -27,10 +33,8 @@ stats: $(TARGETS:%=%.parse) $(TARGETS:%=%.eva)
 	../show_stats.sh "$(notdir $(CURDIR))" $^
 
 libmodbus-random-test-client.parse: $(sort $(wildcard src/*.c)) \
-  tests/random-test-client.c
+  tests/random-test-client.c $(FRAMAC_SHARE)/libc/string.c
 
 libmodbus-unit-test-server.parse: $(sort $(wildcard src/*.c)) \
-  tests/unit-test-server.c $(FRAMAC_SHARE)/libc/netdb.c
-
-libmodbus-random-test-client.eva: \
-  EVAFLAGS += $(shell cat libmodbus-random-test-client.slevel | tr '\\' ' ')
+  tests/unit-test-server.c $(FRAMAC_SHARE)/libc/netdb.c \
+  $(FRAMAC_SHARE)/libc/string.c

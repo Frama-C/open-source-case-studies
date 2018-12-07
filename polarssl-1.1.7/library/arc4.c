@@ -47,11 +47,13 @@ void arc4_setup( arc4_context *ctx, const unsigned char *key, unsigned int keyle
     ctx->y = 0;
     m = ctx->m;
 
+    //@ loop unroll 256;
     for( i = 0; i < 256; i++ )
         m[i] = (unsigned char) i;
 
     j = k = 0;
 
+    //@ loop unroll 256;
     for( i = 0; i < 256; i++, k++ )
     {
         if( k >= keylen ) k = 0;

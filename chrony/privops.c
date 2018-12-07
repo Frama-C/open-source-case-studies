@@ -268,7 +268,7 @@ do_bind_socket(ReqBindSocket *req, PrvResponse *res)
   sock_fd = req->sock;
 
   UTI_SockaddrToIPAndPort(sa, &ip, &port);
-  if (port && port != CNF_GetNTPPort()) {
+  if (port && port != CNF_GetNTPPort() && port != CNF_GetAcquisitionPort()) {
     close(sock_fd);
     res_fatal(res, "Invalid port %d", port);
     return;
@@ -579,7 +579,8 @@ PRV_BindSocket(int sock, struct sockaddr *address, socklen_t address_len)
   unsigned short port;
 
   UTI_SockaddrToIPAndPort(address, &ip, &port);
-  assert(!port || port == CNF_GetNTPPort());
+  if (port && port != CNF_GetNTPPort() && port != CNF_GetAcquisitionPort())
+    assert(0);
 
   if (!have_helper())
     return bind(sock, address, address_len);
@@ -699,7 +700,7 @@ PRV_StartHelper(void)
     }
 
     /* ignore signals, the process will exit on OP_QUIT request */
-    UTI_SetQuitSignalsHandler(SIG_IGN);
+    UTI_SetQuitSignalsHandler(SIG_IGN, 1);
 
     helper_main(sock_pair[1]);
 

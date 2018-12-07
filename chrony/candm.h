@@ -99,7 +99,9 @@
 #define REQ_ADD_PEER2 59
 #define REQ_ADD_SERVER3 60
 #define REQ_ADD_PEER3 61
-#define N_REQUEST_TYPES 62
+#define REQ_SHUTDOWN 62
+#define REQ_ONOFFLINE 63
+#define N_REQUEST_TYPES 64
 
 /* Structure used to exchange timespecs independent of time_t size */
 typedef struct {
@@ -252,6 +254,7 @@ typedef struct {
 #define REQ_ADDSRC_TRUST 0x20
 #define REQ_ADDSRC_REQUIRE 0x40
 #define REQ_ADDSRC_INTERLEAVED 0x80
+#define REQ_ADDSRC_BURST 0x100
 
 typedef struct {
   IPAddr ip_addr;
@@ -273,7 +276,8 @@ typedef struct {
   Float asymmetry;
   Float offset;
   uint32_t flags;
-  uint32_t reserved[4];
+  int32_t filter_length;
+  uint32_t reserved[3];
   int32_t EOR;
 } REQ_NTP_Source;
 
@@ -367,9 +371,9 @@ typedef struct {
    domain socket.
 
    Version 6 (no authentication) : changed format of client accesses by index
-   (using new request/reply types) and manual timestamp, new fields and flags
-   in NTP source request and report, new commands: ntpdata, refresh,
-   serverstats
+   (using new request/reply types) and manual timestamp, added new fields and
+   flags to NTP source request and report, made length of manual list constant,
+   added new commands: ntpdata, refresh, serverstats, shutdown
  */
 
 #define PROTO_VERSION_NUMBER 6
@@ -468,7 +472,8 @@ typedef struct {
 #define RPY_CLIENT_ACCESSES_BY_INDEX2 15
 #define RPY_NTP_DATA 16
 #define RPY_MANUAL_TIMESTAMP2 17
-#define N_REPLY_TYPES 18
+#define RPY_MANUAL_LIST2 18
+#define N_REPLY_TYPES 19
 
 /* Status codes */
 #define STT_SUCCESS 0

@@ -1294,6 +1294,8 @@ parse_hwtimestamp(char *line)
   iface = ARR_GetNewElement(hwts_interfaces);
   iface->name = Strdup(p);
   iface->minpoll = 0;
+  iface->min_samples = 2;
+  iface->max_samples = 16;
   iface->nocrossts = 0;
   iface->rxfilter = CNF_HWTS_RXFILTER_ANY;
   iface->precision = 100.0e-9;
@@ -1303,8 +1305,14 @@ parse_hwtimestamp(char *line)
   for (p = line; *p; line += n, p = line) {
     line = CPS_SplitWord(line);
 
-    if (!strcasecmp(p, "minpoll")) {
+    if (!strcasecmp(p, "maxsamples")) {
+      if (sscanf(line, "%d%n", &iface->max_samples, &n) != 1)
+        break;
+    } else if (!strcasecmp(p, "minpoll")) {
       if (sscanf(line, "%d%n", &iface->minpoll, &n) != 1)
+        break;
+    } else if (!strcasecmp(p, "minsamples")) {
+      if (sscanf(line, "%d%n", &iface->min_samples, &n) != 1)
         break;
     } else if (!strcasecmp(p, "precision")) {
       if (sscanf(line, "%lf%n", &iface->precision, &n) != 1)
@@ -1418,7 +1426,7 @@ CNF_AddInitSources(void)
     ntp_addr.ip_addr = *(IPAddr *)ARR_GetElement(init_sources, i);
     ntp_addr.port = cps_source.port;
     cps_source.params.iburst = 1;
-    cps_source.params.online = 0;
+    cps_source.params.connectivity = SRC_OFFLINE;
 
     NSR_AddSource(&ntp_addr, NTP_SERVER, &cps_source.params);
   }

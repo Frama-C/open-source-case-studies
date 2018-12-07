@@ -4,7 +4,7 @@
  **********************************************************************
  * Copyright (C) Richard P. Curnow  1997-2003
  * Copyright (C) John G. Hasler  2009
- * Copyright (C) Miroslav Lichvar  2009-2012, 2014-2017
+ * Copyright (C) Miroslav Lichvar  2009-2012, 2014-2018
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
@@ -42,11 +42,6 @@
 #include <sys/resource.h>
 #endif
 
-#ifdef FEAT_PRIVDROP
-#include <sys/prctl.h>
-#include <sys/capability.h>
-#endif
-
 #if defined(FEAT_PHC) || defined(HAVE_LINUX_TIMESTAMPING)
 #include <linux/ptp_clock.h>
 #endif
@@ -64,6 +59,11 @@
 #ifdef HAVE_LINUX_TIMESTAMPING
 #include <linux/sockios.h>
 #endif
+#endif
+
+#ifdef FEAT_PRIVDROP
+#include <sys/prctl.h>
+#include <sys/capability.h>
 #endif
 
 #include "sys_linux.h"
@@ -309,9 +309,9 @@ get_version_specific_details(void)
   nominal_tick = (1000000L + (hz/2))/hz; /* Mirror declaration in kernel */
   max_tick_bias = nominal_tick / 10;
 
-  /* We can't reliably detect the internal kernel HZ, it may not even be fixed
-     (CONFIG_NO_HZ aka tickless), assume the lowest commonly used fixed rate */
-  tick_update_hz = 100;
+  /* In modern kernels the frequency of the clock is updated immediately in the
+     adjtimex() system call.  Assume a maximum delay of 10 microseconds. */
+  tick_update_hz = 100000;
 
   get_kernel_version(&major, &minor, &patch);
   DEBUG_LOG("Linux kernel major=%d minor=%d patch=%d", major, minor, patch);
@@ -322,9 +322,15 @@ get_version_specific_details(void)
 
   if (kernelvercmp(major, minor, patch, 2, 6, 27) >= 0 &&
       kernelvercmp(major, minor, patch, 2, 6, 33) < 0) {
-    /* Tickless kernels before 2.6.33 accumulated ticks only in
-       half-second intervals */
+    /* In tickless kernels before 2.6.33 the frequency is updated in
+       a half-second interval */
     tick_update_hz = 2;
+  } else if (kernelvercmp(major, minor, patch, 4, 19, 0) < 0) {
+    /* In kernels before 4.19 the frequency is updated only on internal ticks
+       (CONFIG_HZ).  As their rate cannot be reliably detected from the user
+       space, and it may not even be constant (CONFIG_NO_HZ - aka tickless),
+       assume the lowest commonly used constant rate */
+    tick_update_hz = 100;
   }
 
   /* ADJ_SETOFFSET support */
@@ -334,8 +340,8 @@ get_version_specific_details(void)
     have_setoffset = 1;
   }
 
-  DEBUG_LOG("hz=%d nominal_tick=%d max_tick_bias=%d",
-      hz, nominal_tick, max_tick_bias);
+  DEBUG_LOG("hz=%d nominal_tick=%d max_tick_bias=%d tick_update_hz=%d",
+            hz, nominal_tick, max_tick_bias, tick_update_hz);
 }
 
 /* ================================================== */
@@ -381,12 +387,26 @@ test_step_offset(void)
 }
 
 /* ================================================== */
+
+static void
+report_time_adjust_blockers(void)
+{
+#if defined(FEAT_PRIVDROP) && defined(CAP_IS_SUPPORTED)
+  if (CAP_IS_SUPPORTED(CAP_SYS_TIME) && cap_get_bound(CAP_SYS_TIME))
+    return;
+  LOG(LOGS_WARN, "CAP_SYS_TIME not present");
+#endif
+}
+
+/* ================================================== */
 /* Initialisation code for this module */
 
 void
 SYS_Linux_Initialise(void)
 {
   get_version_specific_details();
+
+  report_time_adjust_blockers();
 
   reset_adjtime_offset();
 
@@ -415,9 +435,9 @@ SYS_Linux_Finalise(void)
 
 #ifdef FEAT_PRIVDROP
 void
-SYS_Linux_DropRoot(uid_t uid, gid_t gid)
+SYS_Linux_DropRoot(uid_t uid, gid_t gid, int clock_control)
 {
-  const char *cap_text;
+  char cap_text[256];
   cap_t cap;
 
   if (prctl(PR_SET_KEEPCAPS, 1)) {
@@ -426,9 +446,12 @@ SYS_Linux_DropRoot(uid_t uid, gid_t gid)
   
   UTI_DropRoot(uid, gid);
 
-  /* Keep CAP_NET_BIND_SERVICE only if NTP port can be opened */
-  cap_text = CNF_GetNTPPort() ?
-             "cap_net_bind_service,cap_sys_time=ep" : "cap_sys_time=ep";
+  /* Keep CAP_NET_BIND_SERVICE only if a server NTP port can be opened
+     and keep CAP_SYS_TIME only if the clock control is enabled */
+  if (snprintf(cap_text, sizeof (cap_text), "%s %s",
+               CNF_GetNTPPort() ? "cap_net_bind_service=ep" : "",
+               clock_control ? "cap_sys_time=ep" : "") >= sizeof (cap_text))
+    assert(0);
 
   if ((cap = cap_from_text(cap_text)) == NULL) {
     LOG_FATAL("cap_from_text() failed");
@@ -480,7 +503,7 @@ SYS_Linux_EnableSystemCallFilter(int level)
     SCMP_SYS(lseek), SCMP_SYS(rename), SCMP_SYS(stat), SCMP_SYS(stat64),
     SCMP_SYS(statfs), SCMP_SYS(statfs64), SCMP_SYS(unlink),
     /* Socket */
-    SCMP_SYS(bind), SCMP_SYS(connect), SCMP_SYS(getsockname),
+    SCMP_SYS(bind), SCMP_SYS(connect), SCMP_SYS(getsockname), SCMP_SYS(getsockopt),
     SCMP_SYS(recvfrom), SCMP_SYS(recvmmsg), SCMP_SYS(recvmsg),
     SCMP_SYS(sendmmsg), SCMP_SYS(sendmsg), SCMP_SYS(sendto),
     /* TODO: check socketcall arguments */
@@ -512,7 +535,7 @@ SYS_Linux_EnableSystemCallFilter(int level)
 #endif
   };
 
-  const static int fcntls[] = { F_GETFD, F_SETFD };
+  const static int fcntls[] = { F_GETFD, F_SETFD, F_SETFL };
 
   const static unsigned long ioctls[] = {
     FIONREAD, TCGETS,

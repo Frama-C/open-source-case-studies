@@ -36,7 +36,7 @@ DESTDIR=
 HASH_OBJ = @HASH_OBJ@
 
 OBJS = array.o cmdparse.o conf.o local.o logging.o main.o memory.o \
-       reference.o regress.o rtc.o sched.o sources.o sourcestats.o stubs.o \
+       reference.o regress.o rtc.o samplefilt.o sched.o sources.o sourcestats.o stubs.o \
        smooth.o sys.o sys_null.o tempcomp.o util.o $(HASH_OBJ)
 
 EXTRA_OBJS=@EXTRA_OBJECTS@
@@ -70,7 +70,8 @@ distclean : clean
 	-rm -f Makefile config.h config.log
 
 clean :
-	-rm -f *.o *.s chronyc chronyd core *~
+	-rm -f *.o *.s chronyc chronyd core.* *~
+	-rm -f *.gcda *.gcno
 	-rm -rf .deps
 	-rm -rf *.dSYM
 
@@ -116,6 +117,9 @@ quickcheck : chronyd chronyc
 check : chronyd chronyc
 	$(MAKE) -C test/unit check
 	cd test/simulation && ./run -i 20 -m 2
+
+print-chronyd-objects :
+	@echo $(OBJS) $(EXTRA_OBJS)
 
 Makefile : Makefile.in configure
 	@echo

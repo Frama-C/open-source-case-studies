@@ -99,13 +99,13 @@ extern void LOG_Message(LOG_Severity severity, const char *format, ...);
    */
 extern void LOG_SetDebugLevel(int level);
 
-/* Log messages to a file instead of stderr */
+/* Log messages to a file instead of stderr, or stderr again if NULL */
 extern void LOG_OpenFileLog(const char *log_file);
 
 /* Log messages to syslog instead of stderr */
 extern void LOG_OpenSystemLog(void);
 
-/* Send fatal message also to the foreground process */
+/* Stop using stderr and send fatal message to the foreground process */
 extern void LOG_SetParentFd(int fd);
 
 /* Close the pipe to the foreground process so it can exit */

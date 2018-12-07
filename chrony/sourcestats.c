@@ -3,7 +3,7 @@
 
  **********************************************************************
  * Copyright (C) Richard P. Curnow  1997-2003
- * Copyright (C) Miroslav Lichvar  2011-2014, 2016-2017
+ * Copyright (C) Miroslav Lichvar  2011-2014, 2016-2018
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
@@ -50,6 +50,9 @@
 /* The minimum and maximum assumed skew */
 #define MIN_SKEW 1.0e-12
 #define MAX_SKEW 1.0e+02
+
+/* The minimum standard deviation */
+#define MIN_STDDEV 1.0e-9
 
 /* The asymmetry of network jitter when all jitter is in one direction */
 #define MAX_ASYMMETRY 0.5
@@ -129,6 +132,7 @@ struct SST_Stats_Record {
      source per unit local time.  (Positive => local clock fast,
      negative => local clock slow) */
   double estimated_frequency;
+  double estimated_frequency_sd;
 
   /* This is the assumed worst case bounds on the estimated frequency.
      We assume that the true frequency lies within +/- half this much
@@ -171,10 +175,11 @@ struct SST_Stats_Record {
      time of the measurements */
   double root_dispersions[MAX_SAMPLES];
 
-  /* This array contains the strata that were associated with the sources
-     at the times the samples were generated */
-  int strata[MAX_SAMPLES];
+  /* The stratum from the last accumulated sample */
+  int stratum;
 
+  /* The leap status from the last accumulated sample */
+  NTP_Leap leap;
 };
 
 /* ================================================== */
@@ -241,7 +246,8 @@ SST_ResetInstance(SST_Stats inst)
   inst->best_single_sample = 0;
   inst->min_delay_sample = 0;
   inst->estimated_frequency = 0;
-  inst->skew = 2000.0e-6;
+  inst->estimated_frequency_sd = WORST_CASE_FREQ_BOUND;
+  inst->skew = WORST_CASE_FREQ_BOUND;
   inst->estimated_offset = 0.0;
   inst->estimated_offset_sd = 86400.0; /* Assume it's at least within a day! */
   UTI_ZeroTimespec(&inst->offset_time);
@@ -249,6 +255,7 @@ SST_ResetInstance(SST_Stats inst)
   inst->nruns = 0;
   inst->asymmetry_run = 0;
   inst->asymmetry = 0.0;
+  inst->leap = LEAP_Unsynchronised;
 }
 
 /* ================================================== */
@@ -284,11 +291,7 @@ prune_register(SST_Stats inst, int new_oldest)
 /* ================================================== */
 
 void
-SST_AccumulateSample(SST_Stats inst, struct timespec *sample_time,
-                     double offset,
-                     double peer_delay, double peer_dispersion,
-                     double root_delay, double root_dispersion,
-                     int stratum)
+SST_AccumulateSample(SST_Stats inst, NTP_Sample *sample)
 {
   int n, m;
 
@@ -300,7 +303,7 @@ SST_AccumulateSample(SST_Stats inst, struct timespec *sample_time,
 
   /* Make sure it's newer than the last sample */
   if (inst->n_samples &&
-      UTI_CompareTimespecs(&inst->sample_times[inst->last_sample], sample_time) >= 0) {
+      UTI_CompareTimespecs(&inst->sample_times[inst->last_sample], &sample->time) >= 0) {
     LOG(LOGS_WARN, "Out of order sample detected, discarding history for %s",
         inst->ip_addr ? UTI_IPToString(inst->ip_addr) : UTI_RefidToString(inst->refid));
     SST_ResetInstance(inst);
@@ -310,14 +313,17 @@ SST_AccumulateSample(SST_Stats inst, struct timespec *sample_time,
     (MAX_SAMPLES * REGRESS_RUNS_RATIO);
   m = n % MAX_SAMPLES;
 
-  inst->sample_times[n] = *sample_time;
-  inst->offsets[n] = offset;
-  inst->orig_offsets[m] = offset;
-  inst->peer_delays[n] = peer_delay;
-  inst->peer_dispersions[m] = peer_dispersion;
-  inst->root_delays[m] = root_delay;
-  inst->root_dispersions[m] = root_dispersion;
-  inst->strata[m] = stratum;
+  /* WE HAVE TO NEGATE OFFSET IN THIS CALL, IT IS HERE THAT THE SENSE OF OFFSET
+     IS FLIPPED */
+  inst->sample_times[n] = sample->time;
+  inst->offsets[n] = -sample->offset;
+  inst->orig_offsets[m] = -sample->offset;
+  inst->peer_delays[n] = sample->peer_delay;
+  inst->peer_dispersions[m] = sample->peer_dispersion;
+  inst->root_delays[m] = sample->root_delay;
+  inst->root_dispersions[m] = sample->root_dispersion;
+  inst->stratum = sample->stratum;
+  inst->leap = sample->leap;
  
   if (inst->peer_delays[n] < inst->fixed_min_delay)
     inst->peer_delays[n] = 2.0 * inst->fixed_min_delay - inst->peer_delays[n];
@@ -547,7 +553,7 @@ SST_DoNewRegression(SST_Stats inst)
       sd_weight = 1.0;
       if (peer_distances[i] > min_distance)
         sd_weight += (peer_distances[i] - min_distance) / sd;
-      weights[i] = sd_weight * sd_weight;
+      weights[i] = SQUARE(sd_weight);
     }
   }
 
@@ -567,11 +573,12 @@ SST_DoNewRegression(SST_Stats inst)
     old_freq = inst->estimated_frequency;
   
     inst->estimated_frequency = est_slope;
+    inst->estimated_frequency_sd = CLAMP(MIN_SKEW, est_slope_sd, MAX_SKEW);
     inst->skew = est_slope_sd * RGR_GetTCoef(degrees_of_freedom);
     inst->estimated_offset = est_intercept;
     inst->offset_time = inst->sample_times[inst->last_sample];
     inst->estimated_offset_sd = est_intercept_sd;
-    inst->std_dev = sqrt(est_var);
+    inst->std_dev = MAX(MIN_STDDEV, sqrt(est_var));
     inst->nruns = nruns;
 
     inst->skew = CLAMP(MIN_SKEW, inst->skew, MAX_SKEW);
@@ -597,6 +604,7 @@ SST_DoNewRegression(SST_Stats inst)
     prune_register(inst, best_start);
   } else {
     inst->estimated_frequency = 0.0;
+    inst->estimated_frequency_sd = WORST_CASE_FREQ_BOUND;
     inst->skew = WORST_CASE_FREQ_BOUND;
     times_back_start = 0;
   }
@@ -633,7 +641,7 @@ SST_GetFrequencyRange(SST_Stats inst,
 
 void
 SST_GetSelectionData(SST_Stats inst, struct timespec *now,
-                     int *stratum,
+                     int *stratum, NTP_Leap *leap,
                      double *offset_lo_limit,
                      double *offset_hi_limit,
                      double *root_distance,
@@ -653,7 +661,8 @@ SST_GetSelectionData(SST_Stats inst, struct timespec *now,
   i = get_runsbuf_index(inst, inst->best_single_sample);
   j = get_buf_index(inst, inst->best_single_sample);
 
-  *stratum = inst->strata[get_buf_index(inst, inst->n_samples - 1)];
+  *stratum = inst->stratum;
+  *leap = inst->leap;
   *std_dev = inst->std_dev;
 
   sample_elapsed = fabs(UTI_DiffTimespecsToDouble(now, &inst->sample_times[i]));
@@ -695,7 +704,7 @@ SST_GetSelectionData(SST_Stats inst, struct timespec *now,
 void
 SST_GetTrackingData(SST_Stats inst, struct timespec *ref_time,
                     double *average_offset, double *offset_sd,
-                    double *frequency, double *skew,
+                    double *frequency, double *frequency_sd, double *skew,
                     double *root_delay, double *root_dispersion)
 {
   int i, j;
@@ -710,16 +719,16 @@ SST_GetTrackingData(SST_Stats inst, struct timespec *ref_time,
   *average_offset = inst->estimated_offset;
   *offset_sd = inst->estimated_offset_sd;
   *frequency = inst->estimated_frequency;
+  *frequency_sd = inst->estimated_frequency_sd;
   *skew = inst->skew;
   *root_delay = inst->root_delays[j];
 
   elapsed_sample = UTI_DiffTimespecsToDouble(&inst->offset_time, &inst->sample_times[i]);
-  *root_dispersion = inst->root_dispersions[j] + inst->skew * elapsed_sample;
+  *root_dispersion = inst->root_dispersions[j] + inst->skew * elapsed_sample + *offset_sd;
 
-  DEBUG_LOG("n=%d freq=%f (%.3fppm) skew=%f (%.3fppm) avoff=%f offsd=%f disp=%f",
-            inst->n_samples, *frequency, 1.0e6* *frequency, *skew, 1.0e6* *skew,
-            *average_offset, *offset_sd, *root_dispersion);
-
+  DEBUG_LOG("n=%d off=%f offsd=%f freq=%e freqsd=%e skew=%e delay=%f disp=%f",
+            inst->n_samples, *average_offset, *offset_sd,
+            *frequency, *frequency_sd, *skew, *root_delay, *root_dispersion);
 }
 
 /* ================================================== */
@@ -861,7 +870,7 @@ SST_SaveToFile(SST_Stats inst, FILE *out)
             inst->root_delays[j],
             inst->root_dispersions[j],
             1.0, /* used to be inst->weights[i] */
-            inst->strata[j]);
+            inst->stratum /* used to be an array */);
 
   }
 
@@ -884,7 +893,7 @@ SST_LoadFromFile(SST_Stats inst, FILE *in)
   char line[1024];
   double weight;
 
-  assert(!inst->n_samples);
+  SST_ResetInstance(inst);
 
   if (fgets(line, sizeof(line), in) &&
       sscanf(line, "%d", &inst->n_samples) == 1 &&
@@ -906,7 +915,7 @@ SST_LoadFromFile(SST_Stats inst, FILE *in)
                   &(inst->root_delays[i]),
                   &(inst->root_dispersions[i]),
                   &weight, /* not used anymore */
-                  &(inst->strata[i])) != 10)) {
+                  &inst->stratum) != 10)) {
 
         /* This is the branch taken if the read FAILED */
 
@@ -933,7 +942,6 @@ SST_LoadFromFile(SST_Stats inst, FILE *in)
     return 1;
 
   inst->last_sample = inst->n_samples - 1;
-  inst->runs_samples = 0;
 
   find_min_delay_sample(inst);
   SST_DoNewRegression(inst);
@@ -955,7 +963,7 @@ SST_DoSourceReport(SST_Stats inst, RPT_SourceReport *report, struct timespec *no
     report->orig_latest_meas = inst->orig_offsets[j];
     report->latest_meas = inst->offsets[i];
     report->latest_meas_err = 0.5*inst->root_delays[j] + inst->root_dispersions[j];
-    report->stratum = inst->strata[j];
+    report->stratum = inst->stratum;
 
     /* Align the sample time to reduce the leak of the receive timestamp */
     last_sample_time = inst->sample_times[i];

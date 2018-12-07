@@ -8,8 +8,8 @@ FRAMAC_CONFIG ?= frama-c-config
 include $(shell $(FRAMAC_CONFIG) -print-share-path)/analysis-scripts/frama-c.mk
 
 # Define global parameters
-CPPFLAGS         += -I include -I $($FRAMAC_BIN -print-path)/libc -D_SOCKLEN_T
-FCFLAGS          +=
+CPPFLAGS         += -CC
+FCFLAGS          += -json-compilation-database .
 USE_SPEC         += \
   my_set_session \
   my_get_session \
@@ -52,12 +52,18 @@ USE_SPEC         += \
   mpi_sub_abs \
   camellia_crypt_cbc \
   camellia_feistel \
-  sha4
+  sha4 \
+
 EVAFLAGS         += \
-  -val-subdivide-non-linear 16 \
-  -val-ilevel 13 \
-  -no-val-alloc-returns-null \
-  -val-use-spec $(call fc_list,$(USE_SPEC))
+  -eva-subdivide-non-linear 16 \
+  -eva-ilevel 13 \
+  -eva-no-alloc-returns-null \
+  -eva-use-spec $(call fc_list,$(USE_SPEC)) \
+  -eva-warn-key loop-unrolling=abort \
+  -eva-slevel 2 \
+
+#"-eva-plevel 4097" avoids some messages, but does not seem to remove any alarms
+
 
 # Export environment variable for Frama-C
 export FRAMA_C_MEMORY_FOOTPRINT	= 8
@@ -72,4 +78,3 @@ stats: $(TARGETS:%=%.parse) $(TARGETS:%=%.eva)
 	../show_stats.sh "$(notdir $(CURDIR))" $^
 
 ssl_server.parse: stubs.h $(sort $(wildcard library/*.c)) programs/ssl/ssl_server.c
-ssl_server.eva: EVAFLAGS+=$(shell cat ssl_server.slevel | tr -d '\n\\')

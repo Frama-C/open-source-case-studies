@@ -158,6 +158,7 @@ unsigned int inLen;
 
     /* transform if necessary */
     if (mdi == 0x40) {
+      //@ loop unroll 16;
       for (i = 0, ii = 0; i < 16; i++, ii += 4)
         in[i] = (((UINT4)mdContext->in[ii+3]) << 24) |
                 (((UINT4)mdContext->in[ii+2]) << 16) |
@@ -193,6 +194,7 @@ MD5_CTX *mdContext;
   MD5Update (mdContext, PADDING, padLen);
 
   /* append length in bits and transform */
+  //@ loop unroll 14;
   for (i = 0, ii = 0; i < 14; i++, ii += 4)
     in[i] = (((UINT4)mdContext->in[ii+3]) << 24) |
             (((UINT4)mdContext->in[ii+2]) << 16) |
@@ -201,6 +203,7 @@ MD5_CTX *mdContext;
   Transform (mdContext->buf, in);
 
   /* store buffer in digest */
+  //@ loop unroll 4;
   for (i = 0, ii = 0; i < 4; i++, ii += 4) {
     mdContext->digest[ii] = (unsigned char)(mdContext->buf[i] & 0xFF);
     mdContext->digest[ii+1] =

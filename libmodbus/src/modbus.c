@@ -171,6 +171,7 @@ static int send_msg(modbus_t *ctx, uint8_t *msg, int msg_length)
     msg_length = ctx->backend->send_msg_pre(msg, msg_length);
 
     if (ctx->debug) {
+        //@ loop unroll 260;
         for (i = 0; i < msg_length; i++)
             printf("[%.2X]", msg[i]);
         printf("\n");
@@ -1055,10 +1056,12 @@ static int read_io_status(modbus_t *ctx, int function,
 
         offset = ctx->backend->header_length + 2;
         offset_end = offset + rc;
+        //@ loop unroll 14;
         for (i = offset; i < offset_end; i++) {
             /* Shift reg hi_byte to temp */
             temp = rsp[i];
 
+            //@ loop unroll 16;
             for (bit = 0x01; (bit & 0xff) && (pos < nb);) {
                 dest[pos++] = (temp & bit) ? TRUE : FALSE;
                 bit = bit << 1;
@@ -1164,6 +1167,7 @@ static int read_registers(modbus_t *ctx, int function, int addr, int nb,
 
         offset = ctx->backend->header_length;
 
+        //@ loop unroll 100;
         for (i = 0; i < rc; i++) {
             /* shift reg hi_byte to temp OR with lo_byte */
             dest[i] = (rsp[offset + 2 + (i << 1)] << 8) |
@@ -1309,6 +1313,7 @@ int modbus_write_bits(modbus_t *ctx, int addr, int nb, const uint8_t *src)
     byte_count = (nb / 8) + ((nb % 8) ? 1 : 0);
     req[req_length++] = byte_count;
 
+    //@ loop unroll 13;
     for (i = 0; i < byte_count; i++) {
         int bit;
 
@@ -1371,6 +1376,7 @@ int modbus_write_registers(modbus_t *ctx, int addr, int nb, const uint16_t *src)
     byte_count = nb * 2;
     req[req_length++] = byte_count;
 
+    //@ loop unroll 100;
     for (i = 0; i < nb; i++) {
         req[req_length++] = src[i] >> 8;
         req[req_length++] = src[i] & 0x00FF;
@@ -1477,6 +1483,7 @@ int modbus_write_and_read_registers(modbus_t *ctx,
     byte_count = write_nb * 2;
     req[req_length++] = byte_count;
 
+    //@ loop unroll 100;
     for (i = 0; i < write_nb; i++) {
         req[req_length++] = src[i] >> 8;
         req[req_length++] = src[i] & 0x00FF;
@@ -1495,6 +1502,7 @@ int modbus_write_and_read_registers(modbus_t *ctx,
             return -1;
 
         offset = ctx->backend->header_length;
+        //@ loop unroll 100;
         for (i = 0; i < rc; i++) {
             /* shift reg hi_byte to temp OR with lo_byte */
             dest[i] = (rsp[offset + 2 + (i << 1)] << 8) |

@@ -11,7 +11,9 @@ include $(FRAMAC_SHARE)/analysis-scripts/frama-c.mk
 # Define global parameters
 CPPFLAGS     = -include../__fc_compatibility.h -include__fc_builtin.h \
   -D_POSIX_C_SOURCE=200809L
-FCFLAGS     += -main eva_main
+FCFLAGS     += \
+  -main eva_main \
+
 EVAFLAGS    +=
 
 # Export environment variable for Frama-C

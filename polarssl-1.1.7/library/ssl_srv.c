@@ -172,6 +172,7 @@ static int ssl_parse_client_hello( ssl_context *ssl )
         memset( ssl->randbytes, 0, 64 );
         memcpy( ssl->randbytes + 32 - chal_len, p, chal_len );
 
+        //@ loop unroll 13;
         for( i = 0; ssl->ciphersuites[i] != 0; i++ )
         {
             for( j = 0, p = buf + 6; j < ciph_len; j += 3, p += 3 )
@@ -330,8 +331,10 @@ static int ssl_parse_client_hello( ssl_context *ssl )
         /*
          * Search for a matching ciphersuite
          */
+        //@ loop unroll 13;
         for( i = 0; ssl->ciphersuites[i] != 0; i++ )
         {
+            //@ loop unroll 128;
             for( j = 0, p = buf + 41 + sess_len; j < ciph_len;
                 j += 2, p += 2 )
             {

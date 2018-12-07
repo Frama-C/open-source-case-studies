@@ -117,21 +117,22 @@ License files are kept in each directory where they were originally found,
 when available. We also summarize the license of each directory below.
 
 - `2048`: MIT
-- `bzip2-1.0.6`: bzip2 license (BSD-style), see `LICENSE`
 - `chrony`: GPL
-- `debie1-e-free`: distribution and use authorized by Patria Aviation Oy,
-                   Space Systems Finland Ltd. and Tidorum Ltd, see `README.txt`
-                   and `terms_of_use-2014-05.pdf`
+- `debie1`: distribution and use authorized by Patria Aviation Oy,
+            Space Systems Finland Ltd. and Tidorum Ltd, see `README.txt`
+            and `terms_of_use-2014-05.pdf`
 - `gzip124`: GPL
 - `hiredis`: Redis license (BSD-style), see `COPYING`
+- `icpc`: Unlicense
 - `jsmn`: MIT
 - `khash`: MIT
+- `kilo`: BSD
 - `libmodbus`: LGPL
 - `mini-gmp`:  LGPL or GPL
 - `monocypher`: see `README`
-- `monocypher-0.6-tweaked`: see `README`
-- `PapaBench-0.4`: GPL
+- `papabench`: GPL
 - `polarssl-1.1.7`: GPL
 - `qlz`: GPL
+- `semver`: MIT
 - `solitaire`: public domain (see `solitaire.c`)
 - `tweetnacl-usable`: public domain (see `LICENSE.txt`)

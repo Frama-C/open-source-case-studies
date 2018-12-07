@@ -3,7 +3,7 @@
 
  **********************************************************************
  * Copyright (C) Richard P. Curnow  1997-2003
- * Copyright (C) Miroslav Lichvar  2011-2014
+ * Copyright (C) Miroslav Lichvar  2011-2014, 2018
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
@@ -79,11 +79,11 @@ LOG_Initialise(void)
 void
 LOG_Finalise(void)
 {
-  if (system_log) {
+  if (system_log)
     closelog();
-  } else {
+
+  if (file_log)
     fclose(file_log);
-  }
 
   LOG_CycleLogFiles();
 
@@ -116,7 +116,7 @@ static void log_message(int fatal, LOG_Severity severity, const char *message)
         assert(0);
     }
     syslog(priority, fatal ? "Fatal error : %s" : "%s", message);
-  } else {
+  } else if (file_log) {
     fprintf(file_log, fatal ? "Fatal error : %s\n" : "%s\n", message);
   }
 }
@@ -132,18 +132,15 @@ void LOG_Message(LOG_Severity severity,
   char buf[2048];
   va_list other_args;
   time_t t;
-  struct tm stm;
+  struct tm *tm;
 
-  if (!system_log) {
+  if (!system_log && file_log) {
     /* Don't clutter up syslog with timestamps and internal debugging info */
     time(&t);
-    struct tm *gt = gmtime(&t);
-    if (gt) {
-      stm = *gt;
-      strftime(buf, sizeof(buf), "%Y-%m-%dT%H:%M:%SZ", &stm);
+    tm = gmtime(&t);
+    if (tm) {
+      strftime(buf, sizeof (buf), "%Y-%m-%dT%H:%M:%SZ", tm);
       fprintf(file_log, "%s ", buf);
-    } else {
-      fprintf(file_log, "[GMTIME_ERROR]");
     }
 #if DEBUG > 0
     if (debug_level >= DEBUG_LEVEL_PRINT_FUNCTION)
@@ -165,16 +162,14 @@ void LOG_Message(LOG_Severity severity,
     case LOGS_FATAL:
       log_message(1, severity, buf);
 
-      /* With syslog, send the message also to the grandparent
-         process or write it to stderr if not detached */
-      if (system_log) {
-        if (parent_fd > 0) {
-          if (write(parent_fd, buf, strlen(buf) + 1) < 0)
-            ; /* Not much we can do here */
-        } else if (parent_fd == 0) {
-          system_log = 0;
-          log_message(1, severity, buf);
-        }
+      /* Send the message also to the foreground process if it is
+         still running, or stderr if it is still open */
+      if (parent_fd > 0) {
+        if (write(parent_fd, buf, strlen(buf) + 1) < 0)
+          ; /* Not much we can do here */
+      } else if (system_log && parent_fd == 0) {
+        system_log = 0;
+        log_message(1, severity, buf);
       }
       break;
     default:
@@ -189,12 +184,19 @@ LOG_OpenFileLog(const char *log_file)
 {
   FILE *f;
 
-  f = fopen(log_file, "a");
-  if (!f)
-    LOG_FATAL("Could not open log file %s", log_file);
+  if (log_file) {
+    f = fopen(log_file, "a");
+    if (!f)
+      LOG_FATAL("Could not open log file %s", log_file);
+  } else {
+    f = stderr;
+  }
 
   /* Enable line buffering */
   setvbuf(f, NULL, _IOLBF, BUFSIZ);
+
+  if (file_log && file_log != stderr)
+    fclose(file_log);
 
   file_log = f;
 }
@@ -225,6 +227,8 @@ void
 LOG_SetParentFd(int fd)
 {
   parent_fd = fd;
+  if (file_log == stderr)
+    file_log = NULL;
 }
 
 /* ================================================== */

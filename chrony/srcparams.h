@@ -29,12 +29,19 @@
 
 #include "sources.h"
 
+typedef enum {
+  SRC_OFFLINE,
+  SRC_ONLINE,
+  SRC_MAYBE_ONLINE,
+} SRC_Connectivity;
+
 typedef struct {
   int minpoll;
   int maxpoll;
-  int online;
+  SRC_Connectivity connectivity;
   int auto_offline;
   int presend_minpoll;
+  int burst;
   int iburst;
   int min_stratum;
   int poll_target;
@@ -42,6 +49,7 @@ typedef struct {
   int max_sources;
   int min_samples;
   int max_samples;
+  int filter_length;
   int interleaved;
   int sel_options;
   uint32_t authkey;

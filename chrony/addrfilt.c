@@ -61,6 +61,7 @@ split_ip6(IPAddr *ip, uint32_t *dst)
 {
   int i;
 
+  //@ loop unroll 4;
   for (i = 0; i < 4; i++)
     dst[i] = (uint32_t)ip->addr.in6[i * 4 + 0] << 24 |
              ip->addr.in6[i * 4 + 1] << 16 |
@@ -109,9 +110,11 @@ close_node(TableNode *node)
   TableNode *child_node;
 
   if (node->extended != NULL) {
+    //@ loop unroll 16;
     for (i=0; i<TABLE_SIZE; i++) {
       child_node = &(node->extended[i]);
-      close_node(child_node);
+      // Frama-C/Eva: commented recursive call
+      //close_node(child_node);
     }
     Free(node->extended);
     node->extended = NULL;
@@ -133,6 +136,7 @@ open_node(TableNode *node)
 
     node->extended = MallocArray(struct _TableNode, TABLE_SIZE);
 
+    //@ loop unroll 4;
     for (i=0; i<TABLE_SIZE; i++) {
       child_node = &(node->extended[i]);
       child_node->state = AS_PARENT;
@@ -168,6 +172,7 @@ set_subnet(TableNode *start_node,
 
     if ((bits_to_go & (NBITS-1)) == 0) {
     
+      //@ loop unroll 128;
       while (bits_to_go > 0) {
         subnet = get_subnet(ip, bits_consumed);
         if (!(node->extended)) {
@@ -187,6 +192,7 @@ set_subnet(TableNode *start_node,
       int N, i, j;
       TableNode *this_node;
 
+      //@ loop unroll 124;
       while (bits_to_go >= NBITS) {
         subnet = get_subnet(ip, bits_consumed);
         if (!(node->extended)) {
@@ -207,6 +213,7 @@ set_subnet(TableNode *start_node,
         open_node(node);
       }
       
+      //@ loop unroll 16;
       for (i=subnet, j=0; j<N; i++, j++) {
         this_node = &(node->extended[i]);
         if (delete_children) {
@@ -366,6 +373,10 @@ ADF_IsAllowed(ADF_AuthTable table,
 
 /* ================================================== */
 
+#ifdef __FRAMAC__
+volatile int nondet;
+#endif
+
 static int
 is_any_allowed(TableNode *node, State parent)
 {
@@ -376,9 +387,15 @@ is_any_allowed(TableNode *node, State parent)
   assert(state != AS_PARENT);
 
   if (node->extended) {
+    //@ loop unroll 16;
     for (i = 0; i < TABLE_SIZE; i++) {
+#ifdef __FRAMAC__
+      // Frama-C/Eva: commented recursive call
+      if (nondet) return 1;
+#else
       if (is_any_allowed(&node->extended[i], state))
         return 1;
+#endif
     }
   } else if (state == ALLOW) {
     return 1;

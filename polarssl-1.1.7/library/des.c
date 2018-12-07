@@ -541,6 +541,7 @@ static void des3_set3key( unsigned long esk[96],
     des_setkey( dsk + 32, key +  8 );
     des_setkey( esk + 64, key + 16 );
 
+    //@ loop unroll 16;
     for( i = 0; i < 32; i += 2 )
     {
         dsk[i     ] = esk[94 - i];

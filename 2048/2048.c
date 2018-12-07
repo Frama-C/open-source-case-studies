@@ -232,7 +232,9 @@ void addRandom(uint8_t board[SIZE][SIZE]) {
     initialized = true;
   }
 
+  //@ loop unroll SIZE;
   for (x=0;x<SIZE;x++) {
+    //@ loop unroll SIZE;
     for (y=0;y<SIZE;y++) {
       if (board[x][y]==0) {
         list[len][0]=x;
@@ -253,7 +255,9 @@ void addRandom(uint8_t board[SIZE][SIZE]) {
 
 void initBoard(uint8_t board[SIZE][SIZE]) {
   uint8_t x,y;
+  //@ loop unroll SIZE;
   for (x=0;x<SIZE;x++) {
+    //@ loop unroll SIZE;
     for (y=0;y<SIZE;y++) {
       board[x][y]=0;
     }
@@ -319,6 +323,7 @@ int test() {
       array[i] = in[i];
     }
     slideArray(array);
+    //@ loop unroll SIZE;
     for (i=0;i<SIZE;i++) {
       if (array[i] != out[i]) {
         success = false;
@@ -345,7 +350,7 @@ int test() {
     }
   }
   if (success) {
-    printf("All %u tests executed successfully\n",tests);
+    printf("All %hhu tests executed successfully\n",tests);
   }
   return !success;
 }

@@ -33,7 +33,6 @@ TEST_COMMON_SRCS = test/unit/test.c \
   hash_intmd5.c \
   keys.c \
   local.c \
-  logging.c \
   memory.c \
   nameserv.c \
   ntp_io.c \
@@ -47,34 +46,32 @@ TEST_COMMON_SRCS = test/unit/test.c \
   fc_stubs.c \
   stubs.c \
 
+# logging.c voluntarily ommitted, to skip analyzing logging functions
+
 CPPFLAGS    += -D_XOPEN_SOURCE=200112L -DNB_TESTS=3 -includefc_stubs.h
 
 FCFLAGS     += -machdep gcc_x86_64 \
-  -kernel-warn-error typing:implicit-function-declaration \
-  -warn-special-float none
+  -warn-special-float none \
+  -kernel-warn-key typing:implicit-function-declaration=abort \
 
 # (Optional) EVA-specific flags
 EVAFLAGS    += \
-  -val-use-spec atoi,malloc,free,calloc,Transform,parse_include \
+  -eva-use-spec atoi,malloc,free,calloc,Transform,parse_include,SCH_AddTimeout \
   -eva-equality-domain -eva-gauges-domain -eva-symbolic-locations-domain \
-  -slevel 5 \
-  -val-warn-on-alarms \
-  -val-malloc-functions malloc,realloc,Malloc,Malloc2,Realloc,Realloc2
+  -eva-warn-key=alarm \
+  -eva-malloc-functions malloc,realloc,Malloc,Malloc2,Realloc,Realloc2 \
+  -eva-warn-key builtins:missing-spec=abort \
+  -eva-warn-key malloc:weak \
 
-# Add other targets if needed, e.g. 'regress'. The name does not have to
-# correspond to an existing file.
-TARGETS = ntp_core regress
+MAIN_TARGET := ntp_core
+
+TARGETS = $(MAIN_TARGET).eva regress.eva
 
 # Default target
-all: $(TARGETS:%=%.eva)
-
-# For each target, you MUST add a <target>.parse rule listing the sources
-# used by the target; you MAY add a <target>.eva rule with specific options
-# for EVA.
+all: $(TARGETS)
 
 ntp_core.parse: $(TEST_COMMON_SRCS) test/unit/ntp_core.c
 ntp_core.eva: EVAFLAGS += -main eva_main \
-  $(shell cat ntp_core.slevel | tr -d '\n\\')
 
 # The following parsing rule reuses variable TEST_COMMON_SRCS to avoid
 # having to manually list the sources. Note that the unit test version of
@@ -86,7 +83,7 @@ regress.eva: EVAFLAGS += -main eva_main -slevel 100
 # The following targets are optional and provided for convenience only
 help:
 	@echo "targets: $(TARGETS)"
-loop: $(TARGETS:%=%.parse.loop) $(TARGETS:%=%.eva.loop)
-parse: $(TARGETS:%=%.parse)
-stats: $(TARGETS:%=%.parse) $(TARGETS:%=%.eva)
+loop: $(TARGETS:%.eva=%.parse.loop) $(TARGETS:%.eva=%.eva.loop)
+parse: $(TARGETS:%.eva=%.parse)
+stats: $(TARGETS:%.eva=%.parse) $(TARGETS:%=%.eva)
 	../show_stats.sh "$(notdir $(CURDIR))" $^

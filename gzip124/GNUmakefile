@@ -13,8 +13,13 @@ CPPFLAGS  = -include$(shell $(FRAMAC) -print-path)/libc/string.h \
             -DSTDC_HEADERS=1 -DHAVE_UNISTD_H=1 -DDIRENT=1 -DNO_UTIME=1 \
             -I$(shell $(FRAMAC) -print-path)/libc -I$(DIR)/
 
-FCFLAGS  += -nonterm-ignore abort,do_exit,exit
-EVAFLAGS += -slevel 2 -no-val-alloc-returns-null -no-val-builtins-auto
+FCFLAGS  += \
+  -nonterm-ignore do_exit \
+
+EVAFLAGS += \
+  -slevel 2 \
+  -eva-no-alloc-returns-null \
+  -eva-no-builtins-auto \
 
 # Export environment variable for Frama-C
 export FRAMA_C_MEMORY_FOOTPRINT	= 8
@@ -29,4 +34,5 @@ stats: $(TARGETS:%=%.parse) $(TARGETS:%=%.eva)
 	../show_stats.sh "$(notdir $(CURDIR))" $^
 
 gzip.parse: gzip.c zip.c deflate.c trees.c bits.c unzip.c inflate.c util.c \
-              crypt.c lzw.c unlzw.c unpack.c unlzh.c getopt.c
+              crypt.c lzw.c unlzw.c unpack.c unlzh.c getopt.c \
+              $(shell $(FRAMAC_CONFIG) -print-share-path)/libc/stdlib.c

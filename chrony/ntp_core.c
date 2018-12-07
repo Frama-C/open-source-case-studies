@@ -3,7 +3,7 @@
 
  **********************************************************************
  * Copyright (C) Richard P. Curnow  1997-2003
- * Copyright (C) Miroslav Lichvar  2009-2017
+ * Copyright (C) Miroslav Lichvar  2009-2018
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
@@ -37,6 +37,7 @@
 #include "sched.h"
 #include "reference.h"
 #include "local.h"
+#include "samplefilt.h"
 #include "smooth.h"
 #include "sources.h"
 #include "util.h"
@@ -88,8 +89,9 @@ struct NCR_Instance_Record {
   SCH_TimeoutID tx_timeout_id;  /* Timeout ID for next transmission */
   int tx_suspended;             /* Boolean indicating we can't transmit yet */
 
-  int auto_offline;             /* If 1, automatically go offline if server/peer
-                                   isn't responding */
+  int auto_burst;               /* If 1, initiate a burst on each poll */
+  int auto_offline;             /* If 1, automatically go offline when requests
+                                   cannot be sent */
 
   int local_poll;               /* Log2 of polling interval at our end */
   int remote_poll;              /* Log2 of server/peer's polling interval (recovered
@@ -149,14 +151,11 @@ struct NCR_Instance_Record {
      be used for synchronisation */
   int valid_timestamps;
 
-  /* Flag indicating the timestamps below were updated since last request */
-  int updated_timestamps;
-
-  /* Receive and transmit timestamps from the last received packet */
+  /* Receive and transmit timestamps from the last valid response */
   NTP_int64 remote_ntp_rx;
   NTP_int64 remote_ntp_tx;
 
-  /* Local timestamp when the last packet was received from the
+  /* Local timestamp when the last valid response was received from the
      source.  We have to be prepared to tinker with this if the local
      clock has its frequency adjusted before we repond.  The value we
      store here is what our own local time was when the same arrived.
@@ -183,10 +182,22 @@ struct NCR_Instance_Record {
   int prev_local_poll;
   unsigned int prev_tx_count;
 
+  /* Flag indicating the two timestamps below were updated since the
+     last transmission */
+  int updated_init_timestamps;
+
+  /* Timestamps used for (re)starting the symmetric protocol, when we
+     need to respond to a packet which is not a valid response */
+  NTP_int64 init_remote_ntp_tx;
+  NTP_Local_Timestamp init_local_rx;
+
   /* The instance record in the main source management module.  This
      performs the statistical analysis on the samples we generate */
 
   SRC_Instance source;
+
+  /* Optional median filter for NTP measurements */
+  SPF_Instance filter;
 
   int burst_good_samples_to_go;
   int burst_total_samples_to_go;
@@ -210,7 +221,7 @@ static ARR_Instance broadcasts;
 
 /* Spacing required between samples for any two servers/peers (to
    minimise risk of network collisions) (in seconds) */
-#define MIN_SAMPLING_SEPARATION 0.02
+#define MIN_SAMPLING_SEPARATION 0.002
 #define MAX_SAMPLING_SEPARATION 0.2
 
 /* Randomness added to spacing between samples for one server/peer */
@@ -219,16 +230,18 @@ static ARR_Instance broadcasts;
 /* Adjustment of the peer polling interval */
 #define PEER_SAMPLING_ADJ 1.1
 
-/* Spacing between samples in burst mode for one server/peer */
-#define BURST_INTERVAL 2.0
-
-/* Time to wait before retransmitting in burst mode, if we did not get
-   a reply to the previous probe */
-#define BURST_TIMEOUT 2.0
+/* Maximum spacing between samples in the burst mode as an absolute
+   value and ratio to the normal polling interval */
+#define MAX_BURST_INTERVAL 2.0
+#define MAX_BURST_POLL_RATIO 0.25
 
 /* Number of samples in initial burst */
 #define IBURST_GOOD_SAMPLES 4
 #define IBURST_TOTAL_SAMPLES SOURCE_REACH_BITS
+
+/* Number of samples in automatic burst */
+#define BURST_GOOD_SAMPLES 1
+#define MAX_BURST_TOTAL_SAMPLES 4
 
 /* Time to wait after sending packet to 'warm up' link */
 #define WARM_UP_DELAY 2.0
@@ -255,18 +268,19 @@ static ARR_Instance broadcasts;
 #define MAX_MAXDELAYDEVRATIO 1.0e6
 
 /* Minimum and maximum allowed poll interval */
-#define MIN_MINPOLL -4
-#define MIN_MAXPOLL 0
+#define MIN_POLL -6
 #define MAX_POLL 24
+
+/* Enable sub-second polling intervals only when the peer delay is not
+   longer than 10 milliseconds to restrict them to local networks */
+#define MIN_NONLAN_POLL 0
+#define MAX_LAN_PEER_DELAY 0.01
 
 /* Kiss-o'-Death codes */
 #define KOD_RATE 0x52415445UL /* RATE */
 
 /* Maximum poll interval set by KoD RATE */
 #define MAX_KOD_RATE_POLL SRC_DEFAULT_MAXPOLL
-
-/* Maximum number of missed responses to follow peer's polling interval */
-#define MAX_PEER_POLL_TX 8
 
 /* Maximum number of missed responses to accept samples using old timestamps
    in the interleaved client/server mode */
@@ -526,12 +540,13 @@ NCR_GetInstance(NTP_Remote_Address *remote_addr, NTP_Source_Type type, SourcePar
   result->interleaved = params->interleaved;
 
   result->minpoll = params->minpoll;
-  if (result->minpoll < MIN_MINPOLL)
+  if (result->minpoll < MIN_POLL)
     result->minpoll = SRC_DEFAULT_MINPOLL;
   else if (result->minpoll > MAX_POLL)
     result->minpoll = MAX_POLL;
+
   result->maxpoll = params->maxpoll;
-  if (result->maxpoll < MIN_MAXPOLL)
+  if (result->maxpoll < MIN_POLL)
     result->maxpoll = SRC_DEFAULT_MAXPOLL;
   else if (result->maxpoll > MAX_POLL)
     result->maxpoll = MAX_POLL;
@@ -551,6 +566,7 @@ NCR_GetInstance(NTP_Remote_Address *remote_addr, NTP_Source_Type type, SourcePar
   result->max_delay_ratio = CLAMP(0.0, params->max_delay_ratio, MAX_MAXDELAYRATIO);
   result->max_delay_dev_ratio = CLAMP(0.0, params->max_delay_dev_ratio, MAX_MAXDELAYDEVRATIO);
   result->offset_correction = params->offset;
+  result->auto_burst = params->burst;
   result->auto_offline = params->auto_offline;
   result->poll_target = params->poll_target;
 
@@ -588,10 +604,18 @@ NCR_GetInstance(NTP_Remote_Address *remote_addr, NTP_Source_Type type, SourcePar
                                          params->min_samples, params->max_samples,
                                          params->min_delay, params->asymmetry);
 
+  if (params->filter_length >= 1)
+    result->filter = SPF_CreateInstance(params->filter_length, params->filter_length,
+                                        NTP_MAX_DISPERSION, 0.0);
+  else
+    result->filter = NULL;
+
   result->rx_timeout_id = 0;
   result->tx_timeout_id = 0;
   result->tx_suspended = 1;
-  result->opmode = params->online ? MD_ONLINE : MD_OFFLINE;
+  result->opmode = params->connectivity == SRC_ONLINE ||
+                   (params->connectivity == SRC_MAYBE_ONLINE &&
+                    NIO_IsServerConnectable(remote_addr)) ? MD_ONLINE : MD_OFFLINE;
   result->local_poll = result->minpoll;
   result->poll_score = 0.0;
   zero_local_timestamp(&result->local_tx);
@@ -619,6 +643,9 @@ NCR_DestroyInstance(NCR_Instance instance)
 
   if (instance->mode == MODE_ACTIVE)
     NIO_CloseServerSocket(instance->local_addr.sock_fd);
+
+  if (instance->filter)
+    SPF_DestroyInstance(instance->filter);
 
   /* This will destroy the source instance inside the
      structure, which will cause reselection if this was the
@@ -652,7 +679,6 @@ NCR_ResetInstance(NCR_Instance instance)
 
   instance->valid_rx = 0;
   instance->valid_timestamps = 0;
-  instance->updated_timestamps = 0;
   UTI_ZeroNtp64(&instance->remote_ntp_rx);
   UTI_ZeroNtp64(&instance->remote_ntp_tx);
   UTI_ZeroNtp64(&instance->local_ntp_rx);
@@ -662,6 +688,13 @@ NCR_ResetInstance(NCR_Instance instance)
   zero_local_timestamp(&instance->prev_local_tx);
   instance->prev_local_poll = 0;
   instance->prev_tx_count = 0;
+
+  instance->updated_init_timestamps = 0;
+  UTI_ZeroNtp64(&instance->init_remote_ntp_tx);
+  zero_local_timestamp(&instance->init_local_rx);
+
+  if (instance->filter)
+    SPF_DropSamples(instance->filter);
 }
 
 /* ================================================== */
@@ -727,6 +760,13 @@ adjust_poll(NCR_Instance inst, double adj)
     inst->local_poll = inst->maxpoll;
     inst->poll_score = 1.0;
   }
+
+  /* Don't allow a sub-second polling interval if the source is not reachable
+     or it is not in a local network according to the measured delay */
+  if (inst->local_poll < MIN_NONLAN_POLL &&
+      (!SRC_IsReachable(inst->source) ||
+       SST_MinRoundTripDelay(SRC_GetSourcestats(inst->source)) > MAX_LAN_PEER_DELAY))
+    inst->local_poll = MIN_NONLAN_POLL;
 }
 
 /* ================================================== */
@@ -738,6 +778,9 @@ get_poll_adj(NCR_Instance inst, double error_in_estimate, double peer_distance)
   int samples;
 
   if (error_in_estimate > peer_distance) {
+    /* If the prediction is not even within +/- the peer distance of the peer,
+       we are clearly not tracking the peer at all well, so we back off the
+       sampling rate depending on just how bad the situation is */
     poll_adj = -log(error_in_estimate / peer_distance) / log(2.0);
   } else {
     samples = SST_Samples(SRC_GetSourcestats(inst->source));
@@ -767,7 +810,7 @@ get_transmit_poll(NCR_Instance inst)
   /* In symmetric mode, if the peer is responding, use shorter of the local
      and remote poll interval, but not shorter than the minimum */
   if (inst->mode == MODE_ACTIVE && poll > inst->remote_poll &&
-      inst->tx_count < MAX_PEER_POLL_TX)
+      SRC_IsReachable(inst->source))
     poll = MAX(inst->remote_poll, inst->minpoll);
 
   return poll;
@@ -835,7 +878,7 @@ get_transmit_delay(NCR_Instance inst, int on_tx, double last_tx)
     case MD_BURST_WAS_ONLINE:
     case MD_BURST_WAS_OFFLINE:
       /* Burst modes */
-      delay_time = on_tx ? BURST_TIMEOUT : BURST_INTERVAL;
+      delay_time = MIN(MAX_BURST_INTERVAL, MAX_BURST_POLL_RATIO * delay_time);
       break;
     default:
       assert(0);
@@ -852,6 +895,8 @@ static double
 get_separation(int poll)
 {
   double separation;
+
+  assert(poll >= MIN_POLL && poll <= MAX_POLL);
 
   /* Allow up to 8 sources using the same short interval to not be limited
      by the separation */
@@ -890,14 +935,16 @@ transmit_packet(NTP_Mode my_mode, /* The mode this machine wants to be */
                 NTP_Local_Timestamp *local_rx, /* The RX time of the received packet */
                 NTP_Local_Timestamp *local_tx, /* The TX time of the previous packet
                                                   RESULT : TX time of this packet */
-                NTP_int64 *local_ntp_rx, /* RESULT : receive timestamp from this packet */
-                NTP_int64 *local_ntp_tx, /* RESULT : transmit timestamp from this packet */
+                NTP_int64 *local_ntp_rx, /* The receive timestamp from the previous packet
+                                            RESULT : receive timestamp from this packet */
+                NTP_int64 *local_ntp_tx, /* The transmit timestamp from the previous packet
+                                            RESULT : transmit timestamp from this packet */
                 NTP_Remote_Address *where_to, /* Where to address the reponse to */
                 NTP_Local_Address *from /* From what address to send it */
                 )
 {
   NTP_Packet message;
-  int auth_len, mac_len, length, ret, precision;
+  int auth_len, max_auth_len, length, ret, precision;
   struct timespec local_receive, local_transmit;
   double smooth_offset, local_transmit_err;
   NTP_int64 ts_fuzz;
@@ -914,8 +961,8 @@ transmit_packet(NTP_Mode my_mode, /* The mode this machine wants to be */
     version = NTP_VERSION;
   }
 
-  /* Allow interleaved mode only if there was a prior transmission */
-  if (interleaved && (!local_tx || UTI_IsZeroTimespec(&local_tx->ts)))
+  /* Check if the packet can be formed in the interleaved mode */
+  if (interleaved && (!remote_ntp_rx || !local_tx || UTI_IsZeroTimespec(&local_tx->ts)))
     interleaved = 0;
 
   smooth_time = 0;
@@ -989,14 +1036,21 @@ transmit_packet(NTP_Mode my_mode, /* The mode this machine wants to be */
     /* Originate - this comes from the last packet the source sent us */
     message.originate_ts = interleaved ? *remote_ntp_rx : *remote_ntp_tx;
 
-    /* Prepare random bits which will be added to the receive timestamp */
-    UTI_GetNtp64Fuzz(&ts_fuzz, precision);
+    do {
+      /* Prepare random bits which will be added to the receive timestamp */
+      UTI_GetNtp64Fuzz(&ts_fuzz, precision);
 
-    /* Receive - this is when we received the last packet from the source.
-       This timestamp will have been adjusted so that it will now look to
-       the source like we have been running on our latest estimate of
-       frequency all along */
-    UTI_TimespecToNtp64(&local_receive, &message.receive_ts, &ts_fuzz);
+      /* Receive - this is when we received the last packet from the source.
+         This timestamp will have been adjusted so that it will now look to
+         the source like we have been running on our latest estimate of
+         frequency all along */
+      UTI_TimespecToNtp64(&local_receive, &message.receive_ts, &ts_fuzz);
+
+      /* Do not send a packet with a non-zero receive timestamp equal to the
+         originate timestamp or previous receive timestamp */
+    } while (!UTI_IsZeroNtp64(&message.receive_ts) &&
+             UTI_IsEqualAnyNtp64(&message.receive_ts, &message.originate_ts,
+                                 local_ntp_rx, NULL));
   } else {
     UTI_ZeroNtp64(&message.originate_ts);
     UTI_ZeroNtp64(&message.receive_ts);
@@ -1028,24 +1082,21 @@ transmit_packet(NTP_Mode my_mode, /* The mode this machine wants to be */
                           &message.transmit_ts, &ts_fuzz);
 
       if (auth_mode == AUTH_SYMMETRIC) {
+        /* Truncate long MACs in NTPv4 packets to allow deterministic parsing
+           of extension fields (RFC 7822) */
+        max_auth_len = version == 4 ?
+                       NTP_MAX_V4_MAC_LENGTH - 4 : sizeof (message.auth_data);
+
         auth_len = KEY_GenerateAuth(key_id, (unsigned char *) &message,
                                     offsetof(NTP_Packet, auth_keyid),
-                                    (unsigned char *)&message.auth_data,
-                                    sizeof (message.auth_data));
+                                    (unsigned char *)&message.auth_data, max_auth_len);
         if (!auth_len) {
           DEBUG_LOG("Could not generate auth data with key %"PRIu32, key_id);
           return 0;
         }
 
         message.auth_keyid = htonl(key_id);
-        mac_len = sizeof (message.auth_keyid) + auth_len;
-
-        /* Truncate MACs in NTPv4 packets to allow deterministic parsing
-           of extension fields (RFC 7822) */
-        if (version == 4 && mac_len > NTP_MAX_V4_MAC_LENGTH)
-          mac_len = NTP_MAX_V4_MAC_LENGTH;
-
-        length += mac_len;
+        length += sizeof (message.auth_keyid) + auth_len;
       } else if (auth_mode == AUTH_MSSNTP) {
         /* MS-SNTP packets are signed (asynchronously) by ntp_signd */
         return NSD_SignAndSendPacket(key_id, &message, where_to, from, length);
@@ -1055,10 +1106,16 @@ transmit_packet(NTP_Mode my_mode, /* The mode this machine wants to be */
                           &message.transmit_ts, &ts_fuzz);
     }
 
-    /* Avoid sending messages with non-zero transmit timestamp equal to the
-       receive timestamp to allow reliable detection of the interleaved mode */
-  } while (!UTI_CompareNtp64(&message.transmit_ts, &message.receive_ts) &&
-           !UTI_IsZeroNtp64(&message.transmit_ts));
+    /* Do not send a packet with a non-zero transmit timestamp which is
+       equal to any of the following timestamps:
+       - receive (to allow reliable detection of the interleaved mode)
+       - originate (to prevent the packet from being its own valid response
+                    in the symmetric mode)
+       - previous transmit (to invalidate responses to the previous packet)
+       (the precision must be at least -30 to prevent an infinite loop!) */
+  } while (!UTI_IsZeroNtp64(&message.transmit_ts) &&
+           UTI_IsEqualAnyNtp64(&message.transmit_ts, &message.receive_ts,
+                               &message.originate_ts, local_ntp_tx));
 
   ret = NIO_SendPacket(&message, where_to, from, length, local_tx != NULL);
 
@@ -1084,7 +1141,7 @@ transmit_timeout(void *arg)
 {
   NCR_Instance inst = (NCR_Instance) arg;
   NTP_Local_Address local_addr;
-  int interleaved, sent;
+  int interleaved, initial, sent;
 
   inst->tx_timeout_id = 0;
 
@@ -1093,17 +1150,23 @@ transmit_timeout(void *arg)
       /* With online burst switch to online before last packet */
       if (inst->burst_total_samples_to_go <= 1)
         inst->opmode = MD_ONLINE;
+      break;
     case MD_BURST_WAS_OFFLINE:
       if (inst->burst_total_samples_to_go <= 0)
         take_offline(inst);
       break;
+    case MD_ONLINE:
+      /* Start a new burst if the burst option is enabled and the average
+         polling interval including the burst will not fall below the
+         minimum polling interval */
+      if (inst->auto_burst && inst->local_poll > inst->minpoll)
+        NCR_InitiateSampleBurst(inst, BURST_GOOD_SAMPLES,
+                                MIN(1 << (inst->local_poll - inst->minpoll),
+                                    MAX_BURST_TOTAL_SAMPLES));
+      break;
     default:
       break;
   }
-
-  /* With auto_offline take the source offline on 2nd missed reply */
-  if (inst->auto_offline && inst->tx_count >= 2)
-    NCR_TakeSourceOffline(inst);
 
   if (inst->opmode == MD_OFFLINE) {
     return;
@@ -1137,6 +1200,19 @@ transmit_timeout(void *arg)
                  (inst->mode == MODE_ACTIVE &&
                   inst->prev_tx_count == 1 && inst->tx_count == 0));
 
+  /* In symmetric mode, if no valid response was received since the previous
+     transmission, respond to the last received packet even if it failed some
+     specific NTP tests.  This is necessary for starting and restarting the
+     protocol, e.g. when a packet was lost. */
+  initial = inst->mode == MODE_ACTIVE && !inst->valid_rx &&
+            !UTI_IsZeroNtp64(&inst->init_remote_ntp_tx);
+
+  /* Prepare for the response */
+  inst->valid_rx = 0;
+  inst->updated_init_timestamps = 0;
+  if (initial)
+    inst->valid_timestamps = 0;
+
   /* Check whether we need to 'warm up' the link to the other end by
      sending an NTP exchange to ensure both ends' ARP caches are
      primed or whether we need to send two packets first to ensure a
@@ -1148,18 +1224,16 @@ transmit_timeout(void *arg)
     inst->presend_done--;
   }
 
-  sent = transmit_packet(inst->mode, interleaved, inst->local_poll,
-                         inst->version,
+  /* Send the request (which may also be a response in the symmetric mode) */
+  sent = transmit_packet(inst->mode, interleaved, inst->local_poll, inst->version,
                          inst->auth_mode, inst->auth_key_id,
-                         &inst->remote_ntp_rx, &inst->remote_ntp_tx,
-                         &inst->local_rx, &inst->local_tx,
-                         &inst->local_ntp_rx, &inst->local_ntp_tx,
-                         &inst->remote_addr,
-                         &local_addr);
+                         initial ? NULL : &inst->remote_ntp_rx,
+                         initial ? &inst->init_remote_ntp_tx : &inst->remote_ntp_tx,
+                         initial ? &inst->init_local_rx : &inst->local_rx,
+                         &inst->local_tx, &inst->local_ntp_rx, &inst->local_ntp_tx,
+                         &inst->remote_addr, &local_addr);
 
   ++inst->tx_count;
-  inst->valid_rx = 0;
-  inst->updated_timestamps = 0;
   if (sent)
     inst->report.total_tx_count++;
 
@@ -1177,6 +1251,10 @@ transmit_timeout(void *arg)
     SRC_UpdateReachability(inst->source, 0);
   }
 
+  /* With auto_offline take the source offline if sending failed */
+  if (!sent && inst->auto_offline)
+    NCR_SetConnectivity(inst, SRC_OFFLINE);
+
   switch (inst->opmode) {
     case MD_BURST_WAS_ONLINE:
       /* When not reachable, don't stop online burst until sending succeeds */
@@ -1186,6 +1264,8 @@ transmit_timeout(void *arg)
     case MD_BURST_WAS_OFFLINE:
       --inst->burst_total_samples_to_go;
       break;
+    case MD_OFFLINE:
+      return;
     default:
       break;
   }
@@ -1386,10 +1466,57 @@ check_delay_dev_ratio(NCR_Instance inst, SST_Stats stats,
 
 /* ================================================== */
 
+static void
+process_sample(NCR_Instance inst, NTP_Sample *sample)
+{
+  double estimated_offset, error_in_estimate, filtered_sample_ago;
+  NTP_Sample filtered_sample;
+  int filtered_samples;
+
+  /* Accumulate the sample to the median filter if it is enabled.  When the
+     filter produces a result, check if it is not too old, i.e. the filter did
+     not miss too many samples due to missing responses or failing tests. */
+  if (inst->filter) {
+    SPF_AccumulateSample(inst->filter, sample);
+
+    filtered_samples = SPF_GetNumberOfSamples(inst->filter);
+
+    if (!SPF_GetFilteredSample(inst->filter, &filtered_sample))
+      return;
+
+    filtered_sample_ago = UTI_DiffTimespecsToDouble(&sample->time, &filtered_sample.time);
+
+    if (filtered_sample_ago > SOURCE_REACH_BITS / 2 * filtered_samples *
+                              UTI_Log2ToDouble(inst->local_poll)) {
+      DEBUG_LOG("filtered sample dropped ago=%f poll=%d", filtered_sample_ago,
+                inst->local_poll);
+      return;
+    }
+
+    sample = &filtered_sample;
+  }
+
+  /* Get the estimated offset predicted from previous samples.  The
+     convention here is that positive means local clock FAST of
+     reference, i.e. backwards to the way that 'offset' is defined. */
+  estimated_offset = SST_PredictOffset(SRC_GetSourcestats(inst->source), &sample->time);
+
+  error_in_estimate = fabs(-sample->offset - estimated_offset);
+
+  SRC_AccumulateSample(inst->source, sample);
+  SRC_SelectSource(inst->source);
+
+  adjust_poll(inst, get_poll_adj(inst, error_in_estimate,
+                                 sample->peer_dispersion + 0.5 * sample->peer_delay));
+}
+
+/* ================================================== */
+
 static int
 receive_packet(NCR_Instance inst, NTP_Local_Address *local_addr,
                NTP_Local_Timestamp *rx_ts, NTP_Packet *message, int length)
 {
+  NTP_Sample sample;
   SST_Stats stats;
 
   int pkt_leap, pkt_version;
@@ -1397,24 +1524,6 @@ receive_packet(NCR_Instance inst, NTP_Local_Address *local_addr,
   double pkt_root_delay;
   double pkt_root_dispersion;
   AuthenticationMode pkt_auth_mode;
-
-  /* The local time to which the (offset, delay, dispersion) triple will
-     be taken to relate.  For client/server operation this is practically
-     the same as either the transmit or receive time.  The difference comes
-     in symmetric active mode, when the receive may come minutes after the
-     transmit, and this time will be midway between the two */
-  struct timespec sample_time;
-
-  /* The estimated offset in seconds, a positive value indicates that the local
-     clock is SLOW of the remote source and a negative value indicates that the
-     local clock is FAST of the remote source */
-  double offset;
-
-  /* The estimated peer delay, dispersion and distance */
-  double delay, dispersion, distance;
-
-  /* The total root delay and dispersion */
-  double root_delay, root_dispersion;
 
   /* The skew and estimated frequency offset relative to the remote source */
   double skew, source_freq_lo, source_freq_hi;
@@ -1430,18 +1539,10 @@ receive_packet(NCR_Instance inst, NTP_Local_Address *local_addr,
   /* Kiss-o'-Death codes */
   int kod_rate;
 
-  /* The estimated offset predicted from previous samples.  The
-     convention here is that positive means local clock FAST of
-     reference, i.e. backwards to the way that 'offset' is defined. */
-  double estimated_offset;
-
-  /* The absolute difference between the offset estimate and
-     measurement in seconds */
-  double error_in_estimate;
-
   NTP_Local_Timestamp local_receive, local_transmit;
   double remote_interval, local_interval, response_time;
   double delay_time, precision;
+  int updated_timestamps;
 
   /* ==================== */
 
@@ -1459,7 +1560,8 @@ receive_packet(NCR_Instance inst, NTP_Local_Address *local_addr,
      The test values are 1 when passed and 0 when failed. */
   
   /* Test 1 checks for duplicate packet */
-  test1 = !!UTI_CompareNtp64(&message->transmit_ts, &inst->remote_ntp_tx);
+  test1 = UTI_CompareNtp64(&message->receive_ts, &inst->remote_ntp_rx) ||
+          UTI_CompareNtp64(&message->transmit_ts, &inst->remote_ntp_tx);
 
   /* Test 2 checks for bogus packet in the basic and interleaved modes.  This
      ensures the source is responding to the latest packet we sent to it. */
@@ -1555,23 +1657,23 @@ receive_packet(NCR_Instance inst, NTP_Local_Address *local_addr,
     precision = LCL_GetSysPrecisionAsQuantum() + UTI_Log2ToDouble(message->precision);
 
     /* Calculate delay */
-    delay = fabs(local_interval - remote_interval);
-    if (delay < precision)
-      delay = precision;
+    sample.peer_delay = fabs(local_interval - remote_interval);
+    if (sample.peer_delay < precision)
+      sample.peer_delay = precision;
     
     /* Calculate offset.  Following the NTP definition, this is negative
        if we are fast of the remote source. */
-    offset = UTI_DiffTimespecsToDouble(&remote_average, &local_average);
+    sample.offset = UTI_DiffTimespecsToDouble(&remote_average, &local_average);
 
     /* Apply configured correction */
-    offset += inst->offset_correction;
+    sample.offset += inst->offset_correction;
 
     /* We treat the time of the sample as being midway through the local
        measurement period.  An analysis assuming constant relative
        frequency and zero network delay shows this is the only possible
        choice to estimate the frequency difference correctly for every
        sample pair. */
-    sample_time = local_average;
+    sample.time = local_average;
     
     SST_GetFrequencyRange(stats, &source_freq_lo, &source_freq_hi);
 
@@ -1579,8 +1681,8 @@ receive_packet(NCR_Instance inst, NTP_Local_Address *local_addr,
     skew = (source_freq_hi - source_freq_lo) / 2.0;
     
     /* and then calculate peer dispersion */
-    dispersion = MAX(precision, MAX(local_transmit.err, local_receive.err)) +
-                 skew * fabs(local_interval);
+    sample.peer_dispersion = MAX(precision, MAX(local_transmit.err, local_receive.err)) +
+                             skew * fabs(local_interval);
     
     /* If the source is an active peer, this is the minimum assumed interval
        between previous two transmissions (if not constrained by minpoll) */
@@ -1594,10 +1696,11 @@ receive_packet(NCR_Instance inst, NTP_Local_Address *local_addr,
        processing time is sane, and in interleaved symmetric mode that the
        measured delay and intervals between remote timestamps don't indicate
        a missed response */
-    testA = delay - dispersion <= inst->max_delay && precision <= inst->max_delay &&
+    testA = sample.peer_delay - sample.peer_dispersion <= inst->max_delay &&
+            precision <= inst->max_delay &&
             !(inst->mode == MODE_CLIENT && response_time > MAX_SERVER_INTERVAL) &&
             !(inst->mode == MODE_ACTIVE && interleaved_packet &&
-              (delay > 0.5 * prev_remote_poll_interval ||
+              (sample.peer_delay > 0.5 * prev_remote_poll_interval ||
                UTI_CompareNtp64(&message->receive_ts, &message->transmit_ts) <= 0 ||
                (inst->remote_poll <= inst->prev_local_poll &&
                 UTI_DiffTimespecsToDouble(&remote_transmit, &prev_remote_transmit) >
@@ -1606,14 +1709,14 @@ receive_packet(NCR_Instance inst, NTP_Local_Address *local_addr,
     /* Test B requires in client mode that the ratio of the round trip delay
        to the minimum one currently in the stats data register is less than an
        administrator-defined value */
-    testB = check_delay_ratio(inst, stats, &sample_time, delay);
+    testB = check_delay_ratio(inst, stats, &sample.time, sample.peer_delay);
 
     /* Test C requires that the ratio of the increase in delay from the minimum
        one in the stats data register to the standard deviation of the offsets
        in the register is less than an administrator-defined value or the
        difference between measured offset and predicted offset is larger than
        the increase in delay */
-    testC = check_delay_dev_ratio(inst, stats, &sample_time, offset, delay);
+    testC = check_delay_dev_ratio(inst, stats, &sample.time, sample.offset, sample.peer_delay);
 
     /* Test D requires that the remote peer is not synchronised to us to
        prevent a synchronisation loop */
@@ -1621,8 +1724,8 @@ receive_packet(NCR_Instance inst, NTP_Local_Address *local_addr,
             pkt_refid != UTI_IPToRefid(&local_addr->ip_addr);
   } else {
     remote_interval = local_interval = response_time = 0.0;
-    offset = delay = dispersion = 0.0;
-    sample_time = rx_ts->ts;
+    sample.offset = sample.peer_delay = sample.peer_dispersion = 0.0;
+    sample.time = rx_ts->ts;
     local_receive = *rx_ts;
     local_transmit = inst->local_tx;
     testA = testB = testC = testD = 0;
@@ -1632,9 +1735,10 @@ receive_packet(NCR_Instance inst, NTP_Local_Address *local_addr,
      the additional tests passed */
   good_packet = testA && testB && testC && testD;
 
-  root_delay = pkt_root_delay + delay;
-  root_dispersion = pkt_root_dispersion + dispersion;
-  distance = dispersion + 0.5 * delay;
+  sample.root_delay = pkt_root_delay + sample.peer_delay;
+  sample.root_dispersion = pkt_root_dispersion + sample.peer_dispersion;
+  sample.stratum = MAX(message->stratum, inst->min_stratum);
+  sample.leap = (NTP_Leap)pkt_leap;
 
   /* Update the NTP timestamps.  If it's a valid packet from a synchronised
      source, the timestamps may be used later when processing a packet in the
@@ -1644,21 +1748,34 @@ receive_packet(NCR_Instance inst, NTP_Local_Address *local_addr,
      The authentication test (test5) is required to prevent DoS attacks using
      unauthenticated packets on authenticated symmetric associations. */
   if ((inst->mode == MODE_CLIENT && valid_packet && !inst->valid_rx) ||
-      (inst->mode == MODE_ACTIVE && (valid_packet || !inst->valid_rx) &&
-       test5 && !UTI_IsZeroNtp64(&message->transmit_ts) &&
-       (!inst->updated_timestamps || (valid_packet && !inst->valid_rx) ||
+      (inst->mode == MODE_ACTIVE && valid_packet &&
+       (!inst->valid_rx ||
         UTI_CompareNtp64(&inst->remote_ntp_tx, &message->transmit_ts) < 0))) {
     inst->remote_ntp_rx = message->receive_ts;
     inst->remote_ntp_tx = message->transmit_ts;
     inst->local_rx = *rx_ts;
     inst->valid_timestamps = synced_packet;
-    inst->updated_timestamps = 1;
+
+    UTI_ZeroNtp64(&inst->init_remote_ntp_tx);
+    zero_local_timestamp(&inst->init_local_rx);
+    inst->updated_init_timestamps = 0;
+    updated_timestamps = 2;
 
     /* Don't use the same set of timestamps for the next sample */
     if (interleaved_packet)
       inst->prev_local_tx = inst->local_tx;
     else
       zero_local_timestamp(&inst->prev_local_tx);
+  } else if (inst->mode == MODE_ACTIVE &&
+             test1 && !UTI_IsZeroNtp64(&message->transmit_ts) && test5 &&
+             (!inst->updated_init_timestamps ||
+              UTI_CompareNtp64(&inst->init_remote_ntp_tx, &message->transmit_ts) < 0)) {
+    inst->init_remote_ntp_tx = message->transmit_ts;
+    inst->init_local_rx = *rx_ts;
+    inst->updated_init_timestamps = 1;
+    updated_timestamps = 1;
+  } else {
+    updated_timestamps = 0;
   }
 
   /* Accept at most one response per request.  The NTP specification recommends
@@ -1690,14 +1807,16 @@ receive_packet(NCR_Instance inst, NTP_Local_Address *local_addr,
             UTI_Ntp64ToString(&message->receive_ts),
             UTI_Ntp64ToString(&message->transmit_ts));
   DEBUG_LOG("offset=%.9f delay=%.9f dispersion=%f root_delay=%f root_dispersion=%f",
-            offset, delay, dispersion, root_delay, root_dispersion);
+            sample.offset, sample.peer_delay, sample.peer_dispersion,
+            sample.root_delay, sample.root_dispersion);
   DEBUG_LOG("remote_interval=%.9f local_interval=%.9f response_time=%.9f txs=%c rxs=%c",
             remote_interval, local_interval, response_time,
             tss_chars[local_transmit.source], tss_chars[local_receive.source]);
-  DEBUG_LOG("test123=%d%d%d test567=%d%d%d testABCD=%d%d%d%d kod_rate=%d interleaved=%d presend=%d valid=%d good=%d updated=%d",
+  DEBUG_LOG("test123=%d%d%d test567=%d%d%d testABCD=%d%d%d%d kod_rate=%d interleaved=%d"
+            " presend=%d valid=%d good=%d updated=%d",
             test1, test2, test3, test5, test6, test7, testA, testB, testC, testD,
             kod_rate, interleaved_packet, inst->presend_done, valid_packet, good_packet,
-            !UTI_CompareTimespecs(&inst->local_rx.ts, &rx_ts->ts));
+            updated_timestamps);
 
   if (valid_packet) {
     inst->remote_poll = message->poll;
@@ -1711,26 +1830,8 @@ receive_packet(NCR_Instance inst, NTP_Local_Address *local_addr,
     SRC_UpdateReachability(inst->source, synced_packet);
 
     if (good_packet) {
-      /* Do this before we accumulate a new sample into the stats registers, obviously */
-      estimated_offset = SST_PredictOffset(stats, &sample_time);
-
-      SRC_AccumulateSample(inst->source,
-                           &sample_time,
-                           offset, delay, dispersion,
-                           root_delay, root_dispersion,
-                           MAX(message->stratum, inst->min_stratum),
-                           (NTP_Leap) pkt_leap);
-
-      SRC_SelectSource(inst->source);
-
-      /* Now examine the registers.  First though, if the prediction is
-         not even within +/- the peer distance of the peer, we are clearly
-         not tracking the peer at all well, so we back off the sampling
-         rate depending on just how bad the situation is. */
-      error_in_estimate = fabs(-offset - estimated_offset);
-
-      /* Now update the polling interval */
-      adjust_poll(inst, get_poll_adj(inst, error_in_estimate, distance));
+      /* Adjust the polling interval, accumulate the sample, etc. */
+      process_sample(inst, &sample);
 
       /* If we're in burst mode, check whether the burst is completed and
          revert to the previous mode */
@@ -1797,9 +1898,9 @@ receive_packet(NCR_Instance inst, NTP_Local_Address *local_addr,
     inst->report.root_dispersion = pkt_root_dispersion;
     inst->report.ref_id = pkt_refid;
     UTI_Ntp64ToTimespec(&message->reference_ts, &inst->report.ref_time);
-    inst->report.offset = offset;
-    inst->report.peer_delay = delay;
-    inst->report.peer_dispersion = dispersion;
+    inst->report.offset = sample.offset;
+    inst->report.peer_delay = sample.peer_delay;
+    inst->report.peer_dispersion = sample.peer_dispersion;
     inst->report.response_time = response_time;
     inst->report.jitter_asymmetry = SST_GetJitterAsymmetry(stats);
     inst->report.tests = ((((((((test1 << 1 | test2) << 1 | test3) << 1 |
@@ -1816,14 +1917,14 @@ receive_packet(NCR_Instance inst, NTP_Local_Address *local_addr,
   /* Do measurement logging */
   if (logfileid != -1 && (log_raw_measurements || synced_packet)) {
     LOG_FileWrite(logfileid, "%s %-15s %1c %2d %1d%1d%1d %1d%1d%1d %1d%1d%1d%d  %2d %2d %4.2f %10.3e %10.3e %10.3e %10.3e %10.3e %08"PRIX32" %1d%1c %1c %1c",
-            UTI_TimeToLogForm(sample_time.tv_sec),
+            UTI_TimeToLogForm(sample.time.tv_sec),
             UTI_IPToString(&inst->remote_addr.ip_addr),
             leap_chars[pkt_leap],
             message->stratum,
             test1, test2, test3, test5, test6, test7, testA, testB, testC, testD,
             inst->local_poll, message->poll,
             inst->poll_score,
-            offset, delay, dispersion,
+            sample.offset, sample.peer_delay, sample.peer_dispersion,
             pkt_root_delay, pkt_root_dispersion, pkt_refid,
             NTP_LVM_TO_MODE(message->lvm), interleaved_packet ? 'I' : 'B',
             tss_chars[local_transmit.source],
@@ -1972,7 +2073,7 @@ NCR_ProcessRxKnown(NCR_Instance inst, NTP_Local_Address *local_addr,
     /* It's not a reply to our request, don't return success */
     return 0;
   } else {
-    DEBUG_LOG("NTP packet discarded pkt_mode=%d our_mode=%d", pkt_mode, inst->mode);
+    DEBUG_LOG("NTP packet discarded pkt_mode=%d our_mode=%u", pkt_mode, inst->mode);
     return 0;
   }
 }
@@ -1988,7 +2089,7 @@ NCR_ProcessRxUnknown(NTP_Remote_Address *remote_addr, NTP_Local_Address *local_a
   NTP_Mode pkt_mode, my_mode;
   NTP_int64 *local_ntp_rx, *local_ntp_tx;
   NTP_Local_Timestamp local_tx, *tx_ts;
-  int valid_auth, log_index, interleaved, poll;
+  int pkt_version, valid_auth, log_index, interleaved, poll;
   AuthenticationMode auth_mode;
   uint32_t key_id;
 
@@ -2009,6 +2110,7 @@ NCR_ProcessRxUnknown(NTP_Remote_Address *remote_addr, NTP_Local_Address *local_a
   }
 
   pkt_mode = NTP_LVM_TO_MODE(message->lvm);
+  pkt_version = NTP_LVM_TO_VERSION(message->lvm);
 
   switch (pkt_mode) {
     case MODE_ACTIVE:
@@ -2019,9 +2121,18 @@ NCR_ProcessRxUnknown(NTP_Remote_Address *remote_addr, NTP_Local_Address *local_a
       /* Reply with server packet */
       my_mode = MODE_SERVER;
       break;
+    case MODE_UNDEFINED:
+      /* Check if it is an NTPv1 client request (NTPv1 packets have a reserved
+         field instead of the mode field and the actual mode is determined from
+         the port numbers).  Don't ever respond with a mode 0 packet! */
+      if (pkt_version == 1 && remote_addr->port != NTP_PORT) {
+        my_mode = MODE_SERVER;
+        break;
+      }
+      /* Fall through */
     default:
       /* Discard */
-      DEBUG_LOG("NTP packet discarded pkt_mode=%d", pkt_mode);
+      DEBUG_LOG("NTP packet discarded pkt_mode=%u", pkt_mode);
       return;
   }
 
@@ -2047,7 +2158,7 @@ NCR_ProcessRxUnknown(NTP_Remote_Address *remote_addr, NTP_Local_Address *local_a
         break;
       default:
         /* Discard packets in other modes */
-        DEBUG_LOG("NTP packet discarded auth_mode=%d", auth_mode);
+        DEBUG_LOG("NTP packet discarded auth_mode=%u", auth_mode);
         return;
     }
   }
@@ -2064,7 +2175,8 @@ NCR_ProcessRxUnknown(NTP_Remote_Address *remote_addr, NTP_Local_Address *local_a
   if (log_index >= 0) {
     CLG_GetNtpTimestamps(log_index, &local_ntp_rx, &local_ntp_tx);
     interleaved = !UTI_IsZeroNtp64(local_ntp_rx) &&
-                  !UTI_CompareNtp64(&message->originate_ts, local_ntp_rx);
+                  !UTI_CompareNtp64(&message->originate_ts, local_ntp_rx) &&
+                  UTI_CompareNtp64(&message->receive_ts, &message->transmit_ts);
 
     if (interleaved) {
       UTI_Ntp64ToTimespec(local_ntp_tx, &local_tx.ts);
@@ -2081,7 +2193,7 @@ NCR_ProcessRxUnknown(NTP_Remote_Address *remote_addr, NTP_Local_Address *local_a
   poll = MAX(poll, message->poll);
 
   /* Send a reply */
-  transmit_packet(my_mode, interleaved, poll, NTP_LVM_TO_VERSION(message->lvm),
+  transmit_packet(my_mode, interleaved, poll, pkt_version,
                   auth_mode, key_id, &message->receive_ts, &message->transmit_ts,
                   rx_ts, tx_ts, local_ntp_rx, NULL, remote_addr, local_addr);
 
@@ -2189,53 +2301,70 @@ NCR_SlewTimes(NCR_Instance inst, struct timespec *when, double dfreq, double dof
   if (!UTI_IsZeroTimespec(&inst->prev_local_tx.ts))
     UTI_AdjustTimespec(&inst->prev_local_tx.ts, when, &inst->prev_local_tx.ts, &delta, dfreq,
                        doffset);
+  if (!UTI_IsZeroTimespec(&inst->init_local_rx.ts))
+    UTI_AdjustTimespec(&inst->init_local_rx.ts, when, &inst->init_local_rx.ts, &delta, dfreq,
+                       doffset);
+
+  if (inst->filter)
+    SPF_SlewSamples(inst->filter, when, dfreq, doffset);
 }
 
 /* ================================================== */
 
 void
-NCR_TakeSourceOnline(NCR_Instance inst)
+NCR_SetConnectivity(NCR_Instance inst, SRC_Connectivity connectivity)
 {
-  switch (inst->opmode) {
-    case MD_ONLINE:
-      /* Nothing to do */
+  char *s;
+
+  s = UTI_IPToString(&inst->remote_addr.ip_addr);
+
+  if (connectivity == SRC_MAYBE_ONLINE)
+    connectivity = NIO_IsServerConnectable(&inst->remote_addr) ? SRC_ONLINE : SRC_OFFLINE;
+
+  switch (connectivity) {
+    case SRC_ONLINE:
+      switch (inst->opmode) {
+        case MD_ONLINE:
+          /* Nothing to do */
+          break;
+        case MD_OFFLINE:
+          LOG(LOGS_INFO, "Source %s online", s);
+          inst->opmode = MD_ONLINE;
+          NCR_ResetInstance(inst);
+          start_initial_timeout(inst);
+          break;
+        case MD_BURST_WAS_ONLINE:
+          /* Will revert */
+          break;
+        case MD_BURST_WAS_OFFLINE:
+          inst->opmode = MD_BURST_WAS_ONLINE;
+          LOG(LOGS_INFO, "Source %s online", s);
+          break;
+        default:
+          assert(0);
+      }
       break;
-    case MD_OFFLINE:
-      LOG(LOGS_INFO, "Source %s online", UTI_IPToString(&inst->remote_addr.ip_addr));
-      inst->opmode = MD_ONLINE;
-      NCR_ResetInstance(inst);
-      start_initial_timeout(inst);
+    case SRC_OFFLINE:
+      switch (inst->opmode) {
+        case MD_ONLINE:
+          LOG(LOGS_INFO, "Source %s offline", s);
+          take_offline(inst);
+          break;
+        case MD_OFFLINE:
+          break;
+        case MD_BURST_WAS_ONLINE:
+          inst->opmode = MD_BURST_WAS_OFFLINE;
+          LOG(LOGS_INFO, "Source %s offline", s);
+          break;
+        case MD_BURST_WAS_OFFLINE:
+          break;
+        default:
+          assert(0);
+      }
       break;
-    case MD_BURST_WAS_ONLINE:
-      /* Will revert */
-      break;
-    case MD_BURST_WAS_OFFLINE:
-      inst->opmode = MD_BURST_WAS_ONLINE;
-      LOG(LOGS_INFO, "Source %s online", UTI_IPToString(&inst->remote_addr.ip_addr));
-      break;
+    default:
+      assert(0);
   }
-}
-
-/* ================================================== */
-
-void
-NCR_TakeSourceOffline(NCR_Instance inst)
-{
-  switch (inst->opmode) {
-    case MD_ONLINE:
-      LOG(LOGS_INFO, "Source %s offline", UTI_IPToString(&inst->remote_addr.ip_addr));
-      take_offline(inst);
-      break;
-    case MD_OFFLINE:
-      break;
-    case MD_BURST_WAS_ONLINE:
-      inst->opmode = MD_BURST_WAS_OFFLINE;
-      LOG(LOGS_INFO, "Source %s offline", UTI_IPToString(&inst->remote_addr.ip_addr));
-      break;
-    case MD_BURST_WAS_OFFLINE:
-      break;
-  }
-
 }
 
 /* ================================================== */
@@ -2243,7 +2372,7 @@ NCR_TakeSourceOffline(NCR_Instance inst)
 void
 NCR_ModifyMinpoll(NCR_Instance inst, int new_minpoll)
 {
-  if (new_minpoll < MIN_MINPOLL || new_minpoll > MAX_POLL)
+  if (new_minpoll < MIN_POLL || new_minpoll > MAX_POLL)
     return;
   inst->minpoll = new_minpoll;
   LOG(LOGS_INFO, "Source %s new minpoll %d", UTI_IPToString(&inst->remote_addr.ip_addr), new_minpoll);
@@ -2256,7 +2385,7 @@ NCR_ModifyMinpoll(NCR_Instance inst, int new_minpoll)
 void
 NCR_ModifyMaxpoll(NCR_Instance inst, int new_maxpoll)
 {
-  if (new_maxpoll < MIN_MAXPOLL || new_maxpoll > MAX_POLL)
+  if (new_maxpoll < MIN_POLL || new_maxpoll > MAX_POLL)
     return;
   inst->maxpoll = new_maxpoll;
   LOG(LOGS_INFO, "Source %s new maxpoll %d", UTI_IPToString(&inst->remote_addr.ip_addr), new_maxpoll);
@@ -2270,7 +2399,7 @@ void
 NCR_ModifyMaxdelay(NCR_Instance inst, double new_max_delay)
 {
   inst->max_delay = CLAMP(0.0, new_max_delay, MAX_MAXDELAY);
-  LOG(LOGS_INFO, "Source %s new max delay %f",
+  LOG(LOGS_INFO, "Source %s new maxdelay %f",
       UTI_IPToString(&inst->remote_addr.ip_addr), inst->max_delay);
 }
 
@@ -2280,7 +2409,7 @@ void
 NCR_ModifyMaxdelayratio(NCR_Instance inst, double new_max_delay_ratio)
 {
   inst->max_delay_ratio = CLAMP(0.0, new_max_delay_ratio, MAX_MAXDELAYRATIO);
-  LOG(LOGS_INFO, "Source %s new max delay ratio %f",
+  LOG(LOGS_INFO, "Source %s new maxdelayratio %f",
       UTI_IPToString(&inst->remote_addr.ip_addr), inst->max_delay_ratio);
 }
 
@@ -2290,7 +2419,7 @@ void
 NCR_ModifyMaxdelaydevratio(NCR_Instance inst, double new_max_delay_dev_ratio)
 {
   inst->max_delay_dev_ratio = CLAMP(0.0, new_max_delay_dev_ratio, MAX_MAXDELAYDEVRATIO);
-  LOG(LOGS_INFO, "Source %s new max delay dev ratio %f",
+  LOG(LOGS_INFO, "Source %s new maxdelaydevratio %f",
       UTI_IPToString(&inst->remote_addr.ip_addr), inst->max_delay_dev_ratio);
 }
 

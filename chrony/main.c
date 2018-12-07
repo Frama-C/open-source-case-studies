@@ -4,7 +4,7 @@
  **********************************************************************
  * Copyright (C) Richard P. Curnow  1997-2003
  * Copyright (C) John G. Hasler  2009
- * Copyright (C) Miroslav Lichvar  2012-2017
+ * Copyright (C) Miroslav Lichvar  2012-2018
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
@@ -292,6 +292,8 @@ write_pidfile(void)
 
 /* ================================================== */
 
+#define DEV_NULL "/dev/null"
+
 static void
 go_daemon(void)
 {
@@ -352,6 +354,13 @@ go_daemon(void)
       }
 
       LOG_SetParentFd(pipefd[1]);
+
+      /* Open /dev/null as new stdin/out/err */
+      errno = 0;
+      if (open(DEV_NULL, O_RDONLY) != STDIN_FILENO ||
+          open(DEV_NULL, O_WRONLY) != STDOUT_FILENO ||
+          open(DEV_NULL, O_RDWR) != STDERR_FILENO)
+        LOG_FATAL("Could not open %s : %s", DEV_NULL, strerror(errno));
     }
   }
 }
@@ -521,7 +530,17 @@ int main
   /* Check whether another chronyd may already be running */
   check_pidfile();
 
-  /* Write our pidfile to prevent other chronyds running */
+  if (!user)
+    user = CNF_GetUser();
+
+  pw = getpwnam(user);
+  if (!pw)
+    LOG_FATAL("Could not get user/group ID of %s", user);
+
+  /* Create directories for sockets, log files, and dump files */
+  CNF_CreateDirs(pw->pw_uid, pw->pw_gid);
+
+  /* Write our pidfile to prevent other instances from running */
   write_pidfile();
 
   PRV_Initialise();
@@ -551,16 +570,6 @@ int main
     SYS_LockMemory();
   }
 
-  if (!user) {
-    user = CNF_GetUser();
-  }
-
-  if ((pw = getpwnam(user)) == NULL)
-    LOG_FATAL("Could not get %s uid/gid", user);
-
-  /* Create all directories before dropping root */
-  CNF_CreateDirs(pw->pw_uid, pw->pw_gid);
-
   /* Drop root privileges if the specified user has a non-zero UID */
   if (!geteuid() && (pw->pw_uid || pw->pw_gid))
     SYS_DropRoot(pw->pw_uid, pw->pw_gid);
@@ -577,7 +586,7 @@ int main
   /* From now on, it is safe to do finalisation on exit */
   initialised = 1;
 
-  UTI_SetQuitSignalsHandler(signal_cleanup);
+  UTI_SetQuitSignalsHandler(signal_cleanup, 1);
 
   CAM_OpenUnixSocket();
 

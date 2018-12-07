@@ -3,7 +3,7 @@
 
  **********************************************************************
  * Copyright (C) Richard P. Curnow  1997-2003
- * Copyright (C) Miroslav Lichvar  2009-2016
+ * Copyright (C) Miroslav Lichvar  2009-2016, 2018
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
@@ -138,6 +138,8 @@ static const char permissions[] = {
   PERMIT_AUTH, /* ADD_PEER2 */
   PERMIT_AUTH, /* ADD_SERVER3 */
   PERMIT_AUTH, /* ADD_PEER3 */
+  PERMIT_AUTH, /* SHUTDOWN */
+  PERMIT_AUTH, /* ONOFFLINE */
 };
 
 /* ================================================== */
@@ -278,7 +280,6 @@ do_size_checks(void)
   for (i = 1; i < N_REPLY_TYPES; i++) {
     reply.reply = htons(i);
     reply.status = STT_SUCCESS;
-    reply.data.manual_list.n_samples = htonl(MAX_MANUAL_LIST_SAMPLES);
     reply_length = PKL_ReplyLength(&reply);
     if ((reply_length && reply_length < offsetof(CMD_Reply, data)) ||
         reply_length > sizeof (CMD_Reply))
@@ -424,7 +425,7 @@ handle_online(CMD_Request *rx_message, CMD_Reply *tx_message)
 
   UTI_IPNetworkToHost(&rx_message->data.online.mask, &mask);
   UTI_IPNetworkToHost(&rx_message->data.online.address, &address);
-  if (!NSR_TakeSourcesOnline(&mask, &address))
+  if (!NSR_SetConnectivity(&mask, &address, SRC_ONLINE))
     tx_message->status = htons(STT_NOSUCHSOURCE);
 }
 
@@ -437,8 +438,20 @@ handle_offline(CMD_Request *rx_message, CMD_Reply *tx_message)
 
   UTI_IPNetworkToHost(&rx_message->data.offline.mask, &mask);
   UTI_IPNetworkToHost(&rx_message->data.offline.address, &address);
-  if (!NSR_TakeSourcesOffline(&mask, &address))
+  if (!NSR_SetConnectivity(&mask, &address, SRC_OFFLINE))
     tx_message->status = htons(STT_NOSUCHSOURCE);
+}
+
+/* ================================================== */
+
+static void
+handle_onoffline(CMD_Request *rx_message, CMD_Reply *tx_message)
+{
+  IPAddr address, mask;
+
+  address.family = mask.family = IPADDR_UNSPEC;
+  if (!NSR_SetConnectivity(&mask, &address, SRC_MAYBE_ONLINE))
+    ;
 }
 
 /* ================================================== */
@@ -787,6 +800,7 @@ handle_add_source(NTP_Source_Type type, CMD_Request *rx_message, CMD_Reply *tx_m
   params.max_sources = ntohl(rx_message->data.ntp_source.max_sources);
   params.min_samples = ntohl(rx_message->data.ntp_source.min_samples);
   params.max_samples = ntohl(rx_message->data.ntp_source.max_samples);
+  params.filter_length = ntohl(rx_message->data.ntp_source.filter_length);
   params.authkey = ntohl(rx_message->data.ntp_source.authkey);
   params.max_delay = UTI_FloatNetworkToHost(rx_message->data.ntp_source.max_delay);
   params.max_delay_ratio =
@@ -797,10 +811,12 @@ handle_add_source(NTP_Source_Type type, CMD_Request *rx_message, CMD_Reply *tx_m
   params.asymmetry = UTI_FloatNetworkToHost(rx_message->data.ntp_source.asymmetry);
   params.offset = UTI_FloatNetworkToHost(rx_message->data.ntp_source.offset);
 
-  params.online  = ntohl(rx_message->data.ntp_source.flags) & REQ_ADDSRC_ONLINE ? 1 : 0;
+  params.connectivity = ntohl(rx_message->data.ntp_source.flags) & REQ_ADDSRC_ONLINE ?
+                        SRC_ONLINE : SRC_OFFLINE;
   params.auto_offline = ntohl(rx_message->data.ntp_source.flags) & REQ_ADDSRC_AUTOOFFLINE ? 1 : 0;
   params.iburst = ntohl(rx_message->data.ntp_source.flags) & REQ_ADDSRC_IBURST ? 1 : 0;
   params.interleaved = ntohl(rx_message->data.ntp_source.flags) & REQ_ADDSRC_INTERLEAVED ? 1 : 0;
+  params.burst = ntohl(rx_message->data.ntp_source.flags) & REQ_ADDSRC_BURST ? 1 : 0;
   params.sel_options =
     (ntohl(rx_message->data.ntp_source.flags) & REQ_ADDSRC_PREFER ? SRC_SELECT_PREFER : 0) |
     (ntohl(rx_message->data.ntp_source.flags) & REQ_ADDSRC_NOSELECT ? SRC_SELECT_NOSELECT : 0) |
@@ -1068,9 +1084,6 @@ handle_client_accesses_by_index(CMD_Request *rx_message, CMD_Reply *tx_message)
   tx_message->reply = htons(RPY_CLIENT_ACCESSES_BY_INDEX2);
   tx_message->data.client_accesses_by_index.n_indices = htonl(n_indices);
 
-  memset(tx_message->data.client_accesses_by_index.clients, 0,
-         sizeof (tx_message->data.client_accesses_by_index.clients));
-
   for (i = req_first_index, j = 0; i < (uint32_t)n_indices && j < req_n_clients; i++) {
     if (!CLG_GetClientAccessReportByIndex(i, &report, &now))
       continue;
@@ -1103,10 +1116,11 @@ handle_manual_list(CMD_Request *rx_message, CMD_Reply *tx_message)
   RPY_ManualListSample *sample;
   RPT_ManualSamplesReport report[MAX_MANUAL_LIST_SAMPLES];
 
-  tx_message->reply = htons(RPY_MANUAL_LIST);
+  tx_message->reply = htons(RPY_MANUAL_LIST2);
   
   MNL_ReportSamples(report, MAX_MANUAL_LIST_SAMPLES, &n_samples);
   tx_message->data.manual_list.n_samples = htonl(n_samples);
+
   for (i=0; i<n_samples; i++) {
     sample = &tx_message->data.manual_list.samples[i];
     UTI_TimespecHostToNetwork(&report[i].when, &sample->when);
@@ -1239,6 +1253,15 @@ handle_ntp_data(CMD_Request *rx_message, CMD_Reply *tx_message)
 }
 
 /* ================================================== */
+
+static void
+handle_shutdown(CMD_Request *rx_message, CMD_Reply *tx_message)
+{
+  LOG(LOGS_INFO, "Received shutdown command");
+  SCH_QuitProgram();
+}
+
+/* ================================================== */
 /* Read a packet and process it */
 
 static void
@@ -1329,19 +1352,14 @@ read_from_cmd_socket(int sock_fd, int event, void *anything)
   expected_length = PKL_CommandLength(&rx_message);
   rx_command = ntohs(rx_message.command);
 
+  memset(&tx_message, 0, sizeof (tx_message));
+
   tx_message.version = PROTO_VERSION_NUMBER;
   tx_message.pkt_type = PKT_TYPE_CMD_REPLY;
-  tx_message.res1 = 0;
-  tx_message.res2 = 0;
   tx_message.command = rx_message.command;
   tx_message.reply = htons(RPY_NULL);
   tx_message.status = htons(STT_SUCCESS);
-  tx_message.pad1 = 0;
-  tx_message.pad2 = 0;
-  tx_message.pad3 = 0;
   tx_message.sequence = rx_message.sequence;
-  tx_message.pad4 = 0;
-  tx_message.pad5 = 0;
 
   if (rx_message.version != PROTO_VERSION_NUMBER) {
     DEBUG_LOG("Command packet has invalid version (%d != %d)",
@@ -1627,6 +1645,14 @@ read_from_cmd_socket(int sock_fd, int event, void *anything)
 
         case REQ_NTP_DATA:
           handle_ntp_data(&rx_message, &tx_message);
+          break;
+
+        case REQ_SHUTDOWN:
+          handle_shutdown(&rx_message, &tx_message);
+          break;
+
+        case REQ_ONOFFLINE:
+          handle_onoffline(&rx_message, &tx_message);
           break;
 
         default:

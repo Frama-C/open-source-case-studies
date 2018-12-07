@@ -16,6 +16,7 @@ typedef unsigned char u8;
 void hexdump(char * data, int len) 
 {
 	int i;
+	//@ loop unroll 105;
 	for (i = 0; i < len; i++) {
 		printf("%02X", (u8)data[i]);
 	}

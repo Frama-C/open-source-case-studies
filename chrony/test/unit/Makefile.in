@@ -11,13 +11,15 @@ SHARED_OBJS = test.o
 TEST_OBJS := $(sort $(patsubst %.c,%.o,$(wildcard *.c)))
 TESTS := $(patsubst %.o,%.test,$(filter-out $(SHARED_OBJS),$(TEST_OBJS)))
 
-FILTER_OBJS = %/main.o %/client.o %/getdate.o
-CHRONY_OBJS := $(filter-out $(FILTER_OBJS),$(wildcard $(CHRONY_SRCDIR)/*.o))
+CHRONYD_OBJS := $(patsubst %.o,$(CHRONY_SRCDIR)/%.o,$(filter-out main.o,\
+		  $(filter %.o,$(shell $(MAKE) -f $(CHRONY_SRCDIR)/Makefile print-chronyd-objects))))
 
 all: $(TESTS)
 
-%.test: %.o $(SHARED_OBJS)
-	$(CC) $(CFLAGS) -o $@ $^ $(CHRONY_OBJS:%/$*.o=) $(LDFLAGS)
+$(CHRONYD_OBJS): ;
+
+%.test: %.o $(SHARED_OBJS) $(CHRONYD_OBJS)
+	$(CC) $(CFLAGS) -o $@ $(filter-out $(CHRONY_SRCDIR)/$<,$^) $(LDFLAGS)
 
 %.o: %.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $<
@@ -30,7 +32,7 @@ check: $(TESTS)
 	exit $$ret
 
 clean:
-	rm -f *.o $(TESTS)
+	rm -f *.o *.gcda *.gcno core.* $(TESTS)
 	rm -rf .deps
 
 distclean: clean

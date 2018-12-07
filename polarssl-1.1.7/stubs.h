@@ -1,13 +1,13 @@
-#include "polarssl/aes.h"
-#include "polarssl/ssl.h"
-#include "polarssl/timing.h"
-#include "polarssl/x509.h"
-#include "polarssl/sha1.h"
-#include "polarssl/md5.h"
-#include "polarssl/ctr_drbg.h"
-#include "polarssl/camellia.h"
-#include "polarssl/arc4.h"
-#include "polarssl/des.h"
+#include "include/polarssl/aes.h"
+#include "include/polarssl/ssl.h"
+#include "include/polarssl/timing.h"
+#include "include/polarssl/x509.h"
+#include "include/polarssl/sha1.h"
+#include "include/polarssl/md5.h"
+#include "include/polarssl/ctr_drbg.h"
+#include "include/polarssl/camellia.h"
+#include "include/polarssl/arc4.h"
+#include "include/polarssl/des.h"
 
 //@ghost volatile int _state;
 
@@ -388,7 +388,7 @@ int des3_crypt_cbc( des3_context *ctx,
  */
 int fc_recv( void *ctx, unsigned char *buf, size_t len );
 
-#include "polarssl/sha4.h"
+#include "include/polarssl/sha4.h"
 /*@
   requires \valid_read(input + (0 .. ilen-1));
   requires \valid(ctx->state + (0 .. 7));

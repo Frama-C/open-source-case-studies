@@ -136,6 +136,10 @@ extern int UTI_IsZeroNtp64(NTP_int64 *ts);
    b, and 1 if a is after b. */
 extern int UTI_CompareNtp64(NTP_int64 *a, NTP_int64 *b);
 
+/* Compare an NTP timestamp with up to three other timestamps.  Returns 0
+   if a is not equal to any of b1, b2, and b3, 1 otherwise. */
+extern int UTI_IsEqualAnyNtp64(NTP_int64 *a, NTP_int64 *b1, NTP_int64 *b2, NTP_int64 *b3);
+
 /* Convert a timespec into an NTP timestamp */
 extern void UTI_TimespecToNtp64(struct timespec *src, NTP_int64 *dest, NTP_int64 *fuzz);
 
@@ -157,7 +161,7 @@ extern Float UTI_FloatHostToNetwork(double x);
 /* Set FD_CLOEXEC on descriptor */
 extern int UTI_FdSetCloexec(int fd);
 
-extern int UTI_SetQuitSignalsHandler(void (*handler)(int));
+extern void UTI_SetQuitSignalsHandler(void (*handler)(int), int ignore_sigpipe);
 
 /* Get directory (as an allocated string) for a path */
 extern char *UTI_PathToDir(const char *path);
@@ -195,5 +199,7 @@ extern void UTI_GetRandomBytes(void *buf, unsigned int len);
 
 /* Macro to clamp a value between two values */
 #define CLAMP(min, x, max) (MAX((min), MIN((x), (max))))
+
+#define SQUARE(x) ((x) * (x))
 
 #endif /* GOT_UTIL_H */

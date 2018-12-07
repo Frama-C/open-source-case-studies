@@ -181,6 +181,7 @@ static void print_deck(
 {
   int i;
 
+  //@ loop unroll 54;
   for (i = 0; i < 54; i++) {
     if (state.deck[i] < 53) {
       putchar(' ' + state.deck[i]);
@@ -203,6 +204,7 @@ static void key_deck(
 
     state.deck = state.deck1 + 3;
     state.spare = state.deck2 + 3;
+    //@ loop unroll 52;
     for (i = 0; i < 52; i++) {
         state.deck[i] = i+1;
     }
@@ -213,6 +215,7 @@ static void key_deck(
             cycle_deck(0); /* Special value '0' is only useful here... */
                 /* And now perform a second count cut based on the key letter */
             kval = *key - 'A' + 1;
+            //@ loop unroll 53;
             for (i = 0; i < 53; i++)
                 state.spare[i] = state.deck[(i + kval) % 53];
             state.spare[53] = state.deck[53];
@@ -265,6 +268,7 @@ int main(
     if (argc  < 2) {
       printf("Usage: [flags] key message|len\n");
     }
+    //@ loop unroll 3;
     while (argc > 2) {
       if (STREQUAL(*av, "-v")) {
 	verbose = 1;
@@ -283,6 +287,7 @@ int main(
       char *text = av[1];
       int i = 0;
 
+      //@ loop unroll 256;
       for (; *text != '\0'; text++) {
 	if (*text >= 'A' && *text <= 'Z') {
 	  if (i > 0 && (i % 5) == 0)
@@ -323,10 +328,10 @@ int eva_main() {
   int argc = Frama_C_interval(0, 5);
   char argv0[256], argv1[256], argv2[256], argv3[256], argv4[256];
   char *argv[5] = {argv0, argv1, argv2, argv3, argv4};
+  //@ loop unroll 5;
   for (int i = 0; i < 5; i++) {
-    for (int j = 0; j < 256; j++) {
-      argv[i][j] = nondet;
-    }
+    Frama_C_make_unknown(argv[i], 255);
+    argv[i][255] = 0;
   }
   return main(argc, argv);
 }

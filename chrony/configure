@@ -5,7 +5,7 @@
 #
 # Copyright (C) Richard P. Curnow  1997-2003
 # Copyright (C) Bryan Christianson  2016
-# Copyright (C) Miroslav Lichvar  2009, 2012-2016
+# Copyright (C) Miroslav Lichvar  2009, 2012-2018
 #
 # =======================================================================
 
@@ -85,6 +85,7 @@ For better control, use the options below.
   --with-readline-library=DIR Specify where readline lib directory is
   --with-ncurses-library=DIR Specify where ncurses lib directory is
   --disable-sechash      Disable support for hashes other than MD5
+  --without-nettle       Don't use nettle even if it is available
   --without-nss          Don't use NSS even if it is available
   --without-tomcrypt     Don't use libtomcrypt even if it is available
   --disable-cmdmon       Disable command and monitoring support
@@ -107,7 +108,7 @@ For better control, use the options below.
                          since 1970-01-01 [50*365 days ago]
   --with-user=USER       Specify default chronyd user [root]
   --with-hwclockfile=PATH Specify default path to hwclock(8) adjtime file
-  --with-pidfile=PATH    Specify default pidfile [/var/run/chronyd.pid]
+  --with-pidfile=PATH    Specify default pidfile [/var/run/chrony/chronyd.pid]
   --with-rtcdevice=PATH  Specify default path to RTC device [/dev/rtc]
   --with-sendmail=PATH   Path to sendmail binary [/usr/lib/sendmail]
   --enable-debug         Enable debugging support
@@ -198,6 +199,7 @@ feat_readline=1
 try_readline=1
 try_editline=1
 feat_sechash=1
+try_nettle=1
 try_nss=1
 try_tomcrypt=1
 feat_rtc=1
@@ -227,7 +229,7 @@ feat_ntp_signd=0
 ntp_era_split=""
 default_user="root"
 default_hwclockfile=""
-default_pidfile="/var/run/chronyd.pid"
+default_pidfile="/var/run/chrony/chronyd.pid"
 default_rtcdevice="/dev/rtc"
 mail_program="/usr/lib/sendmail"
 
@@ -359,6 +361,9 @@ do
     ;;
     --disable-sechash )
       feat_sechash=0
+    ;;
+    --without-nettle )
+      try_nettle=0
     ;;
     --without-nss )
       try_nss=0
@@ -590,19 +595,11 @@ else
   fi
 fi
   
-if test_code '<stdint.h>' 'stdint.h' '' '' ''; then
-  add_def HAVE_STDINT_H
-fi
-
-if test_code '<inttypes.h>' 'inttypes.h' '' '' ''; then
-  add_def HAVE_INTTYPES_H
-fi
-
 if test_code 'struct in_pktinfo' 'sys/socket.h netinet/in.h' '' '' '
   struct in_pktinfo ipi;
   return sizeof (ipi.ipi_spec_dst.s_addr) + IP_PKTINFO;'
 then
-  echo "SKIPPING add_def HAVE_IN_PKTINFO"
+  add_def HAVE_IN_PKTINFO
 fi
 
 if [ $feat_ipv6 = "1" ] && \
@@ -650,7 +647,7 @@ fi
 
 if [ $feat_asyncdns = "1" ] && \
   test_code 'pthread' 'pthread.h' '-pthread' '' \
-    'return pthread_create((void *)1, NULL, (void *)1, NULL);'
+    'return (int)pthread_create((void *)1, NULL, (void *)1, NULL);'
 then
   add_def FEAT_ASYNCDNS
   add_def USE_PTHREAD_ASYNCDNS
@@ -672,13 +669,13 @@ RECVMMSG_CODE='
   return !recvmmsg(0, &hdr, 1, MSG_DONTWAIT, 0);'
 if [ $try_recvmmsg = "1" ]; then
   if test_code 'recvmmsg()' 'sys/socket.h' '' "$EXTRA_LIBS" "$RECVMMSG_CODE"; then
-    echo "SKIPPING add_def HAVE_RECVMMSG"
+    add_def HAVE_RECVMMSG
   else
     if test_code 'recvmmsg() with _GNU_SOURCE' 'sys/socket.h' '-D_GNU_SOURCE' \
       "$EXTRA_LIBS" "$RECVMMSG_CODE"
     then
-      echo "SKIPPING add_def _GNU_SOURCE"
-      echo "SKIPPING add_def HAVE_RECVMMSG"
+      add_def _GNU_SOURCE
+      add_def HAVE_RECVMMSG
     fi
   fi
 fi
@@ -700,6 +697,7 @@ then
     struct scm_ts_pktinfo pktinfo;
     pktinfo.if_index = pktinfo.pkt_length = 0;
     return pktinfo.if_index + pktinfo.pkt_length + HWTSTAMP_FILTER_NTP_ALL +
+           SCM_TIMESTAMPING_PKTINFO +
            SOF_TIMESTAMPING_OPT_PKTINFO + SOF_TIMESTAMPING_OPT_TX_SWHW;'; then
     add_def HAVE_LINUX_TIMESTAMPING_RXFILTER_NTP 1
     add_def HAVE_LINUX_TIMESTAMPING_OPT_PKTINFO 1
@@ -709,11 +707,11 @@ fi
 
 timepps_h=""
 if [ $feat_refclock = "1" ] && [ $feat_pps = "1" ]; then
-  if test_code '<sys/timepps.h>' 'sys/timepps.h' '' '' ''; then
+  if test_code '<sys/timepps.h>' 'inttypes.h time.h sys/timepps.h' '' '' ''; then
     timepps_h="sys/timepps.h"
     add_def HAVE_SYS_TIMEPPS_H
   else
-    if test_code '<timepps.h>' 'timepps.h' '' '' ''; then
+    if test_code '<timepps.h>' 'inttypes.h time.h timepps.h' '' '' ''; then
       timepps_h="timepps.h"
       add_def HAVE_TIMEPPS_H
     fi
@@ -721,7 +719,7 @@ if [ $feat_refclock = "1" ] && [ $feat_pps = "1" ]; then
 fi
 
 if [ "x$timepps_h" != "x" ] && \
-  test_code 'PPSAPI' "string.h $timepps_h" '' '' '
+  test_code 'PPSAPI' "inttypes.h string.h time.h $timepps_h" '' '' '
     pps_handle_t h = 0;
     pps_info_t i;
     struct timespec ts;
@@ -856,7 +854,22 @@ fi
 HASH_OBJ="hash_intmd5.o"
 HASH_LINK=""
 
-if [ $feat_sechash = "1" ] && [ $try_nss = "1" ]; then
+if [ $feat_sechash = "1" ] && [ "x$HASH_LINK" = "x" ]  && [ $try_nettle = "1" ]; then
+  test_cflags="`pkg_config --cflags nettle`"
+  test_link="`pkg_config --libs nettle`"
+  if test_code 'nettle' 'nettle/nettle-meta.h nettle/sha2.h' \
+    "$test_cflags" "$test_link" \
+    'return nettle_hashes[0]->context_size;'
+  then
+    HASH_OBJ="hash_nettle.o"
+    HASH_LINK="$test_link"
+    LIBS="$LIBS $HASH_LINK"
+    MYCPPFLAGS="$MYCPPFLAGS $test_cflags"
+    add_def FEAT_SECHASH
+  fi
+fi
+
+if [ $feat_sechash = "1" ] && [ "x$HASH_LINK" = "x" ]  && [ $try_nss = "1" ]; then
   test_cflags="`pkg_config --cflags nss`"
   test_link="`pkg_config --libs-only-L nss` -lfreebl3"
   if test_code 'NSS' 'nss.h hasht.h nsslowhash.h' \
@@ -946,9 +959,9 @@ add_def DEFAULT_USER "\"$default_user\""
 add_def DEFAULT_COMMAND_SOCKET "\"$CHRONYRUNDIR/chronyd.sock\""
 add_def MAIL_PROGRAM "\"$mail_program\""
 
-common_features="`get_features IPV6 DEBUG`"
+common_features="`get_features SECHASH IPV6 DEBUG`"
 chronyc_features="`get_features READLINE`"
-chronyd_features="`get_features CMDMON NTP REFCLOCK RTC PRIVDROP SCFILTER SECHASH SIGND ASYNCDNS`"
+chronyd_features="`get_features CMDMON NTP REFCLOCK RTC PRIVDROP SCFILTER SIGND ASYNCDNS`"
 add_def CHRONYC_FEATURES "\"$chronyc_features $common_features\""
 add_def CHRONYD_FEATURES "\"$chronyd_features $common_features\""
 echo "Features : $chronyd_features $chronyc_features $common_features"

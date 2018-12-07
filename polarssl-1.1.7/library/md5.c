@@ -344,6 +344,7 @@ void md5_hmac_starts( md5_context *ctx, const unsigned char *key, size_t keylen 
     memset( ctx->ipad, 0x36, 64 );
     memset( ctx->opad, 0x5C, 64 );
 
+    //@ loop unroll 64;
     for( i = 0; i < keylen; i++ )
     {
         ctx->ipad[i] = (unsigned char)( ctx->ipad[i] ^ key[i] );

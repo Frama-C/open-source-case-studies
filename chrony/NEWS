@@ -1,3 +1,53 @@
+New in version 3.4
+==================
+
+Enhancements
+------------
+* Add filter option to server/pool/peer directive
+* Add minsamples and maxsamples options to hwtimestamp directive
+* Add support for faster frequency adjustments in Linux 4.19
+* Change default pidfile to /var/run/chrony/chronyd.pid to allow
+  chronyd without root privileges to remove it on exit
+* Disable sub-second polling intervals for distant NTP sources
+* Extend range of supported sub-second polling intervals
+* Get/set IPv4 destination/source address of NTP packets on FreeBSD
+* Make burst options and command useful with short polling intervals
+* Modify auto_offline option to activate when sending request failed
+* Respond from interface that received NTP request if possible
+* Add onoffline command to switch between online and offline state
+  according to current system network configuration
+* Improve example NetworkManager dispatcher script
+
+Bug fixes
+---------
+* Avoid waiting in Linux getrandom system call
+* Fix PPS support on FreeBSD and NetBSD
+
+New in version 3.3
+==================
+
+Enhancements
+------------
+* Add burst option to server/pool directive
+* Add stratum and tai options to refclock directive
+* Add support for Nettle crypto library
+* Add workaround for missing kernel receive timestamps on Linux
+* Wait for late hardware transmit timestamps
+* Improve source selection with unreachable sources
+* Improve protection against replay attacks on symmetric mode
+* Allow PHC refclock to use socket in /var/run/chrony
+* Add shutdown command to stop chronyd
+* Simplify format of response to manual list command
+* Improve handling of unknown responses in chronyc
+
+Bug fixes
+---------
+* Respond to NTPv1 client requests with zero mode
+* Fix -x option to not require CAP_SYS_TIME under non-root user
+* Fix acquisitionport directive to work with privilege separation
+* Fix handling of socket errors on Linux to avoid high CPU usage
+* Fix chronyc to not get stuck in infinite loop after clock step
+
 New in version 3.2
 ==================
 

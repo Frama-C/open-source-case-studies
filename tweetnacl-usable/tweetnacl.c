@@ -35,6 +35,7 @@ static u32 ld32(const u8 *x)
 static u64 dl64(const u8 *x)
 {
   u64 i,u=0;
+  //@ loop unroll 8;
   FOR(i,8) u=(u<<8)|x[i];
   return u;
 }
@@ -42,6 +43,7 @@ static u64 dl64(const u8 *x)
 sv st32(u8 *x,u32 u)
 {
   int i;
+  //@ loop unroll 4;
   FOR(i,4) { x[i] = u; u >>= 8; }
 }
 
@@ -54,6 +56,7 @@ sv ts64(u8 *x,u64 u)
 static int vn(const u8 *x,const u8 *y,int n)
 {
   u32 i,d = 0;
+  //@ loop unroll 32;
   FOR(i,n) d |= x[i]^y[i];
   return (1 & ((d - 1) >> 8)) - 1;
 }
@@ -73,6 +76,7 @@ sv core(u8 *out,const u8 *in,const u8 *k,const u8 *c,int h)
   u32 w[16],x[16],y[16],t[4];
   int i,j,m;
 
+  //@ loop unroll 4;
   FOR(i,4) {
     x[5*i] = ld32(c+4*i);
     x[1+i] = ld32(k+4*i);
@@ -80,10 +84,14 @@ sv core(u8 *out,const u8 *in,const u8 *k,const u8 *c,int h)
     x[11+i] = ld32(k+16+4*i);
   }
 
+  //@ loop unroll 16;
   FOR(i,16) y[i] = x[i];
 
+  //@ loop unroll 20;
   FOR(i,20) {
+    //@ loop unroll 4;
     FOR(j,4) {
+      //@ loop unroll 4;
       FOR(m,4) t[m] = x[(5*j+4*m)%16];
       t[1] ^= L32(t[0]+t[3], 7);
       t[2] ^= L32(t[1]+t[0], 9);
@@ -91,20 +99,25 @@ sv core(u8 *out,const u8 *in,const u8 *k,const u8 *c,int h)
       t[0] ^= L32(t[3]+t[2],18);
       FOR(m,4) w[4*j+(j+m)%4] = t[m];
     }
+    //@ loop unroll 16;
     FOR(m,16) x[m] = w[m];
   }
 
   if (h) {
+    //@ loop unroll 16;
     FOR(i,16) x[i] += y[i];
+    //@ loop unroll 4;
     FOR(i,4) {
       x[5*i] -= ld32(c+4*i);
       x[6+i] -= ld32(in+4*i);
     }
+    //@ loop unroll 4;
     FOR(i,4) {
       st32(out+4*i,x[5*i]);
       st32(out+16+4*i,x[6+i]);
     }
   } else
+    //@ loop unroll 16;
     FOR(i,16) st32(out + 4 * i,x[i] + y[i]);
 }
 
@@ -127,12 +140,17 @@ int crypto_stream_salsa20_xor(u8 *c,const u8 *m,u64 b,const u8 *n,const u8 *k)
   u8 z[16],x[64];
   u32 u,i;
   if (!b) return 0;
+  //@ loop unroll 16;
   FOR(i,16) z[i] = 0;
+  //@ loop unroll 8;
   FOR(i,8) z[i] = n[i];
+  //@ loop unroll 64;
   while (b >= 64) {
     crypto_core_salsa20(x,z,k,sigma);
+    //@ loop unroll 64;
     FOR(i,64) c[i] = (m?m[i]:0) ^ x[i];
     u = 1;
+    //@ loop unroll 8;
     for (i = 8;i < 16;++i) {
       u += (u32) z[i];
       z[i] = u;
@@ -144,6 +162,7 @@ int crypto_stream_salsa20_xor(u8 *c,const u8 *m,u64 b,const u8 *n,const u8 *k)
   }
   if (b) {
     crypto_core_salsa20(x,z,k,sigma);
+    //@ loop unroll 64;
     FOR(i,b) c[i] = (m?m[i]:0) ^ x[i];
   }
   return 0;
@@ -171,6 +190,7 @@ int crypto_stream_xor(u8 *c,const u8 *m,u64 d,const u8 *n,const u8 *k)
 sv add1305(u32 *h,const u32 *c)
 {
   u32 j,u = 0;
+  //@ loop unroll 17;
   FOR(j,17) {
     u += h[j] + c[j];
     h[j] = u & 255;
@@ -186,7 +206,9 @@ int crypto_onetimeauth(u8 *out,const u8 *m,u64 n,const u8 *k)
 {
   u32 s,i,j,u,x[17],r[17],h[17],c[17],g[17];
 
+  //@ loop unroll 17;
   FOR(j,17) r[j]=h[j]=0;
+  //@ loop unroll 16;
   FOR(j,16) r[j]=k[j];
   r[3]&=15;
   r[4]&=252;
@@ -197,17 +219,23 @@ int crypto_onetimeauth(u8 *out,const u8 *m,u64 n,const u8 *k)
   r[15]&=15;
 
   while (n > 0) {
+    //@ loop unroll 17;
     FOR(j,17) c[j] = 0;
+    //@ loop unroll 16;
     for (j = 0;(j < 16) && (j < n);++j) c[j] = m[j];
     c[j] = 1;
     m += j; n -= j;
     add1305(h,c);
+    //@ loop unroll 17;
     FOR(i,17) {
       x[i] = 0;
+      //@ loop unroll 17;
       FOR(j,17) x[i] += h[j] * ((j <= i) ? r[i - j] : 320 * r[i + 17 - j]);
     }
+    //@ loop unroll 17;
     FOR(i,17) h[i] = x[i];
     u = 0;
+    //@ loop unroll 16;
     FOR(j,16) {
       u += h[j];
       h[j] = u & 255;
@@ -215,6 +243,7 @@ int crypto_onetimeauth(u8 *out,const u8 *m,u64 n,const u8 *k)
     }
     u += h[16]; h[16] = u & 3;
     u = 5 * (u >> 2);
+    //@ loop unroll 16;
     FOR(j,16) {
       u += h[j];
       h[j] = u & 255;
@@ -223,14 +252,18 @@ int crypto_onetimeauth(u8 *out,const u8 *m,u64 n,const u8 *k)
     u += h[16]; h[16] = u;
   }
 
+  //@ loop unroll 17;
   FOR(j,17) g[j] = h[j];
   add1305(h,minusp);
   s = -(h[16] >> 7);
+  //@ loop unroll 17;
   FOR(j,17) h[j] ^= s & (g[j] ^ h[j]);
 
+  //@ loop unroll 16;
   FOR(j,16) c[j] = k[j + 16];
   c[16] = 0;
   add1305(h,c);
+  //@ loop unroll 16;
   FOR(j,16) out[j] = h[j];
   return 0;
 }
@@ -248,6 +281,7 @@ int crypto_secretbox(u8 *c,const u8 *m,u64 d,const u8 *n,const u8 *k)
   if (d < 32) return -1;
   crypto_stream_xor(c,m,d,n,k);
   crypto_onetimeauth(c + 16,c + 32,d - 32,c);
+  //@ loop unroll 16;
   FOR(i,16) c[i] = 0;
   return 0;
 }
@@ -260,6 +294,7 @@ int crypto_secretbox_open(u8 *m,const u8 *c,u64 d,const u8 *n,const u8 *k)
   crypto_stream(x,32,n,k);
   if (crypto_onetimeauth_verify(c + 16,c + 32,d - 32,x) != 0) return -1;
   crypto_stream_xor(m,c,d,n,k);
+  //@ loop unroll 32;
   FOR(i,32) m[i] = 0;
   return 0;
 }
@@ -267,6 +302,7 @@ int crypto_secretbox_open(u8 *m,const u8 *c,u64 d,const u8 *n,const u8 *k)
 sv set25519(gf r, const gf a)
 {
   int i;
+  //@ loop unroll 16;
   FOR(i,16) r[i]=a[i];
 }
 
@@ -274,6 +310,7 @@ sv car25519(gf o)
 {
   int i;
   i64 c;
+  //@ loop unroll 16;
   FOR(i,16) {
     o[i]+=(1LL<<16);
     c=o[i]>>16;
@@ -285,6 +322,7 @@ sv car25519(gf o)
 sv sel25519(gf p,gf q,int b)
 {
   i64 t,i,c=~(b-1);
+  //@ loop unroll 16;
   FOR(i,16) {
     t= c&(p[i]^q[i]);
     p[i]^=t;
@@ -296,12 +334,15 @@ sv pack25519(u8 *o,const gf n)
 {
   int i,j,b;
   gf m,t;
+  //@ loop unroll 16;
   FOR(i,16) t[i]=n[i];
   car25519(t);
   car25519(t);
   car25519(t);
+  //@ loop unroll 2;
   FOR(j,2) {
     m[0]=t[0]-0xffed;
+    //@ loop unroll 15;
     for(i=1;i<15;i++) {
       m[i]=t[i]-0xffff-((m[i-1]>>16)&1);
       m[i-1]&=0xffff;
@@ -311,6 +352,7 @@ sv pack25519(u8 *o,const gf n)
     m[14]&=0xffff;
     sel25519(t,m,1-b);
   }
+  //@ loop unroll 16;
   FOR(i,16) {
     o[2*i]=t[i]&0xff;
     o[2*i+1]=t[i]>>8;
@@ -335,6 +377,7 @@ static u8 par25519(const gf a)
 sv unpack25519(gf o, const u8 *n)
 {
   int i;
+  //@ loop unroll 16;
   FOR(i,16) o[i]=n[2*i]+((i64)n[2*i+1]<<8);
   o[15]&=0x7fff;
 }
@@ -342,21 +385,27 @@ sv unpack25519(gf o, const u8 *n)
 sv A(gf o,const gf a,const gf b)
 {
   int i;
+  //@ loop unroll 16;
   FOR(i,16) o[i]=a[i]+b[i];
 }
 
 sv Z(gf o,const gf a,const gf b)
 {
   int i;
+  //@ loop unroll 16;
   FOR(i,16) o[i]=a[i]-b[i];
 }
 
 sv M(gf o,const gf a,const gf b)
 {
   i64 i,j,t[31];
+  //@ loop unroll 31;
   FOR(i,31) t[i]=0;
+  //@ loop unroll 16;
   FOR(i,16) FOR(j,16) t[i+j]+=a[i]*b[j];
+  //@ loop unroll 15;
   FOR(i,15) t[i]+=38*t[i+16];
+  //@ loop unroll 16;
   FOR(i,16) o[i]=t[i];
   car25519(o);
   car25519(o);
@@ -371,7 +420,9 @@ sv inv25519(gf o,const gf i)
 {
   gf c;
   int a;
+  //@ loop unroll 16;
   FOR(a,16) c[a]=i[a];
+  //@ loop unroll 254;
   for(a=253;a>=0;a--) {
     S(c,c);
     if(a!=2&&a!=4) M(c,c,i);
@@ -383,11 +434,14 @@ sv pow2523(gf o,const gf i)
 {
   gf c;
   int a;
+  //@ loop unroll 16;
   FOR(a,16) c[a]=i[a];
+  //@ loop unroll 250;
   for(a=250;a>=0;a--) {
     S(c,c);
     if(a!=1) M(c,c,i);
   }
+  //@ loop unroll 16;
   FOR(a,16) o[a]=c[a];
 }
 
@@ -396,15 +450,18 @@ int crypto_scalarmult(u8 *q,const u8 *n,const u8 *p)
   u8 z[32];
   i64 x[80],r,i;
   gf a,b,c,d,e,f;
+  //@ loop unroll 31;
   FOR(i,31) z[i]=n[i];
   z[31]=(n[31]&127)|64;
   z[0]&=248;
   unpack25519(x,p);
+  //@ loop unroll 16;
   FOR(i,16) {
     b[i]=x[i];
     d[i]=a[i]=c[i]=0;
   }
   a[0]=d[0]=1;
+  //@ loop unroll 255;
   for(i=254;i>=0;--i) {
     r=(z[i>>3]>>(i&7))&1;
     sel25519(a,b,r);
@@ -430,6 +487,7 @@ int crypto_scalarmult(u8 *q,const u8 *n,const u8 *p)
     sel25519(a,b,r);
     sel25519(c,d,r);
   }
+  //@ loop unroll 16;
   FOR(i,16) {
     x[i+16]=a[i];
     x[i+32]=c[i];
@@ -521,28 +579,37 @@ int crypto_hashblocks(u8 *x,const u8 *m,u64 n)
   u64 z[8],b[8],a[8],w[16],t;
   int i,j;
 
+  //@ loop unroll 8;
   FOR(i,8) z[i] = a[i] = dl64(x + 8 * i);
 
+  //@ loop unroll 128;
   while (n >= 128) {
+    //@ loop unroll 16;
     FOR(i,16) w[i] = dl64(m + 8 * i);
 
+    //@ loop unroll 80;
     FOR(i,80) {
+      //@ loop unroll 8;
       FOR(j,8) b[j] = a[j];
       t = a[7] + Sigma1(a[4]) + Ch(a[4],a[5],a[6]) + K[i] + w[i%16];
       b[7] = t + Sigma0(a[0]) + Maj(a[0],a[1],a[2]);
       b[3] += t;
+      //@ loop unroll 8;
       FOR(j,8) a[(j+1)%8] = b[j];
       if (i%16 == 15)
-	FOR(j,16)
-	  w[j] += w[(j+9)%16] + sigma0(w[(j+1)%16]) + sigma1(w[(j+14)%16]);
+        //@ loop unroll 16;
+        FOR(j,16)
+          w[j] += w[(j+9)%16] + sigma0(w[(j+1)%16]) + sigma1(w[(j+14)%16]);
     }
 
+    //@ loop unroll 8;
     FOR(i,8) { a[i] += z[i]; z[i] = a[i]; }
 
     m += 128;
     n -= 128;
   }
 
+  //@ loop unroll 8;
   FOR(i,8) ts64(x+8*i,z[i]);
 
   return n;
@@ -564,6 +631,7 @@ int crypto_hash(u8 *out,const u8 *m,u64 n)
   u8 h[64],x[256];
   u64 i,b = n;
 
+  //@ loop unroll 64;
   FOR(i,64) h[i] = iv[i];
 
   crypto_hashblocks(h,m,n);
@@ -571,7 +639,9 @@ int crypto_hash(u8 *out,const u8 *m,u64 n)
   n &= 127;
   m -= n;
 
+  //@ loop unroll 256;
   FOR(i,256) x[i] = 0;
+  //@ loop unroll 128;
   FOR(i,n) x[i] = m[i];
   x[n] = 128;
 
@@ -580,6 +650,7 @@ int crypto_hash(u8 *out,const u8 *m,u64 n)
   ts64(x+n-8,b<<3);
   crypto_hashblocks(h,x,n);
 
+  //@ loop unroll 64;
   FOR(i,64) out[i] = h[i];
 
   return 0;
@@ -613,6 +684,7 @@ sv add(gf p[4],gf q[4])
 sv cswap(gf p[4],gf q[4],u8 b)
 {
   int i;
+  //@ loop unroll 4;
   FOR(i,4)
     sel25519(p[i],q[i],b);
 }
@@ -634,6 +706,7 @@ sv scalarmult(gf p[4],gf q[4],const u8 *s)
   set25519(p[1],gf1);
   set25519(p[2],gf1);
   set25519(p[3],gf0);
+  //@ loop unroll 255;
   for (i = 255;i >= 0;--i) {
     u8 b = (s[i/8]>>(i&7))&1;
     cswap(p,q,b);
@@ -668,6 +741,7 @@ int crypto_sign_keypair(u8 *pk, u8 *sk)
   scalarbase(p,d);
   pack(pk,p);
 
+  //@ loop unroll 32;
   FOR(i,32) sk[32 + i] = pk[i];
   return 0;
 }
@@ -677,8 +751,10 @@ static const u64 L[32] = {0xed, 0xd3, 0xf5, 0x5c, 0x1a, 0x63, 0x12, 0x58, 0xd6, 
 sv modL(u8 *r,i64 x[64])
 {
   i64 carry,i,j;
+  //@ loop unroll 32;
   for (i = 63;i >= 32;--i) {
     carry = 0;
+    //@ loop unroll 20;
     for (j = i - 32;j < i - 12;++j) {
       x[j] += carry - 16 * x[i] * L[j - (i - 32)];
       carry = (x[j] + 128) >> 8;
@@ -688,12 +764,15 @@ sv modL(u8 *r,i64 x[64])
     x[i] = 0;
   }
   carry = 0;
+  //@ loop unroll 32;
   FOR(j,32) {
     x[j] += carry - (x[31] >> 4) * L[j];
     carry = x[j] >> 8;
     x[j] &= 255;
   }
+  //@ loop unroll 32;
   FOR(j,32) x[j] -= carry * L[j];
+  //@ loop unroll 32;
   FOR(i,32) {
     x[i+1] += x[i] >> 8;
     r[i] = x[i] & 255;
@@ -703,7 +782,9 @@ sv modL(u8 *r,i64 x[64])
 sv reduce(u8 *r)
 {
   i64 x[64],i;
+  //@ loop unroll 64;
   FOR(i,64) x[i] = (u64) r[i];
+  //@ loop unroll 64;
   FOR(i,64) r[i] = 0;
   modL(r,x);
 }
@@ -720,7 +801,9 @@ int crypto_sign(u8 *sm,u64 *smlen,const u8 *m,u64 n,const u8 *sk)
   d[31] |= 64;
 
   *smlen = n+64;
+  //@ loop unroll 64;
   FOR(i,n) sm[64 + i] = m[i];
+  //@ loop unroll 32;
   FOR(i,32) sm[32 + i] = d[32 + i];
 
   crypto_hash(r, sm+32, n+32);
@@ -728,12 +811,16 @@ int crypto_sign(u8 *sm,u64 *smlen,const u8 *m,u64 n,const u8 *sk)
   scalarbase(p,r);
   pack(sm,p);
 
+  //@ loop unroll 32;
   FOR(i,32) sm[i+32] = sk[i+32];
   crypto_hash(h,sm,n + 64);
   reduce(h);
 
+  //@ loop unroll 64;
   FOR(i,64) x[i] = 0;
+  //@ loop unroll 32;
   FOR(i,32) x[i] = (u64) r[i];
+  //@ loop unroll 32;
   FOR(i,32) FOR(j,32) x[i+j] += h[i] * (u64) d[j];
   modL(sm + 32,x);
 
@@ -787,7 +874,9 @@ int crypto_sign_open(u8 *m,u64 *mlen,const u8 *sm,u64 n,const u8 *pk)
 
   if (unpackneg(q,pk)) return -1;
 
+  //@ loop unroll 32;
   FOR(i,n) m[i] = sm[i];
+  //@ loop unroll 32;
   FOR(i,32) m[i+32] = pk[i];
   crypto_hash(h,m,n);
   reduce(h);
@@ -799,10 +888,12 @@ int crypto_sign_open(u8 *m,u64 *mlen,const u8 *sm,u64 n,const u8 *pk)
 
   n -= 64;
   if (crypto_verify_32(sm, t)) {
+    //@ loop unroll 16;
     FOR(i,n) m[i] = 0;
     return -1;
   }
 
+  //@ loop unroll 64;
   FOR(i,n) m[i] = sm[i + 64];
   *mlen = n;
   return 0;

@@ -1,0 +1,1118 @@
+[
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "pkey/key_app", 
+            "pkey/key_app.c"
+        ], 
+        "directory": "programs", 
+        "file": "pkey/key_app.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "dhm.c"
+        ], 
+        "directory": "library", 
+        "file": "dhm.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "hash/md5sum", 
+            "hash/md5sum.c"
+        ], 
+        "directory": "programs", 
+        "file": "hash/md5sum.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "camellia.c"
+        ], 
+        "directory": "library", 
+        "file": "camellia.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "bignum.c"
+        ], 
+        "directory": "library", 
+        "file": "bignum.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "version.c"
+        ], 
+        "directory": "library", 
+        "file": "version.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "padlock.c"
+        ], 
+        "directory": "library", 
+        "file": "padlock.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "cipher_wrap.c"
+        ], 
+        "directory": "library", 
+        "file": "cipher_wrap.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "pkey/rsa_sign", 
+            "pkey/rsa_sign.c"
+        ], 
+        "directory": "programs", 
+        "file": "pkey/rsa_sign.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "md_wrap.c"
+        ], 
+        "directory": "library", 
+        "file": "md_wrap.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "havege.c"
+        ], 
+        "directory": "library", 
+        "file": "havege.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "x509parse.c"
+        ], 
+        "directory": "library", 
+        "file": "x509parse.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "ssl_cli.c"
+        ], 
+        "directory": "library", 
+        "file": "ssl_cli.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "ssl/ssl_client1", 
+            "ssl/ssl_client1.c"
+        ], 
+        "directory": "programs", 
+        "file": "ssl/ssl_client1.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "pkcs11.c"
+        ], 
+        "directory": "library", 
+        "file": "pkcs11.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "arc4.c"
+        ], 
+        "directory": "library", 
+        "file": "arc4.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "debug.c"
+        ], 
+        "directory": "library", 
+        "file": "debug.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "aes.c"
+        ], 
+        "directory": "library", 
+        "file": "aes.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "ssl_tls.c"
+        ], 
+        "directory": "library", 
+        "file": "ssl_tls.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "sha4.c"
+        ], 
+        "directory": "library", 
+        "file": "sha4.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "cipher.c"
+        ], 
+        "directory": "library", 
+        "file": "cipher.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "entropy.c"
+        ], 
+        "directory": "library", 
+        "file": "entropy.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "ssl_srv.c"
+        ], 
+        "directory": "library", 
+        "file": "ssl_srv.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "md4.c"
+        ], 
+        "directory": "library", 
+        "file": "md4.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "ssl/ssl_client2", 
+            "ssl/ssl_client2.c"
+        ], 
+        "directory": "programs", 
+        "file": "ssl/ssl_client2.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "sha1.c"
+        ], 
+        "directory": "library", 
+        "file": "sha1.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "des.c"
+        ], 
+        "directory": "library", 
+        "file": "des.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "pkey/dh_client", 
+            "pkey/dh_client.c"
+        ], 
+        "directory": "programs", 
+        "file": "pkey/dh_client.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "rsa.c"
+        ], 
+        "directory": "library", 
+        "file": "rsa.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "ssl/ssl_server", 
+            "ssl/ssl_server.c"
+        ], 
+        "directory": "programs", 
+        "file": "ssl/ssl_server.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "aes/aescrypt2", 
+            "aes/aescrypt2.c"
+        ], 
+        "directory": "programs", 
+        "file": "aes/aescrypt2.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "random/gen_random_ctr_drbg", 
+            "random/gen_random_ctr_drbg.c"
+        ], 
+        "directory": "programs", 
+        "file": "random/gen_random_ctr_drbg.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "certs.c"
+        ], 
+        "directory": "library", 
+        "file": "certs.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "md5.c"
+        ], 
+        "directory": "library", 
+        "file": "md5.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "test/selftest", 
+            "test/selftest.c"
+        ], 
+        "directory": "programs", 
+        "file": "test/selftest.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "hash/sha1sum", 
+            "hash/sha1sum.c"
+        ], 
+        "directory": "programs", 
+        "file": "hash/sha1sum.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "entropy_poll.c"
+        ], 
+        "directory": "library", 
+        "file": "entropy_poll.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "ctr_drbg.c"
+        ], 
+        "directory": "library", 
+        "file": "ctr_drbg.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "pkey/dh_genprime", 
+            "pkey/dh_genprime.c"
+        ], 
+        "directory": "programs", 
+        "file": "pkey/dh_genprime.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "test/ssl_test", 
+            "test/ssl_test.c"
+        ], 
+        "directory": "programs", 
+        "file": "test/ssl_test.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "pem.c"
+        ], 
+        "directory": "library", 
+        "file": "pem.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "test/ssl_cert_test", 
+            "test/ssl_cert_test.c"
+        ], 
+        "directory": "programs", 
+        "file": "test/ssl_cert_test.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "timing.c"
+        ], 
+        "directory": "library", 
+        "file": "timing.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "pkey/mpi_demo", 
+            "pkey/mpi_demo.c"
+        ], 
+        "directory": "programs", 
+        "file": "pkey/mpi_demo.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "aes/crypt_and_hash", 
+            "aes/crypt_and_hash.c"
+        ], 
+        "directory": "programs", 
+        "file": "aes/crypt_and_hash.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "random/gen_entropy", 
+            "random/gen_entropy.c"
+        ], 
+        "directory": "programs", 
+        "file": "random/gen_entropy.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "error.c"
+        ], 
+        "directory": "library", 
+        "file": "error.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "sha2.c"
+        ], 
+        "directory": "library", 
+        "file": "sha2.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "md2.c"
+        ], 
+        "directory": "library", 
+        "file": "md2.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "hash/sha2sum", 
+            "hash/sha2sum.c"
+        ], 
+        "directory": "programs", 
+        "file": "hash/sha2sum.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "hash/generic_sum", 
+            "hash/generic_sum.c"
+        ], 
+        "directory": "programs", 
+        "file": "hash/generic_sum.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "random/gen_random_havege", 
+            "random/gen_random_havege.c"
+        ], 
+        "directory": "programs", 
+        "file": "random/gen_random_havege.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "hash/hello", 
+            "hash/hello.c"
+        ], 
+        "directory": "programs", 
+        "file": "hash/hello.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "pkey/rsa_encrypt", 
+            "pkey/rsa_encrypt.c"
+        ], 
+        "directory": "programs", 
+        "file": "pkey/rsa_encrypt.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "pkey/rsa_verify", 
+            "pkey/rsa_verify.c"
+        ], 
+        "directory": "programs", 
+        "file": "pkey/rsa_verify.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "pkey/rsa_genkey", 
+            "pkey/rsa_genkey.c"
+        ], 
+        "directory": "programs", 
+        "file": "pkey/rsa_genkey.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "pkey/rsa_verify_pss", 
+            "pkey/rsa_verify_pss.c"
+        ], 
+        "directory": "programs", 
+        "file": "pkey/rsa_verify_pss.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "asn1parse.c"
+        ], 
+        "directory": "library", 
+        "file": "asn1parse.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "xtea.c"
+        ], 
+        "directory": "library", 
+        "file": "xtea.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "pkey/dh_server", 
+            "pkey/dh_server.c"
+        ], 
+        "directory": "programs", 
+        "file": "pkey/dh_server.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "ssl/ssl_fork_server", 
+            "ssl/ssl_fork_server.c"
+        ], 
+        "directory": "programs", 
+        "file": "ssl/ssl_fork_server.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "pkey/rsa_decrypt", 
+            "pkey/rsa_decrypt.c"
+        ], 
+        "directory": "programs", 
+        "file": "pkey/rsa_decrypt.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "ssl/ssl_mail_client", 
+            "ssl/ssl_mail_client.c"
+        ], 
+        "directory": "programs", 
+        "file": "ssl/ssl_mail_client.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "test/benchmark", 
+            "test/benchmark.c"
+        ], 
+        "directory": "programs", 
+        "file": "test/benchmark.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "net.c"
+        ], 
+        "directory": "library", 
+        "file": "net.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "base64.c"
+        ], 
+        "directory": "library", 
+        "file": "base64.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "md.c"
+        ], 
+        "directory": "library", 
+        "file": "md.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "x509/cert_app", 
+            "x509/cert_app.c"
+        ], 
+        "directory": "programs", 
+        "file": "x509/cert_app.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "pkey/rsa_sign_pss", 
+            "pkey/rsa_sign_pss.c"
+        ], 
+        "directory": "programs", 
+        "file": "pkey/rsa_sign_pss.c"
+    }, 
+    {
+        "arguments": [
+            "cc", 
+            "-c", 
+            "-I../include", 
+            "-D_FILE_OFFSET_BITS=64", 
+            "-Wall", 
+            "-W", 
+            "-Wdeclaration-after-statement", 
+            "-O", 
+            "-o", 
+            "x509/crl_app", 
+            "x509/crl_app.c"
+        ], 
+        "directory": "programs", 
+        "file": "x509/crl_app.c"
+    }
+]

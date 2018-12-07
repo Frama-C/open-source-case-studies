@@ -799,6 +799,11 @@ modbus_t* modbus_new_tcp(const char *ip, int port)
 #endif
 
     ctx = (modbus_t *)malloc(sizeof(modbus_t));
+    // Frama-C/Eva : patch to avoid issue with malloc returning NULL
+    if (!ctx) {
+      errno = ENOMEM;
+      return NULL;
+    }
     _modbus_init_common(ctx);
 
     /* Could be changed after to reach a remote serial Modbus device */
