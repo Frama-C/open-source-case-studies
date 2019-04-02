@@ -1,0 +1,106 @@
+\ProvidesPackage{beamerouterthemeframa-c}[2008/12/03]
+\RequirePackage{calc}
+\RequirePackage{ifthen}
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+\newdimen\framac@leftmargin
+\newdimen\framac@rightmargin
+\newdimen\framac@headheight
+\newdimen\framac@footheight
+\newdimen\framac@logowidth
+\newdimen\framac@sectionstart
+\newdimen\framac@sectionwidth
+\newdimen\framac@subsectionstart
+\newdimen\framac@subsectionwidth
+\newdimen\framac@scale
+
+\newdimen\framac@temp
+
+\framac@scale=.2285pt
+
+\framac@leftmargin=80\framac@scale
+\framac@rightmargin=80\framac@scale
+\framac@headheight=50\framac@scale
+\framac@footheight=100\framac@scale
+
+\framac@logowidth=150\framac@scale
+\setlength{\framac@temp}{\framac@logowidth + 50\framac@scale}
+\setlength{\framac@sectionstart}{\framac@leftmargin - \framac@temp}
+\setlength{\framac@sectionwidth}
+    {\paperwidth-\framac@sectionstart -50\framac@scale}
+
+\setbeamersize{text margin left=\framac@leftmargin}
+\setbeamersize{text margin right=\framac@rightmargin}
+
+\def\framac@logo{logo}
+
+\DeclareOptionBeamer{logo}{\def\framac@logo{#1}}
+
+\ProcessOptionsBeamer
+
+\pgfdeclareimage[height=\paperheight,interpolate=true]{background}{background}
+\pgfdeclareimage[width=150\framac@scale,interpolate=true]{logo}{\framac@logo}
+
+
+\defbeamertemplate*{background}{frama-c}{%
+\ifnum\insertpagenumber=1
+\pgfuseimage{background}\fi
+}
+
+\setbeamertemplate{frametitle}{
+\begin{tikzpicture}[remember picture,overlay]
+\node[anchor=north east] (title) at ([xshift=-2mm, yshift=-2mm]current page.north east)
+{\begin{minipage}{0.7\textwidth}
+\raggedleft
+\insertframetitle
+\end{minipage}};
+\end{tikzpicture}
+}
+
+\setbeamertemplate{framesubtitle}{
+\begin{tikzpicture}[remember picture,overlay]
+\node[anchor=north east] at (title.south east)
+{\begin{minipage}{0.65\textwidth}
+\raggedleft
+\insertframesubtitle
+\end{minipage}};
+\end{tikzpicture}}
+
+\defbeamertemplate*{navigation symbols}{frama-c}{}
+
+\setbeamertemplate{headline}{
+\vskip\framac@headheight
+\begin{tikzpicture}[remember picture, overlay]
+\node[anchor=north west] (logo) at ([xshift=0.3mm,yshift=-0.2mm]current page.north west) {\pgfuseimage{logo}};
+\node[anchor=north west] at ($(current page.north west) + (13mm,-4mm)$) {
+\begin{minipage}{0.3\textwidth}
+\insertsection\ifx\insertsection\empty\else\\\fi
+\insertsubsection
+\end{minipage}
+};
+\end{tikzpicture}
+}
+
+\defbeamertemplate*{footline}{frama-c}{
+\vskip\framac@footheight
+\ifnum\insertpagenumber=1
+\else
+\begin{tikzpicture}[remember picture, overlay]
+\node[anchor=south west,xshift=-0.8mm,yshift=-0.8mm] at (current page.south west) {
+\begin{tikzpicture}
+\begin{scope}[transparency group]
+\begin{scope}[blend mode=multiply]
+\fill[frama-c-banner](0,0) rectangle
+  (\paperwidth,\framac@footheight);
+\fill[frama-c-banner](0,0)
+rectangle
+(\paperwidth,0.7\framac@footheight);
+\fill[frama-c-banner](0,0.3\framac@footheight)
+rectangle
+(\paperwidth,0.5\framac@footheight);
+\end{scope}
+\end{scope}
+\end{tikzpicture}};
+\end{tikzpicture}
+\fi
+}

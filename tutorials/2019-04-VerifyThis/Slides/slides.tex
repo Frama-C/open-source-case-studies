@@ -1,0 +1,134 @@
+\documentclass[pdf,xcolor={svgnames}]{beamer}
+
+\usetheme{frama-c}
+
+\usepackage{tikz}
+\usepackage{graphbox}
+\usepackage[overlay,absolute]{textpos}
+\usepackage[type={CC},modifier={by}]{doclicense}
+
+\usetikzlibrary{mindmap}
+\hypersetup{colorlinks=true,urlcolor=blue}
+
+\author{Virgile Prevosto\\
+\href{mailto:virgile.prevosto@cea.fr}{virgile.prevosto@cea.fr}}
+\institute{CEA Tech List}
+\title{C Program Specification and Verification\\ with ACSL and Frama-C/WP}
+\subtitle{VerifyThis Tutorial}
+\date{2019-04-06}
+
+\begin{document}
+
+\begin{frame}\maketitle
+\begin{textblock*}{1.5cm}(6mm,87mm)
+\doclicenseImage[imagewidth=8mm]
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Overview of the tutorial}
+\begin{itemize}
+\item short general introduction to Frama-C and ACSL
+\item examples of writing ACSL specifications
+\item verification of implementations with the WP plugin of Frama-C
+\item All material available on \href{https://github.com/Frama-C/open-source-case-studies/tutorials/2019-04-VerifyThis}{Frama-C github}:
+\begin{center}
+\url{https://frama.link/TODO}\hspace{5mm}
+\includegraphics[width=1cm,align=c]{tuto-qr.pdf}
+\end{center}
+\begin{itemize}
+\item \alert{\texttt{Examples}} contains plain (unannotated) C code
+\item \alert{\texttt{Solutions}} contains the corresponding annotations...
+\item ... that should be provable by Frama-C 18.0, Alt-Ergo and Coq
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{It's 2019! Why bother with proving C programs?}
+\begin{itemize}
+\item Lot of legacy code
+\item Embedded world (aka IoT) still uses it in many places
+\item And in some cases they care about safety and (cyber)security
+\end{itemize}
+\begin{block}{A few recent use cases}
+\begin{itemize}
+\item \href{https://gitlab.com/systerel/S2OPC/}{S2OPC}
+  OPC (communication protocol for industrial systems), result of INGOPCS
+  French project
+\item \href{https://www.bureauveritas.com/white-papers/cybersecurity-guidelines-for-development-and-assessment-bv-sw-200}{Bureau Veritas Cybersecurity Guidelines}
+\item \href{https://www.vessedia.eu/}{Vessedia H2020 project} \includegraphics[align=c,width=1.5cm]{vessedia-logo}\\
+including verification of parts of \href{http://www.contiki-os.org/}{Contiki OS}
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Frama-C at a glance}
+\begin{itemize}
+\item
+  A \alert{Fra}mework for \alert{m}odular \alert{a}nalysis of \alert{C} code.
+\item \url{http://frama-c.com/}
+\item Developed at CEA Tech List and Inria
+\item Released under LGPL license (v18.0 Argon in November 2018)
+\item Kernel based on CIL (Necula et al. -- Berkeley).
+\item ACSL annotation language.
+\item Extensible platform
+\begin{itemize}
+\item Collaboration of analyses over same code
+\item Inter plug-in communication through ACSL formulas.
+\item Adding specialized plug-in is easy
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Frama-C plugins}
+\tikzset{every node/.append style={concept,font=\Tiny,text width=8mm,minimum size=0mm,inner sep=0pt}}
+\begin{center}
+\begin{tikzpicture}[
+  small mindmap,
+  concept color=OrangeRed,
+  level 1 concept/.append style={level distance=18mm},
+  level 2 concept/.append style={level distance=14mm}
+]
+
+\node{Frama-C\\ Plug-Ins}
+  [counterclockwise from=30]
+  child[concept color=Orange] {
+    node { Specification Generation }
+    [counterclockwise from=-60]
+    child { node{Aoraï} }
+    child { node{CaFE} }
+    child { node{RPP} }
+    child { node{MetACSL} }
+  }
+  child[concept color=Gold] {
+    node {Verification}
+    [counterclockwise from = 80]
+    child { node{Eva} }
+    child { node{WP} }
+  }
+  child[concept color=Coral] {
+    node {Code Navigation}
+    [counterclockwise from = 90]
+    child { node{Studia} }
+    child { node{Impact} }
+    child { node{Slicing} }
+  }
+  child[concept color=LightSalmon] {
+    node { Dynamic Analysis }
+    [counterclockwise from =160]
+    child { node{E-ACSL} }
+    child { node{PathCrawler} }
+    child { node{LTests} }
+  }
+  child[concept color=Orange!50!white] {
+    node { others }
+    [counterclockwise from=220]
+    child { node{Mthread} }
+    child { node{Pilat} }
+    child { node{JCard} }
+  }
+;
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+\end{document}
