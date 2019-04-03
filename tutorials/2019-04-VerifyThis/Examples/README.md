@@ -48,3 +48,21 @@ There is also a subtle pre-condition for `permut`: namely, if the three
 pointers are aliased, the results will not be a real permutation (for instance,
 if `a == c`, the first call to swap will overwrite the value pointed to by `c`):
 we really want to call `permut` with `\separated` pointers.
+
+# 03-binary-search.c
+
+Standard binary search algorithm, that requires a sorted array
+of appropriate `length` as first argument, and returns an index where the given
+key can be found, or `length` if the key is not present in the array. It is
+possible to use `behavior`s to structure the specification of the function in
+two distinct cases.
+
+As for function calls, it is mandatory to write `loop assigns` clauses as part
+of the annotations given to each loop in the program, together with an
+appropriate set of `loop invariant`.
+
+In addition, note that by default Frama-C/WP will allow you to prove
+_partial correctness_, i.e. that the post-condition holds **if** the
+function terminates. To prove _total correctness_ (the function always
+terminates in a state where the post-condition holds), the loop
+annotations must contain a `loop variant` clause.
