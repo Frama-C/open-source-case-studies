@@ -1,3 +1,4 @@
 *.parse
 *.eva
 *.loop
+.frama-c/
