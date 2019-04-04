@@ -66,3 +66,32 @@ _partial correctness_, i.e. that the post-condition holds **if** the
 function terminates. To prove _total correctness_ (the function always
 terminates in a state where the post-condition holds), the loop
 annotations must contain a `loop variant` clause.
+
+# 04-mjrty.c
+
+This is a C implementation of [Boyer-Moore's MJRTY algorithm](https://en.wikipedia.org/wiki/Boyer%E2%80%93Moore_majority_vote_algorithm) to determine whether
+a single element occurs in a (strict) majority of the cells of the given
+array. The specification requires thus to define a logic function for counting
+the number of occurrences of an element in an array. Verification is quite
+involved, and in particular requires non-trivial loop invariants
+
+# 05-selectionsort.c
+
+Standard selection sort algorithm. The specification of any sorting algorithm
+is that the array must be sorted after the call and that it is a permutation
+of the elements contained before the call, which can be specified in two
+manners:
+- either by using a function counting the number of occurrences of each element
+- or by specifying what is a permutation (e.g. as a composition of simple
+swap).
+
+The latter is well adapter to insertion sort, as the algorithm swaps two cells
+at each step.
+
+# 06-mergesort.c
+
+Standard merge sort algorithm. However, this time, it is easier to count
+the number of occurrences of each element in the array before and after
+each call than relying on permutations, as the elementary step is a whole
+shuffle of an array slice and not a mere swap. The verification is also much
+more involved than selection sort.
