@@ -6,8 +6,14 @@
 \usepackage{graphbox}
 \usepackage[overlay,absolute]{textpos}
 \usepackage[type={CC},modifier={by}]{doclicense}
+\usepackage{listings}
+\usepackage{pifont}
+\usepackage{courier}
 
 \usetikzlibrary{mindmap}
+\usetikzlibrary{decorations.text}
+\usetikzlibrary{decorations.pathreplacing}
+
 \hypersetup{colorlinks=true,urlcolor=blue}
 
 \author{Virgile Prevosto\\
@@ -16,6 +22,50 @@
 \title{C Program Specification and Verification\\ with ACSL and Frama-C/WP}
 \subtitle{VerifyThis Tutorial}
 \date{2019-04-06}
+
+\definecolor{darkgreen}{rgb}{0, 0.5, 0}
+\definecolor{lightgreen}{rgb}{0.9,1,0.9}
+\definecolor{lightred}{rgb}{1,0.7,0.7}
+\definecolor{lightblue}{rgb}{0.8,0.8,1}
+\definecolor{darkblue}{rgb}{0.3,0.3,1}
+\definecolor{lightyellow}{rgb}{1,1,0.5}
+\definecolor{darkyellow}{rgb}{0.8,0.8,0}
+\definecolor{darkred}{rgb}{0.33,0.14,0.09}
+
+\colorlet{perimetercolorbg}{lightblue}
+\colorlet{perimetercolorfg}{darkblue}
+\colorlet{propertycolorbg}{lightgreen}
+\colorlet{propertycolorfg}{darkgreen}
+\colorlet{tcbcolorbg}{lightyellow}
+\colorlet{tcbcolorfg}{darkyellow}
+
+\def\good{\textcolor{darkgreen}{\ding{52}}}
+\def\bad{\textcolor{red}{\ding{56}}}
+
+\lstdefinelanguage{ACSL}{%
+  morekeywords={assert,assigns,assumes,axiom,axiomatic,behavior,behaviors,
+    boolean,breaks,complete,continues,data,decreases,disjoint,ensures,
+    exit_behavior,ghost,global,inductive,integer,invariant,lemma,logic,loop,
+    model,predicate,reads,real,requires,returns,sizeof,strong,struct,terminates,type,
+    union,variant,volatile,writes},
+%  otherkeywords={\\at,\\base_addr,\\block_length,\\false,\\fresh,\\from,
+%                 \\initialized,\\lambda,\\let,\\match,\\max,\\nothing,\\null,
+%                 \\numof,\\old,\\result,\\specified,\\strlen,\\sum,\\true,
+%                 \\valid,\\valid_range},
+  keywordsprefix={\\},
+  alsoletter={\\},
+  morecomment=[l]{//},
+  moredelim=*[l]{//@},
+  moredelim=*[s]{/*@}{*/}
+}
+
+\lstset{
+basicstyle=\ttfamily,
+keywordstyle=\bfseries\color{red},
+showstringspaces=false,
+stringstyle={\rmfamily\color{gray}},
+escapechar=^
+}
 
 \begin{document}
 
@@ -32,7 +82,7 @@
 \item verification of implementations with the WP plugin of Frama-C
 \item All material available on \href{https://github.com/Frama-C/open-source-case-studies/tree/master/tutorials/2019-04-VerifyThis}{Frama-C github}:
 \begin{center}
-\url{https://frama.link/TODO}\hspace{5mm}
+\url{https://frama.link/fc-tuto-2019-04}\hspace{5mm}
 \includegraphics[width=1cm,align=c]{tuto-qr.pdf}
 \end{center}
 \begin{itemize}
@@ -45,11 +95,16 @@
 
 \begin{frame}{It's 2019! Why bother with proving C programs?}
 \begin{itemize}
-\item Lot of legacy code
-\item Embedded world (aka IoT) still uses it in many places
-\item And in some cases they care about safety and (cyber)security
+\item[\bad] Lack of modularity and high-level constructs
+\item[\bad] Many quirks in the semantics (pointers)
+\item[\bad] Small standard library
+\item[\good] Lot of legacy code
+\item[\good] Embedded world (aka IoT) still uses it in many places
+\item[\good] And in some cases they care about safety and (cyber)security
 \end{itemize}
-\begin{block}{A few recent use cases}
+\end{frame}
+
+\begin{frame}{A few recent use cases}
 \begin{itemize}
 \item \href{https://gitlab.com/systerel/S2OPC/}{S2OPC}
   OPC (communication protocol for industrial systems), result of INGOPCS
@@ -58,7 +113,6 @@
 \item \href{https://www.vessedia.eu/}{Vessedia H2020 project} \includegraphics[align=c,width=1.5cm]{vessedia-logo}\\
 including verification of parts of \href{http://www.contiki-os.org/}{Contiki OS}
 \end{itemize}
-\end{block}
 \end{frame}
 
 \begin{frame}{Frama-C at a glance}
@@ -93,7 +147,7 @@ including verification of parts of \href{http://www.contiki-os.org/}{Contiki OS}
   [counterclockwise from=30]
   child[concept color=Orange] {
     node { Specification Generation }
-    [counterclockwise from=-60]
+    [counterclockwise from=-50]
     child { node{Aoraï} }
     child { node{CaFE} }
     child { node{RPP} }
@@ -121,14 +175,136 @@ including verification of parts of \href{http://www.contiki-os.org/}{Contiki OS}
   }
   child[concept color=Orange!50!white] {
     node { others }
-    [counterclockwise from=220]
+    [counterclockwise from=230]
     child { node{Mthread} }
     child { node{Pilat} }
-    child { node{JCard} }
+    child { node{Frama-Clang} }
   }
 ;
 \end{tikzpicture}
 \end{center}
+\end{frame}
+
+\begin{frame}{What is verified by Frama-C?}
+\begin{minipage}[t]{0.32\textwidth}
+\begin{block}{Code Properties}
+\fcolorbox{propertycolorfg}{propertycolorbg}{
+\parbox{0.9\textwidth}{
+\begin{itemize}
+\item Functional properties (contract)
+\item Absence of run-time error
+\item Termination
+\item \textcolor{gray}{Dependencies}
+\item \textcolor{gray}{Non-interference}
+\item \textcolor{gray}{Temporal properties}
+\end{itemize}
+}}
+\end{block}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.6\textwidth}
+\begin{block}{\mbox{Perimeter of the verification}}
+\fcolorbox{perimetercolorfg}{perimetercolorbg}{
+\parbox{0.9\textwidth}{
+\begin{itemize}
+\item Which part of the code is under analysis?
+\item Which initial context?
+\end{itemize}
+}}
+\end{block}
+\vskip0.7cm
+\begin{block}{\mbox{Trusted Code Base}}
+\fcolorbox{tcbcolorfg}{tcbcolorbg}{
+\parbox{0.9\textwidth}{
+\begin{itemize}
+\item ACSL Axioms
+\item Hypotheses made by analyzers
+  \begin{itemize}
+    \item \alert{WP memory model}
+  \end{itemize}
+\item Stub Functions
+\item Frama-C itself
+\end{itemize}
+}}
+\end{block}
+\end{minipage}
+\end{frame}
+
+\begin{frame}[fragile,label=ACSL]{ANSI/ISO C Specification Language}
+\begin{block}{Presentation}
+\begin{itemize}
+\item Based on the notion of contract, like in Eiffel
+\item Allows users to specify functional properties of their code
+\item Allows communication between various plugins
+\item Independent from a particular analysis
+\item \url{https://github.com/acsl-language/acsl}
+\end{itemize}
+\end{block}
+\begin{block}{Basic Components}
+\begin{itemize}
+\item First-order logic
+\item Pure C expressions
+\item C types + $\mathbb{Z}$ (integer) and $\mathbb{R}$ (real)
+\item Built-ins predicates and logic functions, particularly over
+pointers.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Integer Arithmetic in ACSL}
+\lstset{language=ACSL}
+\begin{itemize}
+\item All operations are done over $\mathbb{Z}$: \alert{no overflow}
+\item ACSL predicate \lstinline|INT_MIN <= x + y <= INT_MAX|\\
+ $\Leftrightarrow$\\
+ C operation \lstinline|x+y| does not overflow (undefined behavior)
+\item $\text{\lstinline|(int)z|}\equiv\text{\lstinline|z|}\mod 2^{8*\text{\lstinline|sizeof(int)|}}$
+\item and \lstinline|INT_MIN <= (int)z <= INT_MAX|
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Memory description in ACSL}
+\lstset{language=C}
+\begin{tikzpicture}[x=6mm,y=6mm]
+\fill[lightred] (0,0) rectangle (2,1);
+\fill[LightGrey] (2,0) rectangle (4,1);
+\fill[lightgreen] (4,0) rectangle (8,1);
+\draw[decoration=brace,decorate] (0,1.1) -- (2,1.1) node[midway,above]{\tiny\lstinline|s[0].x|};
+\draw[decoration=brace,decorate] (2,1.1) -- (4,1.1) node[midway,above]{\tiny padding};
+\draw[decoration=brace,decorate] (4,1.1) -- (8,1.1) node[midway,above]{\tiny \lstinline|s[0].y|};
+\fill[lightred] (8,0) rectangle (10,1);
+\fill[LightGrey] (10,0) rectangle (12,1);
+\fill[lightgreen] (12,0) rectangle (16,1);
+\draw[decoration=brace,decorate] (8,1.1) -- (10,1.1) node[midway,above]{\tiny\lstinline|s[1].x|};
+\draw[decoration=brace,decorate] (10,1.1) -- (12,1.1) node[midway,above]{\tiny padding};
+\draw[decoration=brace,decorate] (12,1.1) -- (16,1.1) node[midway,above]{\tiny \lstinline|s[1].y|};
+\draw[step=1] (0,0) grid (16,1);
+\node (fst) at (0,-1) {\lstinline|&s[0]|};
+\draw[->] (fst) -- (0,0);
+\node (snd) at (8,-1) {\lstinline|&s[1]|};
+\draw[->] (snd) -- (8,0);
+
+\end{tikzpicture}
+\begin{minipage}{0.3\textwidth}
+\begin{lstlisting}
+struct S {
+short x;
+int y;
+} s[2];
+\end{lstlisting}
+\end{minipage}
+\begin{minipage}{0.65\textwidth}
+\lstset{language=ACSL}
+\begin{lstlisting}
+\valid(&s[0]+(0 .. 1))
+\valid((char*)&s[0] + (0 .. 15))
+!\initialized(*((char*)&s[0].x+2))
+\block_length(&s[0]) == 16
+\base_addr(&s[0].y) == s
+\offset(&s[1].y) == 12
+\separated(&s[0],&s[1])
+\end{lstlisting}
+\end{minipage}
 \end{frame}
 
 \end{document}
