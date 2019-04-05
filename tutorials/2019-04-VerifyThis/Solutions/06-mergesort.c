@@ -152,3 +152,9 @@ void merge_sort_aux(int* a, size_t low, size_t high) {
       count{Here}(a,key,0,length-1) == count{Pre}(a,key,0,length -1 );
 */
 void merge_sort(int* a, size_t length) { merge_sort_aux(a,0,length); }
+
+/*
+Local Variables:
+compile-command: "frama-c -wp -wp-rte 06-mergesort.c -wp-session merge_sort_proofs -wp-script merge_sort_lemma_count_id_Coq.v -wp-prover script,alt-ergo,coq"
+End:
+*/
