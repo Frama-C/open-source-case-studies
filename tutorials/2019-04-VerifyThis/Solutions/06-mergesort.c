@@ -20,16 +20,17 @@
       count{L2}(a,key,low, high);
 */
 
-/*@ requires valid_block: \valid(a+(low .. high-1));
+/*@ ghost
+/@ requires valid_block: \valid(a+(low .. high-1));
     requires ordered_bounds: low < middle < high;
     assigns \nothing;
     ensures count_split_eq:
      \forall int key;
       count(a,key,low,high-1) ==
         count(a,key,low,middle-1) + count(a,key,middle,high -1);
-*/
+@/
 void lemma_count_split(int* a, size_t low, size_t middle, size_t high) {
-  /*@
+  /@
    loop invariant middle <= i <= high;
    loop invariant
     \forall int key;
@@ -37,11 +38,13 @@ void lemma_count_split(int* a, size_t low, size_t middle, size_t high) {
           count(a,key,low,middle-1) + count(a,key,middle,i-1);
       loop assigns i;
       loop variant high - i;
-  */
+  @/
   for (size_t i = middle; i < high; i++);
 }
+*/
 
-/*@ requires valid_a: \valid(a+(low_a .. low_a + length - 1));
+/*@ ghost
+ /@ requires valid_a: \valid(a+(low_a .. low_a + length - 1));
     requires valid_b: \valid(b+(low_b .. low_b + length - 1));
     requires same_a_b:
       \forall integer i; 0 <= i < length ==> a[low_a+i] == b[low_b+i];
@@ -50,18 +53,19 @@ void lemma_count_split(int* a, size_t low, size_t middle, size_t high) {
       \forall int key;
         count(a,key,low_a,low_a+length - 1) ==
         count(b,key,low_b,low_b+length-1);
-*/
+ @/
 void lemma_count_same(int *a, int* b,
                       size_t low_a, size_t low_b, size_t length) {
-  /*@ loop invariant bounds: 0 <= i <= length;
+  /@ loop invariant bounds: 0 <= i <= length;
       loop invariant same_count:
        \forall int key;
        count(a,key,low_a,low_a+i-1) == count(b,key,low_b,low_b+i-1);
        loop assigns i;
        loop variant length - i;
-  */
+  @/
   for(size_t i = 0; i < length; i++);
 }
+*/
 
 /*@
   requires slices: low < middle < high;
@@ -111,7 +115,7 @@ void merge(int* a, size_t low, size_t middle, size_t high) {
       hidx++;
     }
   }
-  lemma_count_split(a,low,middle,high);
+  /*@ ghost lemma_count_split(a,low,middle,high); */
   /*@ assert tmp_all_elts:
       \forall int k; count(&tmp[0],k,0,high-low-1) == count(a,k,low,high-1);*/
   /*@
@@ -122,7 +126,7 @@ void merge(int* a, size_t low, size_t middle, size_t high) {
    */
   for (size_t i = 0; i < high - low; i++)
     a[low + i] = tmp[i];
-  lemma_count_same(a,tmp,low,0,high-low);
+  /*@ ghost lemma_count_same(a,tmp,low,0,high-low); */
 }
 
 /*@ requires valid_slice: \valid(a + (low .. high  - 1));
@@ -138,14 +142,14 @@ void merge_sort_aux(int* a, size_t low, size_t high) {
     size_t middle = low + (high - low) / 2;
     if (low < middle) {
       /*@ assert well_ordered: low < middle < high; */
-      lemma_count_split(a,low,middle,high);
+      /*@ ghost lemma_count_split(a,low,middle,high); */
       merge_sort_aux(a,low,middle);
-      lemma_count_split(a,low,middle,high);
+      /*@ ghost lemma_count_split(a,low,middle,high); */
       L: merge_sort_aux(a,middle,high);
       /*@
         assert helper_count: \forall int k;
           count(a,k,low,middle-1) == count{L}(a,k,low,middle-1); */
-      lemma_count_split(a,low,middle,high);
+      /*@ ghost lemma_count_split(a,low,middle,high); */
       merge(a,low,middle,high);
     }
   }
