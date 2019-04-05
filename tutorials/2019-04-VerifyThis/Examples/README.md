@@ -71,7 +71,11 @@ annotations must contain a `loop variant` clause.
 
 This is a C implementation of [Boyer-Moore's MJRTY algorithm](https://en.wikipedia.org/wiki/Boyer%E2%80%93Moore_majority_vote_algorithm) to determine whether
 a single element occurs in a (strict) majority of the cells of the given
-array. The specification requires thus to define a logic function for counting
+array. As a special case, the implementation assumes that `0` does not occur
+in the input array, and returns that value to denote the absence of a majority
+value. This is the only constraint on the content of the array.
+
+The specification requires thus to define a logic function for counting
 the number of occurrences of an element in an array. Verification is quite
 involved, and in particular requires non-trivial loop invariants
 
