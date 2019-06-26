@@ -14,27 +14,32 @@ FCFLAGS     += \
   -machdep gcc_x86_64 \
 
 EVAFLAGS    += \
-  -slevel 20 \
+  -slevel 23 \
   -eva-equality-domain \
   -eva-split-return full \
-
-VALBUILTINS +=
 
 # Export environment variable for Frama-C
 export FRAMA_C_MEMORY_FOOTPRINT = 8
 
-TARGETS=libmodbus-random-test-client libmodbus-unit-test-server
-all: $(TARGETS:%=%.eva)
+MAIN_TARGET := libmodbus-random-client
+TARGETS = $(MAIN_TARGET).eva libmodbus-unit-server.eva
+all: $(TARGETS)
 help:
 	@echo "targets: $(TARGETS)"
-loop: $(TARGETS:%=%.parse.loop) $(TARGETS:%=%.eva.loop)
-parse: $(TARGETS:%=%.parse)
-stats: $(TARGETS:%=%.parse) $(TARGETS:%=%.eva)
+display-targets:
+	@echo "$(TARGETS)"
+
+# The following targets are optional and provided for convenience only
+parse: $(TARGETS:%.eva=%.parse)
+loop: $(TARGETS:%.eva=%.parse.loop) $(TARGETS:%=%.loop)
+gui: $(MAIN_TARGET).eva.gui
+
+stats: $(TARGETS:%.eva=%.parse) $(TARGETS)
 	../show_stats.sh "$(notdir $(CURDIR))" $^
 
-libmodbus-random-test-client.parse: $(sort $(wildcard src/*.c)) \
+libmodbus-random-client.parse: $(sort $(wildcard src/*.c)) \
   tests/random-test-client.c $(FRAMAC_SHARE)/libc/string.c
 
-libmodbus-unit-test-server.parse: $(sort $(wildcard src/*.c)) \
+libmodbus-unit-server.parse: $(sort $(wildcard src/*.c)) \
   tests/unit-test-server.c $(FRAMAC_SHARE)/libc/netdb.c \
   $(FRAMAC_SHARE)/libc/string.c

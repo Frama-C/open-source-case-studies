@@ -35,30 +35,37 @@ EVAFLAGS    += \
   -eva-no-alloc-returns-null \
 
 # (MANDATORY) Name of the main target
-MAIN_TARGET := compress
+MAIN_TARGET := qlz-compress
 
 # Add other targets if needed
-TARGETS = $(MAIN_TARGET).eva decompress.eva stream-compress.eva stream-decompress.eva
+TARGETS = $(MAIN_TARGET).eva qlz-decompress.eva qlz-stream-compress.eva qlz-stream-decompress.eva
 
 # Default target
 all: $(TARGETS)
+help:
+	@echo "targets: $(TARGETS)"
+display-targets:
+	@echo "$(TARGETS)"
 
 # (MANDATORY) List of source files used by MAIN_TARGET, usually obtained
 # via a JSON compilation database + analysis-scripts/list_files.py
 $(MAIN_TARGET).parse: compress_file.c quicklz.c fc_stubs.c
 
-decompress.parse: decompress_file.c quicklz.c fc_stubs.c
+qlz-decompress.parse: decompress_file.c quicklz.c fc_stubs.c
 
-stream-compress.parse: CPPFLAGS += -DQLZ_COMPRESSION_LEVEL=3 -DQLZ_STREAMING_BUFFER=10000
-stream-compress.parse: stream_compress.c quicklz.c fc_stubs.c
+qlz-stream-compress.parse: CPPFLAGS += -DQLZ_COMPRESSION_LEVEL=3 -DQLZ_STREAMING_BUFFER=10000
+qlz-stream-compress.parse: stream_compress.c quicklz.c fc_stubs.c
 
-stream-decompress.parse: CPPFLAGS += -DQLZ_COMPRESSION_LEVEL=3 -DQLZ_STREAMING_BUFFER=10000
-stream-decompress.parse: stream_decompress.c quicklz.c fc_stubs.c
+qlz-stream-decompress.parse: CPPFLAGS += -DQLZ_COMPRESSION_LEVEL=3 -DQLZ_STREAMING_BUFFER=10000
+qlz-stream-decompress.parse: stream_decompress.c quicklz.c fc_stubs.c
 
 # The following targets are optional and provided for convenience only
 parse: $(TARGETS:%.eva=%.parse)
 loop: $(TARGETS:%.eva=%.parse.loop) $(TARGETS:%=%.loop)
 gui: $(MAIN_TARGET).eva.gui
+
+stats: $(TARGETS:%.eva=%.parse) $(TARGETS)
+	../show_stats.sh "$(notdir $(CURDIR))" $^
 
 # Run 'make <TARGET>.eva.loop' to obtain a .loop file, fine-tune it by hand,
 # then rename it to <TARGET>.slevel to prevent it from being overwritten.

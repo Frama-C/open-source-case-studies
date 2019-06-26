@@ -2041,7 +2041,7 @@ void Read_AD_Channel (ADC_parameters_t EXTERNAL * ADC_parameters)
    /* Limits the number of conversion attempts repeated because */
    /* of particle hit interrupts. Assumed to be at least 1.     */
 
-   //@ loop unroll 255;
+   //@ loop unroll 1; // partial, but enough to prevent initialization alarms
    while (tries_left > 0)
 
    {

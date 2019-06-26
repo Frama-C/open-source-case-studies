@@ -25,6 +25,7 @@ TEST_COMMON_SRCS = test/unit/test.c \
   $(shell $(FRAMAC_CONFIG) -print-share-path)/libc/stdlib.c \
   $(shell $(FRAMAC_CONFIG) -print-share-path)/libc/stdio.c \
   $(shell $(FRAMAC_CONFIG) -print-share-path)/libc/glob.c \
+  $(shell $(FRAMAC_CONFIG) -print-share-path)/libc/netdb.c \
   addrfilt.c \
   array.c \
   clientlog.c \
@@ -48,7 +49,7 @@ TEST_COMMON_SRCS = test/unit/test.c \
 
 # logging.c voluntarily ommitted, to skip analyzing logging functions
 
-CPPFLAGS    += -D_XOPEN_SOURCE=200112L -DNB_TESTS=3 -includefc_stubs.h
+CPPFLAGS    += -D_XOPEN_SOURCE=200112L -DNB_TESTS=3
 
 FCFLAGS     += -machdep gcc_x86_64 \
   -warn-special-float none \
@@ -63,27 +64,30 @@ EVAFLAGS    += \
   -eva-warn-key builtins:missing-spec=abort \
   -eva-warn-key malloc:weak \
 
-MAIN_TARGET := ntp_core
+MAIN_TARGET := chrony-ntp-core
 
-TARGETS = $(MAIN_TARGET).eva regress.eva
+TARGETS = $(MAIN_TARGET).eva chrony-regress.eva
 
 # Default target
 all: $(TARGETS)
 
-ntp_core.parse: $(TEST_COMMON_SRCS) test/unit/ntp_core.c
-ntp_core.eva: EVAFLAGS += -main eva_main \
+chrony-ntp-core.parse: $(TEST_COMMON_SRCS) test/unit/ntp_core.c
+chrony-ntp-core.eva: EVAFLAGS += -main eva_main \
 
 # The following parsing rule reuses variable TEST_COMMON_SRCS to avoid
 # having to manually list the sources. Note that the unit test version of
 # regress.c redefines some functions from the other regress.c file, so
 # we remove the latter from the list of sources.
-regress.parse: $(filter-out regress.c,$(TEST_COMMON_SRCS)) test/unit/regress.c
-regress.eva: EVAFLAGS += -main eva_main -slevel 100
+chrony-regress.parse: \
+  $(filter-out regress.c,$(TEST_COMMON_SRCS)) test/unit/regress.c
+chrony-regress.eva: EVAFLAGS += -main eva_main
 
 # The following targets are optional and provided for convenience only
 help:
 	@echo "targets: $(TARGETS)"
-loop: $(TARGETS:%.eva=%.parse.loop) $(TARGETS:%.eva=%.eva.loop)
+display-targets:
+	@echo "$(TARGETS)"
+loop: $(TARGETS:%.eva=%.parse.loop) $(TARGETS:%=%.loop)
 parse: $(TARGETS:%.eva=%.parse)
-stats: $(TARGETS:%.eva=%.parse) $(TARGETS:%=%.eva)
+stats: $(TARGETS:%.eva=%.parse) $(TARGETS)
 	../show_stats.sh "$(notdir $(CURDIR))" $^

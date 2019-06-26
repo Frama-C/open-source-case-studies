@@ -168,7 +168,7 @@ void HandleHitTrigger (void)
 
       conversion_try_count = 0;
 
-      //@ loop unroll 25;
+      
       while (   conversion_try_count < ADC_MAX_TRIES
              && END_OF_ADC != CONVERSION_ACTIVE )
       {
@@ -249,7 +249,7 @@ void HandleHitTrigger (void)
 
          conversion_try_count = 0;
 
-         //@ loop unroll 25;
+         
          while (   conversion_try_count < ADC_MAX_TRIES
                 && END_OF_ADC != CONVERSION_ACTIVE )
          {

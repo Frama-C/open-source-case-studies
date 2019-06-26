@@ -36,13 +36,17 @@ EVAFLAGS    += \
   -eva-equality-domain \
 
 # (MANDATORY) Name of the main target
-MAIN_TARGET := tweetnacl
+MAIN_TARGET := tweetnacl-usable
 
 # Add other targets if needed
 TARGETS = $(MAIN_TARGET).eva
 
 # Default target
 all: $(TARGETS)
+help:
+	@echo "targets: $(TARGETS)"
+display-targets:
+	@echo "$(TARGETS)"
 
 # (MANDATORY) List of source files used by MAIN_TARGET, usually obtained
 # via a JSON compilation database + analysis-scripts/list_files.py
@@ -53,6 +57,9 @@ $(MAIN_TARGET).parse: main.c tweetnacl.c randombytes.c
 parse: $(TARGETS:%.eva=%.parse)
 loop: $(TARGETS:%.eva=%.parse.loop) $(TARGETS:%=%.loop)
 gui: $(MAIN_TARGET).eva.gui
+
+stats: $(TARGETS:%.eva=%.parse) $(TARGETS)
+	../show_stats.sh "$(notdir $(CURDIR))" $^
 
 # Run 'make <TARGET>.eva.loop' to obtain a .loop file, fine-tune it by hand,
 # then rename it to <TARGET>.slevel to prevent it from being overwritten.

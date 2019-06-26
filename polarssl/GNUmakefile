@@ -68,13 +68,21 @@ EVAFLAGS         += \
 # Export environment variable for Frama-C
 export FRAMA_C_MEMORY_FOOTPRINT	= 8
 
-TARGETS=ssl_server
-all: $(TARGETS:%=%.eva)
+MAIN_TARGET := polarssl-server
+TARGETS = $(MAIN_TARGET).eva
+all: $(TARGETS)
 help:
 	@echo "targets: $(TARGETS)"
-loop: $(TARGETS:%=%.parse.loop) $(TARGETS:%=%.eva.loop)
-parse: $(TARGETS:%=%.parse)
-stats: $(TARGETS:%=%.parse) $(TARGETS:%=%.eva)
+display-targets:
+	@echo "$(TARGETS)"
+
+# The following targets are optional and provided for convenience only
+parse: $(TARGETS:%.eva=%.parse)
+loop: $(TARGETS:%.eva=%.parse.loop) $(TARGETS:%=%.loop)
+gui: $(MAIN_TARGET).eva.gui
+
+stats: $(TARGETS:%.eva=%.parse) $(TARGETS)
 	../show_stats.sh "$(notdir $(CURDIR))" $^
 
-ssl_server.parse: stubs.h $(sort $(wildcard library/*.c)) programs/ssl/ssl_server.c
+polarssl-server.parse: stubs.h $(sort $(wildcard library/*.c)) \
+  programs/ssl/ssl_server.c

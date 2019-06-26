@@ -79,3 +79,8 @@ void __gmpz_lcm(mpz_ptr res, mpz_srcptr a, mpz_srcptr b);
   assigns *res \from a, b;
 */
 void __gmpz_gcd(mpz_ptr res, mpz_srcptr a, mpz_srcptr b);
+
+/*@
+  assigns *res \from a;
+*/
+void mpz_neg (mpz_ptr res, mpz_srcptr a);

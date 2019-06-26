@@ -3555,8 +3555,8 @@ mpz_abs_sub_bit (mpz_t d, mp_bitcnt_t bit_index)
 
   assert (limb_index < dn);
 
-  gmp_assert_nocarry (mpn_sub_1 (dp + limb_index, dp + limb_index,
-				 dn - limb_index, bit));
+  gmp_assert_nocarry (mpn_sub_1 (dp + limb_index, dp + limb_index, dn - limb_index, bit));
+
   dn = mpn_normalized_size (dp, dn);
   d->_mp_size = (d->_mp_size < 0) ? - dn : dn;
 }

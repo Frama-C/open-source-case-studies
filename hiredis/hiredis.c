@@ -124,9 +124,9 @@ static void *createStringObject(const redisReadTask *task, char *str, size_t len
         return NULL;
     }
 
-    assert(task->type == REDIS_REPLY_ERROR  ||
-           task->type == REDIS_REPLY_STATUS ||
-           task->type == REDIS_REPLY_STRING);
+    assert(task->type == REDIS_REPLY_ERROR  || task->type == REDIS_REPLY_STATUS || task->type == REDIS_REPLY_STRING);
+
+
 
     /* Copy string value */
     memcpy(buf,str,len);

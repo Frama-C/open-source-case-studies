@@ -29,8 +29,11 @@ CPPFLAGS    += -Isrc -Isrc/optional
 # (Optional) Frama-C general flags (parsing and kernel)
 FCFLAGS     += \
   -machdep x86_64 \
-  -kernel-msg-key callstack \
   -no-warn-signed-overflow \
+
+# msg key callstack is too unstable and causes oracle changes more often than
+# 
+# -kernel-msg-key callstack \
 
 # (Optional) Eva-specific flags
 EVAFLAGS    += \
@@ -40,7 +43,7 @@ EVAFLAGS    += \
 # -eva-gauges-domain : -6 alarms, +1m30 analysis time
 # -eva-equality-domain : +3 alarms (!), +1m30 analysis time
 
-FCGUIFLAGS += -kernel-msg-key callstack
+#FCGUIFLAGS += -kernel-msg-key callstack
 
 # (MANDATORY) Name of the main target
 MAIN_TARGET := monocypher
@@ -50,6 +53,10 @@ TARGETS = $(MAIN_TARGET).eva
 
 # Default target
 all: $(TARGETS)
+help:
+	@echo "targets: $(TARGETS)"
+display-targets:
+	@echo "$(TARGETS)"
 
 # (MANDATORY) List of source files used by MAIN_TARGET, usually obtained
 # via a JSON compilation database + analysis-scripts/list_files.py
@@ -60,6 +67,9 @@ $(MAIN_TARGET).parse: src/monocypher.c src/optional/sha512.c tests/test.c
 parse: $(TARGETS:%.eva=%.parse)
 loop: $(TARGETS:%.eva=%.parse.loop) $(TARGETS:%=%.loop)
 gui: $(MAIN_TARGET).eva.gui
+
+stats: $(TARGETS:%.eva=%.parse) $(TARGETS)
+	../show_stats.sh "$(notdir $(CURDIR))" $^
 
 # Run 'make <TARGET>.eva.loop' to obtain a .loop file, fine-tune it by hand,
 # then rename it to <TARGET>.slevel to prevent it from being overwritten.

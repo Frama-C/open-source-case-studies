@@ -1,46 +1,44 @@
-TARGETS=2048 debie1 gzip124 mini-gmp papabench polarssl-1.1.7 \
+TARGETS=2048 debie1 gzip124 mini-gmp papabench polarssl \
      qlz solitaire tweetnacl-usable libmodbus monocypher khash \
-     jsmn chrony hiredis semver kilo icpc
+     jsmn chrony hiredis semver kilo icpc cerberus itc-benchmarks
 
 help::
 	@echo ""
 	@echo "Known targets:"
-	@echo "$(TARGETS)"
+	@echo "$(sort $(TARGETS))"
+
+QUICK_TARGETS=$(filter-out polarssl gzip124 monocypher chrony,$(TARGETS))
 
 all: $(TARGETS)
 
 $(TARGETS):
 	+$(MAKE) -C $@
 
-# use GNU parallel if available
-PARALLEL := $(shell command -v parallel 2> /dev/null)
+quick: $(QUICK_TARGETS)
 
-loop-all: $(TARGETS)
-ifdef PARALLEL
-	parallel $(MAKE) -C {} loop ::: $(TARGETS)
-else
-	$(foreach target,$(TARGETS),$(MAKE) -C $(target) loop ;)
-endif
+%.loop:
+	$(MAKE) -C $* loop
 
-clean-all:
-ifdef PARALLEL
-	parallel $(MAKE) -C {} clean ::: $(TARGETS)
-else
-	$(foreach target,$(TARGETS),$(MAKE) -C $(target) clean ;)
-endif
+loop-all: $(addsuffix .loop,$(TARGETS))
 
-parse-all:
-ifdef PARALLEL
-	parallel $(MAKE) -C {} parse ::: $(TARGETS)
-else
-	$(foreach target,$(TARGETS),$(MAKE) -C $(target) parse ;)
-endif
+%.clean:
+	$(MAKE) -C $* clean
 
-stats-all: $(TARGETS)
-ifdef PARALLEL
-	parallel $(MAKE) -s -C {} stats ::: $(TARGETS)
-else
-	$(foreach target,$(TARGETS),$(MAKE) -s -C $(target) stats ;)
-endif
+clean-all: $(addsuffix .clean,$(TARGETS))
+
+%.parse:
+	$(MAKE) -C $* parse
+
+parse-all: $(addsuffix .parse,$(TARGETS))
+
+%.stats:
+	$(MAKE) -C $* stats
+
+stats-all: $(addsuffix .stats,$(TARGETS))
+
+display-targets:
+	@echo $(foreach target,$(TARGETS),\
+	        $(addprefix $(target)/,\
+	          $(shell $(MAKE) --quiet -C $(target) display-targets)))
 
 .PHONY: $(TARGETS) frama-c/build/bin/frama-c loop-all clean-all help stats-all

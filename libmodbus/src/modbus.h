@@ -8,7 +8,7 @@
 #define MODBUS_H
 
 /* Add this for macros that defined unix flavor */
-#if (defined(__unix__) || defined(unix)) && !defined(USG)
+#if (defined(__unix__) || defined(unix)) && !defined(USG) && 0
 #include <sys/param.h>
 #endif
 

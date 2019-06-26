@@ -39,20 +39,24 @@ EVAFLAGS    += \
   -slevel 300 \
 
 # (MANDATORY) Name of the main target
-MAIN_TARGET := jsmn
+MAIN_TARGET := jsmn-main
 
 # Add other targets if needed
-TARGETS = $(MAIN_TARGET).eva example.eva
+TARGETS = $(MAIN_TARGET).eva jsmn-example.eva
 
 # Default target
 all: $(TARGETS)
+help:
+	@echo "targets: $(TARGETS)"
+display-targets:
+	@echo "$(TARGETS)"
 
 # (MANDATORY) List of source files used by MAIN_TARGET.
 # If there is a JSON compilation database,
 # 'frama-c-script list-files' can help obtain it
 $(MAIN_TARGET).parse: test/tests.c
 
-example.parse: jsmn.c example/simple.c
+jsmn-example.parse: jsmn.c example/simple.c
 
 # The following targets are optional and provided for convenience only
 parse: $(TARGETS:%.eva=%.parse)
@@ -67,5 +71,5 @@ $(MAIN_TARGET).eva: \
   EVAFLAGS += $(shell cat $(MAIN_TARGET).slevel | tr -d '\n\\')
 endif
 
-stats: $(TARGETS:%.eva=%.parse) $(TARGETS:%.eva=%.eva)
+stats: $(TARGETS:%.eva=%.parse) $(TARGETS)
 	../show_stats.sh "$(notdir $(CURDIR))" $^

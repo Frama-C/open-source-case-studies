@@ -30,21 +30,3 @@ void eva_main() {
   }
   main(argc, argv);
 }
-
-#include <netdb.h>
-
-static struct hostent h;
-
-/*@
-  requires valid_read_string(name);
-*/
-struct hostent *gethostbyname(const char *name) {
-  h.h_name = "gethostbyname_name";
-  h.h_aliases = 0;
-  h.h_addrtype = AF_INET;
-  h.h_length = sizeof(struct in_addr);
-  h.h_addr_list = malloc(sizeof(char*));
-  if (!h.h_addr_list) return 0;
-  h.h_addr_list[0] = 0;
-  return &h;
-}

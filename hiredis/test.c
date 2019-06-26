@@ -547,8 +547,8 @@ static void test_blocking_io_errors(struct config config) {
      * On >2.0, QUIT will return with OK and another read(2) needed to be
      * issued to find out the socket was closed by the server. In both
      * conditions, the error will be set to EOF. */
-    assert(c->err == REDIS_ERR_EOF &&
-        strcmp(c->errstr,"Server closed the connection") == 0);
+    assert(c->err == REDIS_ERR_EOF && strcmp(c->errstr,"Server closed the connection") == 0);
+
     redisFree(c);
 
     c = connect(config);

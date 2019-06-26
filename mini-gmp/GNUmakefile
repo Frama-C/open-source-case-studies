@@ -25,12 +25,13 @@ FRAMAC_CONFIG ?= frama-c-config
 # The flags below are only suggestions to use with Eva, and can be removed
 
 # (Optional) preprocessing flags, usually handled by -json-compilation-database
-CPPFLAGS    += -include../__fc_compatibility.h -include__fc_builtin.h -std=c99
+CPPFLAGS    += -include__fc_builtin.h -std=c99
 # note: '-std=c99' is used to avoid issues with old GCCs (< 5) due to the
 #       presence of inline attributes.
 
 # (Optional) Frama-C general flags (parsing and kernel)
 FCFLAGS     += \
+  -machdep gcc_x86_32 \
   -kernel-warn-key annot:missing-spec=abort \
   -kernel-warn-key typing:implicit-function-declaration=abort \
   -main testmain \
@@ -41,13 +42,17 @@ EVAFLAGS    += \
 
 
 # (MANDATORY) Name of the main target
-MAIN_TARGET := mini_gmp
+MAIN_TARGET := mini-gmp
 
 # Add other targets if needed
 TARGETS = $(MAIN_TARGET).eva
 
 # Default target
 all: $(TARGETS)
+help:
+	@echo "targets: $(TARGETS)"
+display-targets:
+	@echo "$(TARGETS)"
 
 # (MANDATORY) List of source files used by MAIN_TARGET.
 # If there is a JSON compilation database,
@@ -68,5 +73,5 @@ $(MAIN_TARGET).eva: \
   EVAFLAGS += $(shell cat $(MAIN_TARGET).slevel | tr -d '\n\\')
 endif
 
-stats: $(TARGETS:%.eva=%.parse) $(TARGETS:%.eva=%.eva)
+stats: $(TARGETS:%.eva=%.parse) $(TARGETS)
 	../show_stats.sh "$(notdir $(CURDIR))" $^

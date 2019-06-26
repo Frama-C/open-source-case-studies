@@ -9,30 +9,40 @@ include $(shell $(FRAMAC_CONFIG) -print-share-path)/analysis-scripts/frama-c.mk
 
 # Define global parameters
 CPPFLAGS  = -include$(shell $(FRAMAC) -print-path)/libc/string.h \
-            -include../__fc_compatibility.h \
             -DSTDC_HEADERS=1 -DHAVE_UNISTD_H=1 -DDIRENT=1 -DNO_UTIME=1 \
             -I$(shell $(FRAMAC) -print-path)/libc -I$(DIR)/
 
 FCFLAGS  += \
   -nonterm-ignore do_exit \
+  -main eva_main \
 
 EVAFLAGS += \
-  -slevel 2 \
+  -slevel 4 \
   -eva-no-alloc-returns-null \
   -eva-no-builtins-auto \
+  -eva-widening-delay 3 \
+  -eva-widening-period 3 \
 
 # Export environment variable for Frama-C
 export FRAMA_C_MEMORY_FOOTPRINT	= 8
 
-TARGETS=gzip
-all: $(TARGETS:%=%.eva)
+MAIN_TARGET := gzip124
+TARGETS = $(MAIN_TARGET).eva
+all: $(TARGETS)
 help:
 	@echo "targets: $(TARGETS)"
-loop: $(TARGETS:%=%.parse.loop) $(TARGETS:%=%.eva.loop)
-parse: $(TARGETS:%=%.parse)
-stats: $(TARGETS:%=%.parse) $(TARGETS:%=%.eva)
+display-targets:
+	@echo "$(TARGETS)"
+
+# The following targets are optional and provided for convenience only
+parse: $(TARGETS:%.eva=%.parse)
+loop: $(TARGETS:%.eva=%.parse.loop) $(TARGETS:%=%.loop)
+gui: $(MAIN_TARGET).eva.gui
+
+stats: $(TARGETS:%.eva=%.parse) $(TARGETS)
 	../show_stats.sh "$(notdir $(CURDIR))" $^
 
-gzip.parse: gzip.c zip.c deflate.c trees.c bits.c unzip.c inflate.c util.c \
+gzip124.parse: gzip.c zip.c deflate.c trees.c bits.c unzip.c inflate.c util.c \
               crypt.c lzw.c unlzw.c unpack.c unlzh.c getopt.c \
-              $(shell $(FRAMAC_CONFIG) -print-share-path)/libc/stdlib.c
+              $(shell $(FRAMAC_CONFIG) -print-share-path)/libc/stdlib.c \
+              fc_stubs.c

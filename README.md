@@ -124,9 +124,11 @@ when available. We also summarize the license of each directory below.
 - `gzip124`: GPL
 - `hiredis`: Redis license (BSD-style), see `COPYING`
 - `icpc`: Unlicense
+- `itc-benchmarks`: BSD 2-clause, see `COPYING`
 - `jsmn`: MIT
 - `khash`: MIT
-- `kilo`: BSD
+- `kilo`: BSD 2-clause "Simplified"
+          (see https://github.com/antirez/kilo/blob/master/LICENSE)
 - `libmodbus`: LGPL
 - `mini-gmp`:  LGPL or GPL
 - `monocypher`: see `README`

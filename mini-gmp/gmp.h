@@ -361,7 +361,7 @@ typedef __mpq_struct *mpq_ptr;
 #ifdef __GNUC__
 #if (defined __GNUC_STDC_INLINE__) || (__GNUC__ == 4 && __GNUC_MINOR__ == 2) \
   || (defined __GNUC_GNU_INLINE__ && defined __cplusplus)
-#define __GMP_EXTERN_INLINE extern __inline__ __attribute__ ((__gnu_inline__))
+//#define __GMP_EXTERN_INLINE extern __inline__ __attribute__ ((__gnu_inline__))
 #else
 #define __GMP_EXTERN_INLINE      extern __inline__
 #endif

@@ -46,6 +46,10 @@ TARGETS = $(MAIN_TARGET).eva
 
 # Default target
 all: $(TARGETS)
+help:
+	@echo "targets: $(TARGETS)"
+display-targets:
+	@echo "$(TARGETS)"
 
 # (MANDATORY) List of source files used by MAIN_TARGET.
 # If there is a JSON compilation database,
@@ -58,5 +62,5 @@ parse: $(TARGETS:%.eva=%.parse)
 loop: $(TARGETS:%.eva=%.parse.loop) $(TARGETS:%=%.loop)
 gui: $(MAIN_TARGET).eva.gui
 
-stats: $(TARGETS:%.eva=%.parse) $(TARGETS:%.eva=%.eva)
+stats: $(TARGETS:%.eva=%.parse) $(TARGETS)
 	../show_stats.sh "$(notdir $(CURDIR))" $^
