@@ -2,7 +2,7 @@ Open source case studies for Frama-C
 ====================================
 
 This repository is a collection of open source C codes to be used with
-[Frama-C](http://frama-c.com), in particular with the EVA
+[Frama-C](http://frama-c.com), in particular with the Eva
 (Evolved Value Analysis) plug-in.
 
 Each directory contains open-source code that constitutes a "case study".
@@ -11,7 +11,7 @@ Each directory contains open-source code that constitutes a "case study".
 # Requirements
 
 - GNU Make >= 4.0;
-- Frama-C 17 (Chlorine);
+- Frama-C 19 (Potassium);
 - The `frama-c` binary must be in the PATH.
 
 
@@ -19,7 +19,7 @@ Each directory contains open-source code that constitutes a "case study".
 
 - `cd` to one of the case studies;
 
-- Run `make` to parse and run EVA on the predefined targets
+- Run `make` to parse and run Eva on the predefined targets
   (you can run `make help` to get the list of base targets).
   Note that the default file used by GNU Make is `GNUmakefile` if it exists.
   We use this to avoid renaming the original Makefile, if any. It also means
@@ -29,7 +29,7 @@ Each directory contains open-source code that constitutes a "case study".
 - For each base target `t`, the following targets are generated:
 
     - `t.parse`: parse the sources;
-    - `t.eva`: run EVA;
+    - `t.eva`: run Eva;
     - `t.eva.gui`: open the GUI.
 
   Each target depends on the previous one; note that `t.parse.gui` is also
@@ -41,7 +41,7 @@ Each directory contains open-source code that constitutes a "case study".
 
     - `t.stats`: print time/memory usage;
     - `t.parse.loop` and `t.eva.loop`: use the Loop Analysis plug-in to produce
-      a file with slevel heuristics (running EVA may improve the result of
+      a file with slevel heuristics (running Eva may improve the result of
       Loop Analysis, so `t.eva.loop` should be more precise than `t.parse.loop`).
       After obtaining this initial set of parameters, consider saving it to a
       `.slevel` file and including it in the `GNUmakefile`. This way, you can
@@ -65,7 +65,7 @@ Each directory contains open-source code that constitutes a "case study".
 
 Only minor modifications were performed on each of these case studies:
 
-- File `GNUmakefile` is added to each case study, with Frama-C/EVA-specific
+- File `GNUmakefile` is added to each case study, with Frama-C/Eva-specific
   rules for parsing and running the analysis;
 - Some case studies contain a `.slevel` file which is derived from the result
   obtained by the Loop Analysis plug-in;
@@ -98,16 +98,16 @@ Only minor modifications were performed on each of these case studies:
 
 # Contributions
 
-If you know of other open source code bases where Frama-C/EVA produces
+If you know of other open source code bases where Frama-C/Eva produces
 interesting results, please contribute with pull requests including the
 sources and the `GNUmakefile` that you have devised to run Frama-C.
 
 On the other hand, if you have some interesting open-source C software
 (ideally, C99-compatible) that you are unable to parse and/or run with
-Frama-C/EVA, consider creating an issue with the description of the problem
+Frama-C/Eva, consider creating an issue with the description of the problem
 you are facing (e.g. missing/incompatible declarations in the Frama-C libc,
 problems when preprocessing/parsing the software, constructs unsupported
-by EVA, etc). Ideally, create a (WIP) pull request with the sources in a new
+by Eva, etc). Ideally, create a (WIP) pull request with the sources in a new
 directory, ready to be prepared for the case study.
 
 
@@ -133,7 +133,7 @@ when available. We also summarize the license of each directory below.
 - `mini-gmp`:  LGPL or GPL
 - `monocypher`: see `README`
 - `papabench`: GPL
-- `polarssl-1.1.7`: GPL
+- `polarssl`: GPL
 - `qlz`: GPL
 - `semver`: MIT
 - `solitaire`: public domain (see `solitaire.c`)
