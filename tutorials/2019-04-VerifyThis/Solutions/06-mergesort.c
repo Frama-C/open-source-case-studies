@@ -166,6 +166,6 @@ void merge_sort(int* a, size_t length) { merge_sort_aux(a,0,length); }
 
 /*
 Local Variables:
-compile-command: "frama-c -wp -wp-rte 06-mergesort.c -wp-session merge_sort_proofs -wp-script merge_sort_proofs/lemma_count_id.v -wp-prover script,alt-ergo,coq"
+compile-command: "frama-c -wp -wp-rte 06-mergesort.c -wp-session merge_sort_proofs -wp-coq-script merge_sort_proofs/lemma_count_id.v -wp-prover script,alt-ergo,native:coq"
 End:
 */

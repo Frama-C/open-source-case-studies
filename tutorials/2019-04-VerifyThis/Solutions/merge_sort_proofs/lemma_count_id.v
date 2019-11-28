@@ -6,11 +6,11 @@ Proof.
 intros key low high mem1 mem2 a Hint.
 elim (Z_lt_ge_dec high low).
 + intros Hgt.
-  assert (L_count mem1 a key low high = 0).
+  assert (L_count mem1 a key low high = 0%Z).
   - generalize (FixL_count key low high mem1 a); simpl.
     unfold itep.
     intros (Hdef, _); auto.
-  - assert (L_count mem2 a key low high = 0).
+  - assert (L_count mem2 a key low high = 0%Z).
     * generalize (FixL_count key low high mem2 a).
       unfold itep; intros (Hdef, _); auto.
     * auto with zarith.
@@ -28,14 +28,14 @@ elim (Z_lt_ge_dec high low).
     * intros Hkeq.
       rewrite <- Heq1; auto with zarith.
       rewrite <- Heq2; auto with zarith.
-      ** rewrite <- (Hind (high1 - 1)); auto with zarith.
+      ** rewrite <- (Hind (high1 - 1)%Z); auto with zarith.
          intros i3 a1 Hlbi Hhbi.
          apply Heq; auto with zarith.
       ** rewrite <- (Heq high1); auto with zarith.
     * intros Hkneq.
       rewrite <- Hneq1; auto with zarith.
       rewrite <- Hneq2; auto with zarith.
-      ** rewrite <- (Hind (high1 - 1)); auto with zarith.
+      ** rewrite <- (Hind (high1 - 1)%Z); auto with zarith.
          intros i3 a1 Hlbi Hhbi.
          apply Heq; auto with zarith.
       ** rewrite <- (Heq high1); auto with zarith.
@@ -50,16 +50,16 @@ elim (Z_lt_ge_dec high low).
     * intros Hkeq.
       rewrite <- Heq1; auto with zarith.
       rewrite <- Heq2; auto with zarith.
-      ** replace (L_count mem1 a key low (low - 1)) with 0.
-         *** replace (L_count mem2 a key low (low - 1)) with 0; auto with zarith.
+      ** replace (L_count mem1 a key low (low - 1)%Z) with 0%Z.
+         *** replace (L_count mem2 a key low (low - 1)%Z) with 0%Z; auto with zarith.
              generalize (FixL_count key low (low - 1) mem2 a); unfold itep; simpl; auto with zarith.
          *** generalize (FixL_count key low (low - 1) mem1 a); unfold itep; simpl; auto with zarith.
       ** rewrite <- (Heq low); auto with zarith.
     * intros Hkneq.
       rewrite <- Hneq1; auto with zarith.
       rewrite <- Hneq2; auto with zarith.
-      ** replace (L_count mem1 a key low (low - 1)) with 0.
-         *** replace (L_count mem2 a key low (low - 1)) with 0; auto with zarith.
+      ** replace (L_count mem1 a key low (low - 1)%Z) with 0%Z.
+         *** replace (L_count mem2 a key low (low - 1)%Z) with 0%Z; auto with zarith.
              generalize (FixL_count key low (low - 1) mem2 a); unfold itep; simpl; auto with zarith.
          *** generalize (FixL_count key low (low - 1) mem1 a); unfold itep; simpl; auto with zarith.
       ** rewrite <- (Heq low); auto with zarith.
