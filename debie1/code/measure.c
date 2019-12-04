@@ -232,7 +232,6 @@ void HandleHitTrigger (void)
       /* Delay of 100 microseconds (+ function call overhead). */
 
 
-      //@ loop unroll 5;
       for (i = 0; i < NUM_CH; i++)
       {
 
@@ -406,6 +405,7 @@ void HandleAcquisition (void)
       if ((state == self_test_e || state == acquisition_e) 
            && (EVENT_FLAG == ACCEPT_EVENT))
       {
+         /*@ split event_queue_length; */
          event = GetFreeRecord();
          /* Get pointer to the new event record. */
 
@@ -473,12 +473,12 @@ void HandleAcquisition (void)
             telemetry_data.SU_temperature[trigger_unit - SU1][1];
 
          ClassifyEvent(event);
+         /*@ merge event_queue_length; */
          /* New event is classified. */
 
          checksum_pointer = (EXTERNAL unsigned char *)event;
          event_checksum = 0;
 
-         //@ loop unroll 28;
          for (i = 1; i < sizeof(event_record_t); i++)
          {
             event_checksum ^= *checksum_pointer;

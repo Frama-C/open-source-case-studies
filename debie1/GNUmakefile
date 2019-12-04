@@ -37,6 +37,7 @@ FCFLAGS     += \
 EVAFLAGS    += \
   -eva-warn-key builtins:missing-spec=abort \
   -eva-equality-domain \
+  -eva-auto-loop-unroll 170 -eva-ilevel 16 \
 
 # (MANDATORY) Name of the main target
 MAIN_TARGET := debie1
@@ -59,7 +60,6 @@ $(MAIN_TARGET).parse: $(sort $(wildcard code/*.c)) code/harness/harness.c code/i
 
 # The following targets are optional and provided for convenience only
 parse: $(TARGETS:%.eva=%.parse)
-loop: $(TARGETS:%.eva=%.parse.loop) $(TARGETS:%=%.loop)
 gui: $(MAIN_TARGET).eva.gui
 
 stats: $(TARGETS:%.eva=%.parse) $(TARGETS)

@@ -87,7 +87,7 @@ help:
 	@echo "targets: $(TARGETS)"
 display-targets:
 	@echo "$(TARGETS)"
-loop: $(TARGETS:%.eva=%.parse.loop) $(TARGETS:%=%.loop)
 parse: $(TARGETS:%.eva=%.parse)
+
 stats: $(TARGETS:%.eva=%.parse) $(TARGETS)
 	../show_stats.sh "$(notdir $(CURDIR))" $^

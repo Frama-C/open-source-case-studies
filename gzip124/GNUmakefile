@@ -36,7 +36,6 @@ display-targets:
 
 # The following targets are optional and provided for convenience only
 parse: $(TARGETS:%.eva=%.parse)
-loop: $(TARGETS:%.eva=%.parse.loop) $(TARGETS:%=%.loop)
 gui: $(MAIN_TARGET).eva.gui
 
 stats: $(TARGETS:%.eva=%.parse) $(TARGETS)

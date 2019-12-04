@@ -414,7 +414,6 @@ void Clear_SU_Error(void)
    sensor_index_t EXTERNAL i;
  
    DISABLE_INTERRUPT_MASTER;
-   //@ loop unroll NUM_SU;
    for (i = 0; i < NUM_SU; i++)
    {
       telemetry_data.SU_status[i] &= SUPPLY_VOLTAGE_MASK;
@@ -669,7 +668,6 @@ void Boot(void)
       
       fill_pointer = (EXTERNAL unsigned char * DIRECT_INTERNAL)&telemetry_data;
 
-      //@ loop unroll sizeof(telemetry_data);
       for (i=0; i < sizeof(telemetry_data); i++)
       {
          *fill_pointer = 0;
@@ -1194,7 +1192,6 @@ void MeasureTemperature(sensor_index_t SU_index)
 
 
 
-   //@ loop unroll NUM_TEMP;
    for (j=0; j < NUM_TEMP; j++)
 
    {
@@ -1347,7 +1344,6 @@ void LowVoltageCurrent(void)
    {
       /*  An error is detected, output current is limited.                   */
 
-      //@ loop unroll NUM_SU;
       for (i = 0; i < NUM_SU; i++)
 
       {
@@ -1727,7 +1723,8 @@ void Convert_AD (ADC_parameters_t EXTERNAL * ADC_parameters)
    START_CONVERSION;
  
    conversion_count = 0;
- 
+
+   /*@ loop unroll ADC_parameters->conversion_max_tries; */
    while(conversion_count < ADC_parameters -> conversion_max_tries  
           && (END_OF_ADC != CONVERSION_ACTIVE))
    {
@@ -1876,7 +1873,6 @@ void VoltageFailure(channel_t ADC_channel)
 
    }
 
-   //@ loop unroll NUM_SU;
    for (i = 0; i < NUM_SU; i++)
 
    {
@@ -1974,7 +1970,6 @@ void DelayAwhile (unsigned short duration)
 /* Algorithm      : Call ShortDelay() as many times as necessary to delay    */
 /*                  for at least the desired duration.                       */
 {
-   //@ loop unroll 5;
    while (duration > MAX_SHORT_DELAY)
    {
       ShortDelay (MAX_SHORT_DELAY);
@@ -2323,7 +2318,6 @@ void SelfTest_SU(sensor_index_t self_test_SU_index)
    /* HV Status register is checked. */
 
    /* SU voltages are measured */
-   //@ loop unroll 6;
    for (i = channel_0_e; i <= channel_6_e; i++)
    {
       MeasureVoltage(i);

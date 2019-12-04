@@ -280,7 +280,6 @@ void InitClassification(void)
    uint_least8_t EXTERNAL i;
    /* Loop variable. */
 
-   //@ loop unroll NUM_QCOEFF;
    for (i=0; i<NUM_QCOEFF; i++)
    {
       telemetry_data.coefficient[i] = DEFAULT_COEFF;

@@ -424,7 +424,6 @@ void CopyProgramCode(void)
    code_address_t i;
    INDIRECT_INTERNAL unsigned char code_byte;
 
-   //@ loop unroll PROGRAM_COPY_END - PROGRAM_COPY_START;
    for (i = PROGRAM_COPY_START; i < PROGRAM_COPY_END; i++)
    {
       code_byte = GET_CODE_BYTE(i);
@@ -564,7 +563,6 @@ void PatchCode(memory_patch_variables_t EXTERNAL *patch_variables)
 
    /* Memory block is copied from SRAM3 to SRAM1. */
         
-   //@ loop unroll 32;
    for (i=0 ; i < patch_variables -> data_amount ; i++)
    {
       old_checksum ^= GET_DATA_BYTE(patch_variables -> destination + i);

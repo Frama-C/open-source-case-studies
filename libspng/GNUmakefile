@@ -25,42 +25,37 @@ FRAMAC_CONFIG ?= frama-c-config
 # The flags below are only suggestions to use with Eva, and can be removed
 
 # (Optional) preprocessing flags, usually handled by -json-compilation-database
-CPPFLAGS    += -DUBX -D__FAKE_FOR_IA32__ -D_XOPEN_SOURCE=700 \
-  -Isw/airborne/fly_by_wire \
-  -Isw/var/include \
-  -Isw/airborne/autopilot \
-  -Iavr/include \
-  -iquote sw/include \
+CPPFLAGS    +=
 
 # (Optional) Frama-C general flags (parsing and kernel)
 FCFLAGS     += \
+  -main eva_main \
+  -kernel-warn-key annot:missing-spec=abort \
   -kernel-warn-key typing:implicit-function-declaration=abort \
-  -absolute-valid-range 0-0xFF -warn-special-float nan \
 
 # (Optional) Eva-specific flags
 EVAFLAGS    += \
   -eva-warn-key builtins:missing-spec=abort \
-  -slevel 1 \
+  -eva-plevel 256 \
+  -eva-precision 5 \
 
 # (MANDATORY) Name of the main target
-MAIN_TARGET := papabench
+MAIN_TARGET := libspng_example
 
 # Add other targets if needed
 TARGETS = $(MAIN_TARGET).eva
 
 # Default target
 all: $(TARGETS)
-help:
-	@echo "targets: $(TARGETS)"
-display-targets:
-	@echo "$(TARGETS)"
 
 # (MANDATORY) List of source files used by MAIN_TARGET.
 # If there is a JSON compilation database,
 # 'frama-c-script list-files' can help obtain it
-$(MAIN_TARGET).parse: $(sort $(wildcard sw/airborne/autopilot/*.c)) sw/lib/c/math.c \
-  $(shell $(FRAMAC_CONFIG) -print-share-path)/libc/math.c
-
+$(MAIN_TARGET).parse: \
+  fc_stubs.c \
+  examples/example.c \
+  spng.c \
+  $(shell $(FRAMAC_CONFIG) -print-share-path)/libc/stdio.c \
 
 # The following targets are optional and provided for convenience only
 parse: $(TARGETS:%.eva=%.parse)

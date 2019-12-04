@@ -24,10 +24,10 @@ FRAMAC_CONFIG ?= frama-c-config
 # EDIT VARIABLES AND TARGETS BELOW AS NEEDED
 
 # (Optional) preprocessing flags, usually handled by -json-compilation-database
-CPPFLAGS += -include$(shell $(FRAMAC) -print-path)/libc/string.h
+CPPFLAGS    += -include$(shell $(FRAMAC) -print-path)/libc/string.h
 
 # (Optional) Frama-C general flags (parsing and kernel)
-FCFLAGS  += \
+FCFLAGS     += \
   -main eva_main \
 
 # (Optional) Eva-specific flags
@@ -61,16 +61,7 @@ qlz-stream-decompress.parse: stream_decompress.c quicklz.c fc_stubs.c
 
 # The following targets are optional and provided for convenience only
 parse: $(TARGETS:%.eva=%.parse)
-loop: $(TARGETS:%.eva=%.parse.loop) $(TARGETS:%=%.loop)
 gui: $(MAIN_TARGET).eva.gui
 
 stats: $(TARGETS:%.eva=%.parse) $(TARGETS)
 	../show_stats.sh "$(notdir $(CURDIR))" $^
-
-# Run 'make <TARGET>.eva.loop' to obtain a .loop file, fine-tune it by hand,
-# then rename it to <TARGET>.slevel to prevent it from being overwritten.
-# If such file exists, use it to define per-function slevel values.
-ifneq (,$(wildcard $(MAIN_TARGET).slevel))
-$(MAIN_TARGET).eva: \
-  EVAFLAGS += $(shell cat $(MAIN_TARGET).slevel | tr -d '\n\\')
-endif

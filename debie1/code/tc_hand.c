@@ -135,7 +135,6 @@ void InitTC_LookUp(void)
    /* Loop variable */
 
 
-   //@ loop unroll 128;
    for(i=0; i<128; i++) TC_look_up[i] = ALL_INVALID;
 
    TC_look_up[START_ACQUISITION]            = ONLY_EQUAL;
@@ -660,7 +659,6 @@ void MemoryPatch(telecommand_t EXTERNAL *command)
 
                if (address <= (END_SRAM3 - MEM_BUFFER_SIZE + 1))
                {
-                 //@ loop unroll 32;
                   for(i=0; i<MEM_BUFFER_SIZE; i++)
                   {
                      SET_DATA_BYTE(address + i, memory_transfer_buffer[i]);
@@ -1307,7 +1305,6 @@ void ExecuteCommand(telecommand_t EXTERNAL *command)
       case START_ACQUISITION:
          error_flag = 0;
  
-         //@ loop unroll 4;
          for (i=SU_1; i<=SU_4; i++)
          {
              if ((ReadSensorUnit(i) == start_switching_e) ||

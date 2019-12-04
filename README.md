@@ -11,7 +11,7 @@ Each directory contains open-source code that constitutes a "case study".
 # Requirements
 
 - GNU Make >= 4.0;
-- Frama-C 19 (Potassium);
+- Frama-C 20 (Calcium);
 - The `frama-c` binary must be in the PATH.
 
 
@@ -130,6 +130,7 @@ when available. We also summarize the license of each directory below.
 - `kilo`: BSD 2-clause "Simplified"
           (see https://github.com/antirez/kilo/blob/master/LICENSE)
 - `libmodbus`: LGPL
+- `libspng`: BSD 2-clause, see `LICENSE`
 - `mini-gmp`:  LGPL or GPL
 - `monocypher`: see `README`
 - `papabench`: GPL
@@ -138,3 +139,4 @@ when available. We also summarize the license of each directory below.
 - `semver`: MIT
 - `solitaire`: public domain (see `solitaire.c`)
 - `tweetnacl-usable`: public domain (see `LICENSE.txt`)
+- `x509-parser` : GPLv2 / BSD (see `LICENSE`)

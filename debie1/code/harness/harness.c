@@ -766,7 +766,6 @@ void Set_AD_Unlimited (void)
    printf ("Set AD Unlimited\n");
 #endif
 
-   //@ loop unroll AD_CHANNELS;
    for (c = 0; c < AD_CHANNELS; c++)
    {
       ad_limit[c].min = 0;
@@ -931,7 +930,6 @@ void Set_AD_Delay (int delay)
 /* Sets ad_conv_delay[all] = delay. */
 {
    int i;
-   //@ loop unroll AD_NUM_CONV;
    for (i = 0; i < AD_NUM_CONV; i++)
       ad_conv_delay[i] = delay;
 }
@@ -945,7 +943,6 @@ void Random_AD_Delay (void)
 /* Sets random ad_conv_delay[]. */
 {
    int i;
-   //@ loop unroll AD_NUM_CONV;
    for (i = 0; i < AD_NUM_CONV; i++)
       ad_conv_delay[i] = (Next_Rand (&ad_delay_rand) % (ADC_MAX_TRIES + 10));
 }
@@ -1868,7 +1865,6 @@ static void Send_Patch_Code (
 
    /* Send the patch contents, 16 words = 32 octets: */
 
-   //@ loop unroll 16;
    for (i = 0; i < 16; i++)
    {
       Send_TC_Word (((uint_least16_t) i) << 6);
@@ -1911,7 +1907,6 @@ static void Send_Patch_Data (
 
    /* Send the patch contents, 16 words = 32 octets: */
 
-   //@ loop unroll 16;
    for (i = 0; i < 16; i++)
    {
       Send_TC_Word (((uint_least16_t) i) << 6);
@@ -1945,7 +1940,6 @@ static void Read_Data_Memory (uint16_t address)
 
    /* The 16 first words of data: */
 
-   //@ loop unroll 16;
    for (i = 0; i < 16; i++)
    {
       Check (telemetry_pointer < telemetry_end_pointer);
@@ -2569,6 +2563,7 @@ void Monitoring_Task_Tests (void)
 {
    int sec;
    int tot_errors, max_errors = 20;
+   /*@ widen_hints tot_errors, 20; */
 
    /* Reset all cycles: */
 
@@ -2592,7 +2587,6 @@ void Monitoring_Task_Tests (void)
 
       /* The first 9 seconds: */
 
-      //@ loop unroll 9;
       for (sec = 1; sec <= 9; sec ++)
       {
          Monitor_Health (Prob6a);
@@ -2614,7 +2608,6 @@ void Monitoring_Task_Tests (void)
 
       /* The remaining 170 seconds of the full period: */
 
-      //@ loop unroll 170;
       for (sec = 11; sec <= 180; sec ++)
       {
          Monitor_Health (Prob6a);
@@ -2632,7 +2625,6 @@ void Monitoring_Task_Tests (void)
 
       total_adc_hits = 0;
 
-      //@ loop unroll 180;
       for (sec = 1; sec <= 180; sec ++)
       {
          max_adc_hits = 1;
@@ -2656,7 +2648,6 @@ void Monitoring_Task_Tests (void)
 
       total_adc_hits = 0;
 
-      //@ loop unroll 180;
       for (sec = 1; sec <= 180; sec ++)
       {
          max_adc_hits = HIT_BUDGET_DEFAULT; 
@@ -2692,7 +2683,6 @@ void Monitoring_Task_Tests (void)
           * we save it for last.
           */
 
-         //@ loop unroll 180;
          for (sec = 1; sec <= 180; sec ++)
          {
             Monitor_Health (Prob6d);
@@ -2728,7 +2718,6 @@ void Monitoring_Task_Tests (void)
           * we save it for last.
           */
 
-         //@ loop unroll 180;
          for (sec = 1; sec <= 180; sec ++)
          {
             max_adc_hits = HIT_BUDGET_DEFAULT;
@@ -2774,7 +2763,6 @@ void TM_Tests (void)
 
       Check (TC_state == register_TM_e);
 
-      //@ loop unroll sizeof(telemetry_data_t)/2;
       for (octets = 0; octets < sizeof (telemetry_data_t); octets += 2)
       {
 
@@ -2805,7 +2793,6 @@ void TM_Tests (void)
 
       Check (TC_state == register_TM_e);
 
-      //@ loop unroll 40/2;
       for (octets = 0; octets < 40; octets += 2)
       {
 
@@ -2847,6 +2834,7 @@ void TM_Tests (void)
       /* Absorb TM until a TM_READY message is sent to the TC task: */
 
       octets = 0;
+      /*@ loop unroll 22; */
       while (mail_count[TCTM_MAILBOX] == 0)
       {
          if (telemetry_pointer < telemetry_end_pointer)
@@ -3007,7 +2995,6 @@ static void Hit_ISR_Tests (void)
       Set_AD_Delay (2);
       ad_conv_num = 0;
 
-      //@ loop unroll NUM_SU;
       for (su = 0; su < NUM_SU; su ++)
       {
          Trigger_SU_Hit (su, Prob3a);
@@ -3023,7 +3010,6 @@ static void Hit_ISR_Tests (void)
 
    CASE("Hit Trigger, budget left, no A/D errors, SU self test ok");
 
-      //@ loop unroll NUM_SU;
       for (su = 0; su < NUM_SU; su++)
       {
          /* Right self test pulse: */
@@ -3045,7 +3031,6 @@ static void Hit_ISR_Tests (void)
 
    CASE("Hit Trigger, budget left, no A/D errors, SU self test wrong");
 
-      //@ loop unroll NUM_SU;
       for (su = 0; su < NUM_SU; su++)
       {
          /* Wrong self test pulse: */
@@ -3071,7 +3056,6 @@ static void Hit_ISR_Tests (void)
 
       self_test_SU_number = NO_SU;
 
-      //@ loop unroll NUM_SU;
       for (su = 0; su < NUM_SU; su++) SU_state[su] = off_e;
   
    CASE("Hit Trigger, budget left, all A/D delays at limit but ok");
@@ -3082,7 +3066,6 @@ static void Hit_ISR_Tests (void)
 
       ad_conv_num = 0;
 
-      //@ loop unroll NUM_SU;
       for (su = 0; su < NUM_SU; su ++)
       {
          Trigger_SU_Hit (su, Prob3b);
@@ -3104,7 +3087,6 @@ static void Hit_ISR_Tests (void)
 
       ad_conv_delay[0] = ADC_MAX_TRIES + 1;
 
-      //@ loop unroll NUM_SU;
       for (su = 0; su < NUM_SU; su ++)
       {
          ad_conv_num = su;
@@ -3166,9 +3148,7 @@ void Report_Event_Histo (void)
    int class;
 
 #if defined(TRACE_HARNESS)
-   //@ loop unroll 4;
    for (sen = 0; sen < NUM_SU; sen ++)
-     //@ loop unroll 10;
       for (class = 0; class <NUM_CLASSES; class ++)
       {
          printf ("Events from SU %d, class %d: %d\n",
@@ -3206,7 +3186,6 @@ static void Acquisition_Tests (void)
 
       /* Send the SWITCH ON commands: */
 
-      //@ loop unroll NUM_SU;
       for (sen = 0; sen < NUM_SU; sen ++)
       {
          Check (SU_state[sen] == off_e);
@@ -3229,13 +3208,11 @@ static void Acquisition_Tests (void)
 
       Monitor_Health (Prob6a);
 
-      //@ loop unroll NUM_SU;
       for (sen = 0; sen < NUM_SU; sen ++)
          Check (SU_state[sen] == switching_e);
 
       Monitor_Health (Prob6a);
 
-      //@ loop unroll NUM_SU;
       for (sen = 0; sen < NUM_SU; sen ++)
          Check (SU_state[sen] == on_e);
 
@@ -3259,7 +3236,6 @@ static void Acquisition_Tests (void)
 
       Check ((telemetry_data.mode_status & MODE_BITS_MASK) == ACQUISITION);
 
-      //@ loop unroll NUM_SU;
       for (sen = 0; sen < NUM_SU; sen ++)
          Check (SU_state[sen] == acquisition_e);
 
@@ -3343,6 +3319,7 @@ static void Acquisition_Tests (void)
       Check_Zero (event_queue_length);
 
       octets = 0;
+      /* @ loop unroll 17676; */
       while (mail_count[TCTM_MAILBOX] == 0)
       {
          if (telemetry_pointer < telemetry_end_pointer)
@@ -3422,7 +3399,6 @@ static void Acquisition_Tests (void)
 
       Check ((telemetry_data.mode_status & MODE_BITS_MASK) == STAND_BY);
 
-      //@ loop unroll NUM_SU;
       for (sen = 0; sen < NUM_SU; sen ++)
          Check (SU_state[sen] == on_e);
 
@@ -3430,7 +3406,6 @@ static void Acquisition_Tests (void)
 
       /* Send the SWITCH OFF commands: */
 
-      //@ loop unroll NUM_SU;
       for (sen = 0; sen < NUM_SU; sen ++)
       {
          Exec_TC (switch_su_cmd[sen], OFF_VALUE, Prob4a);
@@ -3452,7 +3427,6 @@ void SU_Self_Test_Tests (void)
 
       /* Send the SWITCH ON commands: */
 
-      //@ loop unroll NUM_SU;
       for (sen = 0; sen < NUM_SU; sen ++)
       {
          Check (SU_state[sen] == off_e);
@@ -3475,13 +3449,11 @@ void SU_Self_Test_Tests (void)
 
       Monitor_Health (Prob6a);
 
-      //@ loop unroll NUM_SU;
       for (sen = 0; sen < NUM_SU; sen ++)
          Check (SU_state[sen] == switching_e);
 
       Monitor_Health (Prob6a);
 
-      //@ loop unroll NUM_SU;
       for (sen = 0; sen < NUM_SU; sen ++)
          Check (SU_state[sen] == on_e);
 
@@ -3594,7 +3566,6 @@ void SU_Self_Test_Tests (void)
       Set_AD_Delay (2);
       ad_conv_num = 0;
 
-      //@ loop unroll NUM_SU;
       for (sen = 0; sen < NUM_SU; sen ++)
       {
          self_test_SU_number = sen + SU1;
@@ -3621,7 +3592,6 @@ void SU_Self_Test_Tests (void)
       Set_AD_Delay (2);
       ad_conv_num = 0;
 
-      //@ loop unroll NUM_SU;
       for (sen = 0; sen < NUM_SU; sen ++)
       {
          self_test_SU_number = sen + SU1;
@@ -3649,7 +3619,6 @@ void SU_Self_Test_Tests (void)
       Set_AD_Delay (2);
       ad_conv_num = 0;
 
-      //@ loop unroll NUM_SU;
       for (sen = 0; sen < NUM_SU; sen ++)
       {
          self_test_SU_number = sen + SU1;
@@ -3675,7 +3644,6 @@ void SU_Self_Test_Tests (void)
 
       /* Send the SWITCH OFF commands: */
 
-      //@ loop unroll NUM_SU;
       for (sen = 0; sen < NUM_SU; sen ++)
       {
          Exec_TC (switch_su_cmd[sen], OFF_VALUE, Prob4a);

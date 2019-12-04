@@ -410,6 +410,7 @@ void RecordEvent(void)
 
    else
    {
+      /*@ widen_hints global: free_slot_index, MAX_EVENTS; */
       if (free_slot_index < max_events)
       {
 	 /* Science Data memory was not full */
@@ -460,12 +461,10 @@ void ClearEvents(void)
    /* Telecommand Execution task has higher priority than */
    /* Acquisition task.                                   */
 
-   //@ loop unroll NUM_SU;
    for(i=0;i<NUM_SU;i++)
    {
       telemetry_data.SU_hits[i] = 0;
 
-      //@ loop unroll NUM_CLASSES;
       for(j=0;j<NUM_CLASSES;j++)
       {
          science_data.event_counter[i][j] = 0;
@@ -473,7 +472,6 @@ void ClearEvents(void)
       /*event counters are cleared in science_data                           */
    }
 
-   //@ loop unroll 10;
    for (i=0; i < event_queue_length; i++)
    {
       /* Events from the event queue are copied to the Science */
