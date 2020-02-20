@@ -24,12 +24,7 @@
                                                   "target": "let x_0 = (-low_0) in\nlet x_1 =\n    (to_uint32 (low_0+(to_uint32 ((to_uint32 (high_0-low_0)) div 2)))) in\nlet a_1 =\n    (havoc Mint_undef_2\n      (havoc Mint_undef_4 Mint_0 (shift_sint32 a_0 low_0) (x_1-low_0))\n      (shift_sint32 a_0 x_1) (high_0-x_1)) in\nlet x_2 = (high_0-1) in\nforall i_0:int.\n(is_sint32 i_0)\n-> (((L_count a_1 a_0 i_0 low_0 (x_1-1))+(L_count a_1 a_0 i_0 x_1 x_2))=\n    (L_count a_1 a_0 i_0 low_0 x_2))",
                                                   "pattern": "\\F>is_sint32=#0+L_countL_countL_count" },
                                       "children": { "Call 'lemma_count_split'": 
-                                                      [ { "prover": "why3:Alt-Ergo,2.0.0",
-                                                          "verdict": "timeout",
-                                                          "time": 10. },
-                                                        { "prover": "coq",
-                                                          "verdict": "unknown" },
-                                                        { "header": "Instance",
+                                                      [ { "header": "Instance",
                                                           "tactic": "Wp.instance",
                                                           "params": { "P1": 
                                                                     { "select": "inside-goal",
@@ -52,10 +47,7 @@
                                                                     "pattern": "\\F>is_sint32=#0+L_countL_countL_count" },
                                                           "children": 
                                                             { "Call 'lemma_count_split'": 
-                                                                [ { "prover": "why3:Alt-Ergo,2.0.0",
-                                                                    "verdict": "timeout",
-                                                                    "time": 10. },
-                                                                  { "header": "Instance",
+                                                                [ { "header": "Instance",
                                                                     "tactic": "Wp.instance",
                                                                     "params": 
                                                                     { "P1": 
@@ -82,7 +74,32 @@
                                                                     "pattern": "\\F>is_sint32=#0+L_countL_countL_count" },
                                                                     "children": 
                                                                     { "Call 'lemma_count_split'": 
-                                                                    [ { "prover": "why3:Alt-Ergo,2.0.0",
+                                                                    [ { "header": "Instance",
+                                                                    "tactic": "Wp.instance",
+                                                                    "params": 
+                                                                    { "P1": 
+                                                                    { "select": "inside-goal",
+                                                                    "occur": 0,
+                                                                    "target": "i_0",
+                                                                    "pattern": "$i" },
+                                                                    "P2": null,
+                                                                    "P3": null,
+                                                                    "P4": null,
+                                                                    "P5": null,
+                                                                    "P6": null,
+                                                                    "P7": null,
+                                                                    "P8": null,
+                                                                    "P9": null,
+                                                                    "P10": null },
+                                                                    "select": 
+                                                                    { "select": "clause-step",
+                                                                    "at": 23,
+                                                                    "kind": "have",
+                                                                    "target": "let x_0 = (-low_0) in\nlet x_1 =\n    (to_uint32 (low_0+(to_uint32 ((to_uint32 (high_0-low_0)) div 2)))) in\nlet a_1 = (havoc Mint_undef_4 Mint_0 (shift_sint32 a_0 low_0) (x_1-low_0)) in\nlet x_2 = (x_1-1) in\nforall i_0:int.\n(is_sint32 i_0)\n-> ((L_count (havoc Mint_undef_2 a_1 (shift_sint32 a_0 x_1) (high_0-x_1)) a_0\n      i_0 low_0 x_2)=(L_count a_1 a_0 i_0 low_0 x_2))",
+                                                                    "pattern": "\\F>is_sint32=#0L_countL_counthavoc" },
+                                                                    "children": 
+                                                                    { "Instance": 
+                                                                    [ { "prover": "why3:Alt-Ergo,2.3.0",
                                                                     "verdict": "valid",
-                                                                    "time": 3.5698,
-                                                                    "steps": 959 } ] } } ] } } ] } } ] } } ]
+                                                                    "time": 8.5606,
+                                                                    "steps": 7691 } ] } } ] } } ] } } ] } } ] } } ]
