@@ -85,3 +85,9 @@ unsigned mjrty(unsigned* a, unsigned length) {
   }
   return 0;
 }
+
+/*
+Local Variables:
+compilation-command: "frama-c -wp -wp-rte 04-mjrty.c -wp-prover alt-ergo,cvc4"
+End:
+*/
