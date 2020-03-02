@@ -1,6 +1,6 @@
 TARGETS=2048 debie1 gzip124 mini-gmp papabench polarssl \
      qlz solitaire tweetnacl-usable libmodbus monocypher khash \
-     jsmn chrony hiredis semver kilo icpc cerberus itc-benchmarks \
+     jsmn chrony hiredis semver kilo icpc itc-benchmarks \
      x509-parser libspng
 
 help::
