@@ -1,3 +1,5 @@
+#### This repository has moved to Frama-C's Gitlab instance: https://git.frama-c.com/pub/open-source-case-studies
+
 Open source case studies for Frama-C
 ====================================
 
